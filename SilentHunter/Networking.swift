@@ -176,7 +176,8 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
         let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
             allowLossyConversion: false)
         
-        if (self.session.connectedPeers.count > 0) {
+        var peerCount = self.session.connectedPeers.count
+        if (peerCount > 0) {
             
             self.session.sendData(rawMsg, toPeers: self.session.connectedPeers,
                 withMode: MCSessionSendDataMode.Unreliable, error: &error)

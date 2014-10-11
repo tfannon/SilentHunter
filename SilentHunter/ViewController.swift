@@ -218,7 +218,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
                 targetsForDataBinding.append(id)
             }
         }
-        logit("In/Out range change: reloading data")
+        //logit("In/Out range change: reloading data")
         tableView.reloadData()
     }
     

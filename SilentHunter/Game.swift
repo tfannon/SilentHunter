@@ -166,12 +166,6 @@ class Game : IProcessMessages {
                     }
                 }
                 else{
-                    hackOtherPlayerCount++
-                    if (hackOtherPlayerCount % 2 == 0)
-                    {
-                        var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
-                        playerUpdate(hackOtherPlayerID, location: meInfo!.location)
-                    }
                     sendMyLocationMessage(meInfo!.location)
                     
                 }
