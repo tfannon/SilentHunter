@@ -29,6 +29,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var lblOutput : UILabel!
     var lastLocation : CLLocation?
     var audioPing : AudioPlayer = AudioPlayer(filename: "ping")
+    var audioHit : AudioPlayer = AudioPlayer(filename: "hit")
     var browser : MCBrowserViewController!
     var assistant : MCAdvertiserAssistant!
     var session : MCSession!
@@ -116,7 +117,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
             if (lastLocation == nil || lastLocation != location)
             {
                 var coordinate = location.coordinate
-                //audioPing.play()
                 var lat = coordinate.latitude
                 var long = coordinate.longitude
                 var distanceInMeters = 0.0;
@@ -274,18 +274,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     
     func inRange(playerID : MCPeerID!)
     {
+        if (targetPeer == nil)
+        {
+            audioPing.play()
+        }
         targetPeers[playerID] = true
         targetPeer = playerID;
         self.btnFire.hidden = false
     }
     
-    func outofRange(playerID : MCPeerID!)
+    func outOfRange(playerID : MCPeerID!)
     {
-        targetPeers[playerID] = false
+        targetPeers[playerID] = false;
         if (targetPeer == playerID)
         {
             findNextTarget()
         }
+    }
+    
+    func hit(playerID: MCPeerID!)
+    {
+        audioHit.play()
+    }
+    
+    func firedUpon(playerID: MCPeerID!) {
     }
     
     func notify(message: NSString!) {
@@ -296,7 +308,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     func findNextTarget()
     {
         self.targetPeer = nil
-        self.btnFire.hidden = false
+        self.btnFire.hidden = true
         for (id, playerInRange) in targetPeers
         {
             if (playerInRange)
