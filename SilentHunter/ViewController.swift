@@ -29,6 +29,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
     var targetsForDataBinding = [MCPeerID]()
+    var ableToFire : Bool = true
+    var timerAbleToFire : NSTimer?
     
     var prefs = Dictionary<String, String>()
     
@@ -278,10 +280,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell:PlayerCell = self.tableView.dequeueReusableCellWithIdentifier("PlayerCell") as PlayerCell
+        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
         var player:MCPeerID = self.targetsForDataBinding[indexPath.row]
-        cell.lblPlayerName.text = player.displayName
-        cell.btnFire.addTarget(self, action: "fireTorpedo:", forControlEvents: UIControlEvents.TouchUpInside)
+//        cell.lblPlayerName.text = player.displayName
+//        cell.btnFire.addTarget(self, action: "fireTorpedo:", forControlEvents: UIControlEvents.TouchUpInside)
+        cell.textLabel?.text = player.displayName
         return cell
     }
     
