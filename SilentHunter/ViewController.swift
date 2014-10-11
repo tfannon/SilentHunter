@@ -15,9 +15,7 @@ protocol IChat {
     func logit(message:String)
 }
 
-class ViewController: UIViewController, CLLocationManagerDelegate
-    //,MCBrowserViewControllerDelegate, MCSessionDelegate, 
-,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
+class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
 {
     var game: Game!
     
@@ -28,11 +26,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var lastLocation : CLLocation?
     var audioPing : AudioPlayer = AudioPlayer(filename: "ping")
     var audioHit : AudioPlayer = AudioPlayer(filename: "hit")
-    var network : NetworkDelegate!
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
     
-    var sessionManager = SessionMananger()
+    var network = Networking()
     var prefs = Dictionary<String, String>()
     
     
@@ -67,11 +64,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
         
-        game = Game(id: sessionManager.peerID)
-        network = sessionManager
-        game.network = network
-        sessionManager.msgProcessor = game;
-        sessionManager.chat = self;
+        game = Game(network: network)
+        network.msgProcessor = game;
+        network.chat = self;
         
         self.game!.delegate = self;
         self.btnFire.hidden = true;
@@ -110,7 +105,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
                 }
                 var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)"
                 txtLocation.text = message
-                self.game!.playerUpdate(sessionManager.peerID, location: location)
+                self.game!.playerUpdate(network.peerID, location: location)
                 lastLocation = location
             }
         }
@@ -163,7 +158,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         var name : String
         
         switch peerID {
-        case sessionManager.peerID:
+        case network.peerID:
             name = "Me"
         default:
             name = peerID.displayName
@@ -177,7 +172,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
    
 
     @IBAction func btnSend(sender: UIButton) {
-        sessionManager.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
     }
 
     @IBAction func btnFire_Clicked(sender: AnyObject) {

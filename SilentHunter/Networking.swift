@@ -14,12 +14,8 @@ protocol SessionManagerDelegate {
     func sessionDidChangeState()
 }
 
-protocol NetworkDelegate
-{
-    func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
-}
 
-class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate, NetworkDelegate
+class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate
 {
     var peerID : MCPeerID!
     var session : MCSession!
