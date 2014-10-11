@@ -328,36 +328,66 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
     }
     @IBAction func btnFire_Clicked(sender: AnyObject) {
-        self.btnFire.hidden = true
+        fire();
+    }
+    
+    func getTarget() -> MCPeerID?
+    {
         var target = self.targetPeer
-        if (target != nil)
+        return target;
+    }
+    
+    func setPotentialTarget(target: MCPeerID!)
+    {
+        targetPeers[target] = true
+        if (getTarget() == nil)
+        {
+            audioPing.play()
+            self.targetPeer = target
+            targetPeers[target] = true
+            self.btnFire.hidden = false
+        }
+    }
+ 
+    func clearPotentialTarget(target: MCPeerID!)
+    {
+        targetPeers[target] = false
+        if (getTarget() == target)
         {
             self.targetPeer = nil
-            self.targetPeers[target!] = false
-            self.game.fire(target)
+            self.btnFire.hidden = true
+            for (id, playerInRange) in targetPeers
+            {
+                if (playerInRange)
+                {
+                    setPotentialTarget(id)
+                    break
+                }
+            }
         }
     }
     
     func inRange(playerID : MCPeerID!)
     {
-        if (targetPeer == nil)
-        {
-            audioPing.play()
-        }
-        targetPeers[playerID] = true
-        targetPeer = playerID;
-        self.btnFire.hidden = false
+        setPotentialTarget(playerID)
     }
     
     func outOfRange(playerID : MCPeerID!)
     {
-        targetPeers[playerID] = false;
-        if (targetPeer == playerID)
-        {
-            findNextTarget()
-        }
+        clearPotentialTarget(playerID)
     }
     
+    func fire()
+    {
+        self.btnFire.hidden = true
+        var target = getTarget()
+        if (target != nil)
+        {
+            clearPotentialTarget(target)
+            self.game.fire(target)
+        }
+    }
+
     func hit(playerID: MCPeerID!)
     {
         audioHit.play()
@@ -373,16 +403,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     
     func findNextTarget()
     {
-        self.targetPeer = nil
-        self.btnFire.hidden = true
-        for (id, playerInRange) in targetPeers
-        {
-            if (playerInRange)
-            {
-                inRange(id)
-                break
-            }
-        }
     }
 }
 
