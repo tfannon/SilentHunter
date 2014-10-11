@@ -14,12 +14,8 @@ protocol SessionManagerDelegate {
     func sessionDidChangeState()
 }
 
-protocol NetworkDelegate
-{
-    func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
-}
 
-class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate, NetworkDelegate
+class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate
 {
     var peerID : MCPeerID!
     var session : MCSession!
@@ -51,7 +47,7 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
         serviceBrowser.delegate = self
     }
     
-    
+
     //MARK: MCSessionDelegate
     // Called when a peer sends an NSData to us
     func session(session: MCSession!, didReceiveData data: NSData!,
@@ -120,13 +116,13 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
         var shouldInvite = false
         var remotePeerName = peerID.displayName
         var myName = self.peerID.displayName
-        println("Found \(remotePeerName)")
+        var message = ("Found \(remotePeerName)")
+        self.chat?.logit(message)
         shouldInvite = remotePeerName != myName
         if shouldInvite {
             browser.invitePeer(peerID, toSession: self.session, withContext: nil, timeout: 30.0)
-            println("Inviting \(remotePeerName)")
-            //tell anyone who cares that we changed state
-            self.delegate?.sessionDidChangeState()
+            message = "Inviting \(remotePeerName)"
+            self.chat?.logit(message)
         }
         else {
         }
@@ -138,10 +134,15 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
     
     //MARK: MCNearbyServiceAdvertiserDelegate
     func advertiser(advertiser: MCNearbyServiceAdvertiser!, didNotStartAdvertisingPeer error: NSError!) {
-        
+
     }
     
     func advertiser(advertiser: MCNearbyServiceAdvertiser!, didReceiveInvitationFromPeer peerID: MCPeerID!, withContext context: NSData!, invitationHandler: ((Bool, MCSession!) -> Void)!) {
+        var message = "Received invitation from: \(peerID.displayName)"
+        self.chat?.logit(message)
+        invitationHandler(true, self.session)
+        message = "Accepted invitation from: \(peerID.displayName)"
+        self.chat?.logit(message)
     }
     
     
@@ -160,6 +161,7 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
             }
         }
     }
+    
     
     
     /*

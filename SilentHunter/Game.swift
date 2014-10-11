@@ -21,7 +21,7 @@ protocol IProcessMessages
     func ProcessMessage(fromPeer: MCPeerID!, msgType: Int!, data:[String])
 }
 
-@objc protocol GameDelegate
+protocol GameDelegate
 {
     func logit(msg: String)
     func inRange(playerID : MCPeerID!)
@@ -33,9 +33,6 @@ protocol IProcessMessages
 
 class Game : IProcessMessages {
     
-    var network: NetworkDelegate?
-    var hackOtherPlayerCount : Int = 0
-    
     struct Messages {
         static let MsgTypePlayerLocation = 1
         static let MsgTypeChat = 2
@@ -44,6 +41,20 @@ class Game : IProcessMessages {
         static let MsgPlayerHit = 5
     }
     
+    private var players = [MCPeerID: PlayerInfo]()
+    private var meId : MCPeerID!
+    var delegate: GameDelegate!
+    let MAX_DISTANCE = 10.0;
+    var network: Networking?
+    var hackOtherPlayerCount : Int = 0
+
+    
+    init(network : Networking)
+    {
+        self.network = network
+        self.meId = network.peerID
+    }
+
     
     // Receiving messages to be processed
     internal func ProcessMessage(fromPeer: MCPeerID!, msgType: Int!, data:[String])
@@ -116,15 +127,6 @@ class Game : IProcessMessages {
         return playerInfo!
     }
     
-    private var players = [MCPeerID: PlayerInfo]()
-    private var meId : MCPeerID!
-    var delegate: GameDelegate!
-    let MAX_DISTANCE = 10.0;
-    
-    init(id : MCPeerID)
-    {
-        self.meId = id;
-    }
     
     func playerUpdate(playerID : MCPeerID!, location: CLLocation!)
     {
@@ -164,7 +166,7 @@ class Game : IProcessMessages {
                     }
                 }
                 else{
-                    hackOtherPlayerCount++
+                    //hackOtherPlayerCount++
                     if (hackOtherPlayerCount == 6)
                     {
                         var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")

@@ -16,7 +16,7 @@
 		65B16B3019E97078008D728D /* SilentHunterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B16B2F19E97078008D728D /* SilentHunterTests.swift */; };
 		65B16B3A19E970A5008D728D /* MultipeerConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65B16B3919E970A5008D728D /* MultipeerConnectivity.framework */; };
 		65B16B3C19E970B5008D728D /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65B16B3B19E970B5008D728D /* CoreLocation.framework */; };
-		65FCE3B019E98DAC006D79B7 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FCE3AF19E98DAC006D79B7 /* SessionManager.swift */; };
+		65FCE3B019E98DAC006D79B7 /* Networking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FCE3AF19E98DAC006D79B7 /* Networking.swift */; };
 		709E5DEE19E9737E005E9348 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709E5DED19E9737E005E9348 /* Game.swift */; };
 		709E5DF019E97388005E9348 /* AudioHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709E5DEF19E97388005E9348 /* AudioHelper.swift */; };
 		709E5DF219E97391005E9348 /* ping.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 709E5DF119E97391005E9348 /* ping.mp3 */; };
@@ -47,7 +47,7 @@
 		65B16B2F19E97078008D728D /* SilentHunterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SilentHunterTests.swift; sourceTree = "<group>"; };
 		65B16B3919E970A5008D728D /* MultipeerConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MultipeerConnectivity.framework; path = System/Library/Frameworks/MultipeerConnectivity.framework; sourceTree = SDKROOT; };
 		65B16B3B19E970B5008D728D /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		65FCE3AF19E98DAC006D79B7 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		65FCE3AF19E98DAC006D79B7 /* Networking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Networking.swift; sourceTree = "<group>"; };
 		709E5DED19E9737E005E9348 /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		709E5DEF19E97388005E9348 /* AudioHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioHelper.swift; sourceTree = "<group>"; };
 		709E5DF119E97391005E9348 /* ping.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = ping.mp3; sourceTree = "<group>"; };
@@ -97,7 +97,7 @@
 		65B16B1619E97078008D728D /* SilentHunter */ = {
 			isa = PBXGroup;
 			children = (
-				65FCE3AF19E98DAC006D79B7 /* SessionManager.swift */,
+				65FCE3AF19E98DAC006D79B7 /* Networking.swift */,
 				51EBE2D319E9932D0016CB77 /* hit.mp3 */,
 				709E5DF319E973AA005E9348 /* Misc.swift */,
 				709E5DF119E97391005E9348 /* ping.mp3 */,
@@ -247,7 +247,7 @@
 			files = (
 				65B16B1C19E97078008D728D /* ViewController.swift in Sources */,
 				709E5DEE19E9737E005E9348 /* Game.swift in Sources */,
-				65FCE3B019E98DAC006D79B7 /* SessionManager.swift in Sources */,
+				65FCE3B019E98DAC006D79B7 /* Networking.swift in Sources */,
 				709E5DF019E97388005E9348 /* AudioHelper.swift in Sources */,
 				709E5DF419E973AA005E9348 /* Misc.swift in Sources */,
 				65B16B1A19E97078008D728D /* AppDelegate.swift in Sources */,
