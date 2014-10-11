@@ -54,20 +54,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         let userDefaults = NSUserDefaults.standardUserDefaults()
         userDefaults.setObject(prefs as Dictionary<NSObject,AnyObject>, forKey: "prefs")
     }
-    
-    @IBAction func btnSend(sender: UIButton) {
-         network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
-    }
-    @IBAction func btnFire_Clicked(sender: AnyObject) {
-        self.btnFire.hidden = true
-        var target = self.targetPeer
-        if (target != nil)
-        {
-            self.targetPeer = nil
-            self.targetPeers[target!] = false
-            self.game.fire(target)
-        }
-    }
+
    
     //MARK:  controller
     override func viewDidLoad() {
