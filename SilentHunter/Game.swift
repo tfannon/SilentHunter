@@ -98,6 +98,15 @@ class Game {
         sendMessage(Messages.MsgPlayerEvadedTorpedo, msgData: [], toPeer: peer)
     }
     
+    internal func getPlayerCount() -> Int {
+        return players.count
+    }
+    internal func getPlayer(index: Int) -> PlayerInfo {
+        var key : MCPeerID = Array(players.keys)[index]
+        var playerInfo = players[key]
+        return playerInfo!
+    }
+    
     private var players = [MCPeerID: PlayerInfo]()
     private var meId : MCPeerID!
     var delegate: GameDelegate?
@@ -183,8 +192,8 @@ class Game {
     }
 }
 
-class PlayerInfo {
-    private var playerID : MCPeerID!;
+internal class PlayerInfo {
+    internal var playerID : MCPeerID!;
     private var location : CLLocation!
     private var isAlive : Bool! = true
     private var hits : Int16! = 0

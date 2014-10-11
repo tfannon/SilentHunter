@@ -17,7 +17,7 @@ protocol NetworkDelegate
 }
 
 class ViewController: UIViewController, CLLocationManagerDelegate
-    ,MCBrowserViewControllerDelegate, MCSessionDelegate, NetworkDelegate,UITextFieldDelegate, GameDelegate
+    ,MCBrowserViewControllerDelegate, MCSessionDelegate, NetworkDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource
 {
     var game: Game!
     
@@ -40,6 +40,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     //MARK:  controller
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         self.txtChatMsg.delegate = self;
         
@@ -365,5 +367,22 @@ class ViewController: UIViewController, CLLocationManagerDelegate
             }
         }
     }
+    
+    @IBOutlet weak var tableView: UITableView!
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.game.getPlayerCount();
+    }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
+        var playerInfo:PlayerInfo = self.game.getPlayer(indexPath.row)
+        cell.textLabel?.text = playerInfo.playerID.displayName
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+    }
+    
 }
 
