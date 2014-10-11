@@ -21,11 +21,11 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     var session : MCSession!
     var serviceAdvertiser : MCNearbyServiceAdvertiser!
     var serviceBrowser : MCNearbyServiceBrowser!
-    //var connectedPeers : Int = 0
+
     var delegate : SessionManagerDelegate?
     var msgProcessor: IProcessMessages?
     var chat: IChat?
-    let serviceType = "SilentHunterX"
+    let serviceType = "SilentHunterXX"
     
     init(name : String) {
         super.init()
@@ -41,6 +41,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     
     func setupSession() {
         session = MCSession(peer: peerID)
+        session.delegate = self
         serviceAdvertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType:serviceType)
         serviceAdvertiser.delegate = self
         serviceBrowser = MCNearbyServiceBrowser(peer: peerID, serviceType: serviceType)
@@ -92,7 +93,8 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
         withName streamName: String!, fromPeer peerID: MCPeerID!)  {
             // Called when a peer establishes a stream with us
     }
-    
+
+    // Called when a connected peer changes state (for example, goes offline)
     func session(session: MCSession!, peer peerID: MCPeerID!,
         didChangeState state: MCSessionState)  {
             var message : String = ""
@@ -101,9 +103,10 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
             case MCSessionState.NotConnected : message = "Not Connected"
             default:""
             }
-            println("\(peerID) changed state to \(message)")
-            self.chat?.logit("\(peerID) changed state to \(message)")
-            // Called when a connected peer changes state (for example, goes offline)
+            Async.main {
+                println("\(peerID.displayName) changed state to \(message)")
+                self.chat?.logit("\(peerID.displayName) changed state to \(message)")
+            }
     }
     
     
@@ -175,7 +178,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
         var msg = String(msgType) + "|" + data;
         let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
             allowLossyConversion: false)
-        
+        var sess = self.session.connectedPeers;
         if (self.session.connectedPeers.count > 0) {
             
             self.session.sendData(rawMsg, toPeers: self.session.connectedPeers,
