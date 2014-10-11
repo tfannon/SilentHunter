@@ -47,6 +47,7 @@ class Game : IProcessMessages {
     let MAX_DISTANCE = 10.0;
     var network: Networking?
     var hackOtherPlayerCount : Int = 0
+    var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
 
     
     init(network : Networking)

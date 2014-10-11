@@ -26,8 +26,6 @@ class Misc
             return NSString(string:device).containsString("Simulator")
         }
     }
-    
-    
 }
 
 extension Array {
