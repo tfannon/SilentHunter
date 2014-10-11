@@ -24,8 +24,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     var lblOutput : UILabel!
     var lastLocation : CLLocation?
+    
     var audioPing : AudioPlayer = AudioPlayer(filename: "ping")
     var audioHit : AudioPlayer = AudioPlayer(filename: "hit")
+    var audioFire : AudioPlayer = AudioPlayer(filename: "fire")
+    
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
     var targetsForDataBinding = [MCPeerID]()
@@ -100,7 +103,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         if (manager.location != nil)
         {
             var location = locations[locations.endIndex - 1] as CLLocation
-            if (lastLocation == nil || lastLocation != location)
+            if (lastLocation == nil)
             {
                 var coordinate = location.coordinate
                 var lat = coordinate.latitude
@@ -245,6 +248,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
             timerAbleToFire = NSTimer.scheduledTimerWithTimeInterval(
                 10.0, target: self, selector:"torpedosLoaded", userInfo: nil, repeats: false)
             
+            audioFire.play()
             self.game.fire(target)
             println("fired at \(target!.displayName)")
         }
