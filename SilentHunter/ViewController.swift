@@ -72,6 +72,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         game.network = self
         self.game!.delegate = self;
         
+        // HACK for other player
+        var playerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
+        var location : CLLocation! = CLLocation(latitude: 37.33497737, longitude: -122.03281282)
+        self.game!.playerUpdate(playerID, location: location)
     }
     
     override func didReceiveMemoryWarning() {
