@@ -138,19 +138,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         
     }
     
-    func inRange(playerID : MCPeerID!)
-    {
-        targetPeers[playerID] = true
-        targetPeer = playerID;
-        self.btnFire.hidden = false
-    }
-    
-    func notify(message: NSString!) {
-        var alert = UIAlertController(title: "Alert", message: message, preferredStyle : UIAlertControllerStyle.Alert)
-        self.presentViewController(alert, animated: false, completion: nil)
-    }
-    
-    
     func browserViewControllerDidFinish(
         browserViewController: MCBrowserViewController!)  {
             // Called when the browser view controller is dismissed (ie the Done
@@ -342,13 +329,37 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         }
     }
     
+    func inRange(playerID : MCPeerID!)
+    {
+        targetPeers[playerID] = true
+        targetPeer = playerID;
+        self.btnFire.hidden = false
+    }
+    
+    func outofRange(playerID : MCPeerID!)
+    {
+        targetPeers[playerID] = false
+        if (targetPeer == playerID)
+        {
+            findNextTarget()
+        }
+    }
+    
+    func notify(message: NSString!) {
+        var alert = UIAlertController(title: "Alert", message: message, preferredStyle : UIAlertControllerStyle.Alert)
+        self.presentViewController(alert, animated: false, completion: nil)
+    }
+    
     func findNextTarget()
     {
-        for (id, inRange) in targetPeers
+        self.targetPeer = nil
+        self.btnFire.hidden = false
+        for (id, playerInRange) in targetPeers
         {
-            if (inRange)
+            if (playerInRange)
             {
-                
+                inRange(id)
+                break
             }
         }
     }
