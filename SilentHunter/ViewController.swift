@@ -18,10 +18,9 @@ protocol IChat {
 class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
 {
     var game: Game!
-    
-    let serviceType = "LCOC-Chat"
-    
     var locationManager : CLLocationManager!
+    var network : Networking!
+    
     var lblOutput : UILabel!
     var lastLocation : CLLocation?
     var audioPing : AudioPlayer = AudioPlayer(filename: "ping")
@@ -29,7 +28,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
     
-    var network = Networking()
     var prefs = Dictionary<String, String>()
     
     
@@ -64,6 +62,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
         
+        restoreUserPrefs()
+        /*
+        var name = (Misc.inSimulator && prefs["SimulatorId"] != nil) ? prefs["SimulatorId"]! : UIDevice.currentDevice().name
+        */
+        let name = UIDevice.currentDevice().name
+        
+        network = Networking(name: name)
         game = Game(network: network)
         network.msgProcessor = game;
         network.chat = self;
@@ -76,12 +81,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         var location : CLLocation! = CLLocation(latitude: 37.33150351, longitude: -122.03071596)
         self.game!.playerUpdate(playerID, location: location)
         
-        restoreUserPrefs()
+
     }
     
     func restoreUserPrefs() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
         if let prefs = userDefaults.objectForKey("prefs") as? Dictionary<String,String> {
+            self.prefs = prefs
             txtSimulatorId.text = prefs["SimulatorId"]
         }
     }
