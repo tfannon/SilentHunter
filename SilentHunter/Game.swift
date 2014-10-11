@@ -166,7 +166,7 @@ class Game : IProcessMessages {
                     }
                 }
                 else{
-                    hackOtherPlayerCount++
+                    //hackOtherPlayerCount++
                     if (hackOtherPlayerCount == 6)
                     {
                         var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")

@@ -123,31 +123,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     }
     
     
-    //MARK: browser
-    
-    func browserViewControllerDidFinish(
-        browserViewController: MCBrowserViewController!)  {
-            // Called when the browser view controller is dismissed (ie the Done
-            // button was tapped)
-            
-            self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func browserViewControllerWasCancelled(
-        browserViewController: MCBrowserViewController!)  {
-            // Called when the browser view controller is cancelled
-            
-            self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    
     
     /*
     * Logs a message in raw form to the output text view
     */
     func logit(message: String) {
-        self.txtMessages.text = self.txtMessages.text + message
-        
+        println(message)
+        self.txtMessages.text = self.txtMessages.text + message + "\n"
     }
     
     func updateChat(text : String, fromPeer peerID: MCPeerID) {
