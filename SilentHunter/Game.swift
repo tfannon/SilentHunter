@@ -56,7 +56,7 @@ class Game {
     
     //Sends a message through the peer network
     private func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?){
-        network?.sendMessage!(msgType, msgData: msgData, toPeer: toPeer)
+        network?.sendMessage(msgType, msgData: msgData, toPeer: toPeer)
     }
     private func sendMyLocationMessage(location: CLLocation)
     {

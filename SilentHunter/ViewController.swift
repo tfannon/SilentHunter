@@ -11,9 +11,9 @@ import CoreLocation
 import MultipeerConnectivity
 
 
-@objc protocol NetworkDelegate
+protocol NetworkDelegate
 {
-    optional func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
+    func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
 }
 
 class ViewController: UIViewController, CLLocationManagerDelegate
@@ -34,25 +34,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
     
-    /*
-    *
-    * Sends a message to one or all peers
-    */
-    func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
-    {
-        if (self.session.connectedPeers.count > 0)
-        {
-            var joiner = "|"
-            var joinedStrings = joiner.join(msgData)
-            if (toPeer == nil) {
-                sendToPeers(msgType, data: joinedStrings)
-            }
-            else {
-                sendToPeer(toPeer!, msgType: msgType, data: joinedStrings)
-            }
-        }
-    }
-
+    var sessionManager = SessionMananger()
+    
+   
+    //MARK:  controller
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -66,9 +51,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
         
-        initNetworking()
+        //initNetworking()
         
-        game = Game(id: self.peerID)
+        game = Game(id: sessionManager.peerID)
         game.network = self
         self.game!.delegate = self;
         
@@ -85,6 +70,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         // Dispose of any resources that can be recreated.
     }
     
+    //MARK:  location
+    
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
         if (manager.location != nil)
         {
@@ -92,7 +79,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
             if (lastLocation == nil || lastLocation != location)
             {
                 var coordinate = location.coordinate
-                audioPing.play()
+                //audioPing.play()
                 var lat = coordinate.latitude
                 var long = coordinate.longitude
                 var distanceInMeters = 0.0;
@@ -101,11 +88,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate
                     distanceInMeters = location.distanceFromLocation(lastLocation!)
                 }
                 var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)"
-               txtLocation.text = message
-                self.game!.playerUpdate(self.peerID, location: location)
-                
+                txtLocation.text = message
+                self.game!.playerUpdate(sessionManager.peerID, location: location)
                 lastLocation = location
-                
             }
         }
     }
@@ -121,6 +106,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         return false;
     }
     
+    
+    //MARK:  networking
+    func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
+    {
+        if (self.sessionManager.connectedPeers > 0)
+        {
+            var joiner = "|"
+            var joinedStrings = joiner.join(msgData)
+            if (toPeer == nil) {
+                sendToPeers(msgType, data: joinedStrings)
+            }
+            else {
+                sendToPeer(toPeer!, msgType: msgType, data: joinedStrings)
+            }
+        }
+    }
+    
     func initNetworking()
     {
         self.peerID = MCPeerID(displayName: UIDevice.currentDevice().name)
@@ -134,9 +136,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         
         // tell the assistant to start advertising our fabulous chat
         self.assistant.start()
-        
-        
     }
+    
+    //MARK: browser 
     
     func browserViewControllerDidFinish(
         browserViewController: MCBrowserViewController!)  {
