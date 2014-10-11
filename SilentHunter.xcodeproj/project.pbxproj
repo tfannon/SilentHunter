@@ -169,6 +169,11 @@
 				TargetAttributes = {
 					65B16B1319E97078008D728D = {
 						CreatedOnToolsVersion = 6.0.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					65B16B2819E97078008D728D = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -413,6 +418,7 @@
 				65B16B3519E97078008D728D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		65B16B3619E97078008D728D /* Build configuration list for PBXNativeTarget "SilentHunterTests" */ = {
 			isa = XCConfigurationList;
@@ -421,6 +427,7 @@
 				65B16B3819E97078008D728D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
