@@ -49,6 +49,9 @@ class Game {
             self.playerUpdate(fromPeer, location: loc)
             
             break;
+        case Messages.MsgFiredTorpedo:
+            
+            break;
         default:
             break;
             
@@ -127,16 +130,8 @@ class Game {
     
     func fire(playerID: MCPeerID!)
     {
-        var meInfo = players[meId]
-        var target = players[playerID];
-        if (target != nil)
-        {
-            var distanceInMeters = target!.location.distanceFromLocation(meInfo!.location)
-            if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
-            {
-                delegate?.notify?("HIT")
-            }
-        }
+        sendMyFireTorpedoMessage(playerID)
+        
     }
     
     func hit(playerID: MCPeerID!)
