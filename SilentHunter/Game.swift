@@ -31,10 +31,12 @@ class Game {
         static let MsgTypePlayerLocation = 1
         static let MsgTypeChat = 2
         static let MsgFiredTorpedo = 3
+        static let MsgPlayerEvadedTorpedo = 4
+        static let MsgPlayerHit = 5
     }
     
     
-    
+    // Receiving messages to be processed
     internal func ProcessMessage(fromPeer: MCPeerID!, msgType: Int!, data:[String])
     {
         switch (msgType)
@@ -45,13 +47,23 @@ class Game {
         case Messages.MsgTypePlayerLocation:
             var lat = data[0].toDouble()
             var lng = data[1].toDouble()
+            self.delegate?.logit("RECV: PlayerLoc: \(lat),\(lng)")
             
             var loc = CLLocation(latitude: lat!, longitude: lng!)
             self.playerUpdate(fromPeer, location: loc)
             
             break;
         case Messages.MsgFiredTorpedo:
-            
+            self.delegate?.logit("RECV: Torpedo Fired at me by: \(fromPeer.displayName)")
+            firedUpon(fromPeer)
+            break;
+        case Messages.MsgPlayerHit:
+            self.delegate?.logit("RECV: I HIT player: \(fromPeer.displayName)")
+            hit(fromPeer)
+            break;
+        case Messages.MsgPlayerEvadedTorpedo:
+            self.delegate?.logit("RECV: Player \(fromPeer.displayName) EVADED by torpedo")
+            evade()
             break;
         default:
             break;
@@ -61,7 +73,7 @@ class Game {
     
     //Sends a message through the peer network
     private func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?){
-        network?.sendMessage!(msgType, msgData: msgData, toPeer: toPeer)
+        network?.sendMessage(msgType, msgData: msgData, toPeer: toPeer)
     }
     private func sendMyLocationMessage(location: CLLocation)
     {
@@ -74,6 +86,16 @@ class Game {
     private func sendMyFireTorpedoMessage(peer: MCPeerID)
     {
         sendMessage(Messages.MsgFiredTorpedo, msgData: [], toPeer: peer)
+    }
+    // indicates "I" have been hit
+    private func sendPlayerHitMessage(peer: MCPeerID)
+    {
+        sendMessage(Messages.MsgPlayerHit, msgData: [], toPeer: peer)
+    }
+    // idnicates "I" have evaded the torpedo fired at me
+    private func sendPlayerEvadedTorpedoMessage(peer: MCPeerID)
+    {
+        sendMessage(Messages.MsgPlayerEvadedTorpedo, msgData: [], toPeer: peer)
     }
     
     private var players = [MCPeerID: PlayerInfo]()
