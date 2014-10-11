@@ -265,7 +265,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     * msgType - Type of Message to send (Game.Messages)
     * data - '|' delimited string of additional data for the message type
     */
-    private func sendToPeers(msgType:Int, data: String) {
+    internal func sendToPeers(msgType:Int, data: String) {
         var error : NSError?
         
         var msg = String(msgType) + "|" + data;
@@ -296,7 +296,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     * msgType - Type of Message to send (Game.Messages)
     * data - '|' delimited string of additional data for the message type
     */
-    private func sendToPeer(peer: MCPeerID, msgType:Int, data: String) {
+    internal func sendToPeer(peer: MCPeerID, msgType:Int, data: String) {
         var error : NSError?
         
         var msg = String(msgType) + "|" + data;
