@@ -27,8 +27,17 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l36-v6-RqT">
+                                <rect key="frame" x="532" y="103" width="52" height="30"/>
+                                <state key="normal" title="Browse">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="btnBrowse:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="7O2-fM-JuK"/>
+                                </connections>
+                            </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-I7-vpp">
-                                <rect key="frame" x="16" y="150" width="568" height="125"/>
+                                <rect key="frame" x="16" y="146" width="568" height="125"/>
                                 <color key="backgroundColor" red="0.0" green="0.59999999999999998" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="125" id="HRU-DR-rTz"/>
@@ -42,8 +51,17 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Nk-gy-pN1">
+                                <rect key="frame" x="16" y="103" width="36" height="30"/>
+                                <state key="normal" title="Send">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="btnSend:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="LgU-xV-NTe"/>
+                                </connections>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UYL-po-0t5">
-                                <rect key="frame" x="16" y="294" width="568" height="41"/>
+                                <rect key="frame" x="16" y="280" width="568" height="41"/>
                                 <color key="backgroundColor" red="1" green="0.040183829110187141" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="41" id="j2W-36-TWG"/>
@@ -71,15 +89,14 @@
                                     <action selector="handleSimulatorIdChanged:" destination="vXZ-lx-hvc" eventType="editingDidEnd" id="4hl-em-F2N"/>
                                 </connections>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Nk-gy-pN1">
-                                <rect key="frame" x="390" y="99" width="36" height="30"/>
-                                <state key="normal" title="Send">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="edg-Aw-TdU">
+                                <rect key="frame" x="16" y="343" width="500" height="124"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <connections>
-                                    <action selector="btnSend:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="LgU-xV-NTe"/>
+                                    <outlet property="dataSource" destination="vXZ-lx-hvc" id="ssN-3Q-Qnc"/>
+                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="54s-yy-7Ju"/>
                                 </connections>
-                            </button>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>

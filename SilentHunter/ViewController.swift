@@ -11,10 +11,8 @@ import CoreLocation
 import MultipeerConnectivity
 
 
-
-
 class ViewController: UIViewController, CLLocationManagerDelegate
-    ,MCBrowserViewControllerDelegate, MCSessionDelegate, NetworkDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource
+    ,MCBrowserViewControllerDelegate, MCSessionDelegate, UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource
 {
     var game: Game!
     
@@ -45,22 +43,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         let userDefaults = NSUserDefaults.standardUserDefaults()
         userDefaults.setObject(prefs as Dictionary<NSObject,AnyObject>, forKey: "prefs")
     }
-    
-    @IBAction func btnSend(sender: UIButton) {
-        let strArray : [String] = [self.txtChatMsg.text]
-        network.sendMessage(Game.Messages.MsgTypeChat, msgData: strArray, toPeer:nil)
-    }
- 
-    @IBAction func btnFire_Clicked(sender: AnyObject) {
-        self.btnFire.hidden = true
-        var target = self.targetPeer
-        if (target != nil)
-        {
-            self.targetPeer = nil
-            self.targetPeers[target!] = false
-            self.game.fire(target)
-        }
-    }
+
    
     //MARK:  controller
     override func viewDidLoad() {
@@ -247,74 +230,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         self.txtMessages.text = self.txtMessages.text + message
         
     }
-    
-    /*
-    * Sends a message to ALL the connected peers.
-    * msgType - Type of Message to send (Game.Messages)
-    * data - '|' delimited string of additional data for the message type
-    */
-    internal func sendToPeers(msgType:Int, data: String) {
-        var error : NSError?
-        
-        var msg = String(msgType) + "|" + data;
-        let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
-            allowLossyConversion: false)
-        
-        if (self.session.connectedPeers.count > 0) {
-        
-            self.session.sendData(rawMsg, toPeers: self.session.connectedPeers,
-                withMode: MCSessionSendDataMode.Unreliable, error: &error)
-        
-            if error != nil {
-                print("Error sending data: \(error?.localizedDescription)")
-            }
-        
-            // special case for chat (to display in window)
-            if (msgType == Game.Messages.MsgTypeChat) {
-                self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
-                self.txtChatMsg.text = ""
-            }
-        }
-        
-    }
-    
-    
-    /*
-    * Sends a message to the identified peer.
-    * msgType - Type of Message to send (Game.Messages)
-    * data - '|' delimited string of additional data for the message type
-    */
-    internal func sendToPeer(peer: MCPeerID, msgType:Int, data: String) {
-        var error : NSError?
-        
-        var msg = String(msgType) + "|" + data;
-        let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
-            allowLossyConversion: false)
-        
-        // create an array of just this peer to send the message to
-        var peers = [ peer ];
-        self.session.sendData(rawMsg, toPeers: peers,
-            withMode: MCSessionSendDataMode.Unreliable, error: &error)
-        
-        if error != nil {
-            print("Error sending data: \(error?.localizedDescription)")
-        }
-        
-        // special case for chat (to display in window)
-        if (msgType == Game.Messages.MsgTypeChat) {
-            self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
-            self.txtChatMsg.text = ""
-        }
-        
-    }
+   
 
-
-    @IBAction func btnBrowse(sender: UIButton) {
-        self.presentViewController(self.browser, animated: true, completion: nil)
-    }
     @IBAction func btnSend(sender: UIButton) {
-        sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        //sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
     }
+
     @IBAction func btnFire_Clicked(sender: AnyObject) {
         fire();
     }
