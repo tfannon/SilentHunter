@@ -70,12 +70,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
         
-        network = sessionManager
         game.network = network
         
         self.game.delegate = self;
-        
-        self.game!.delegate = self;
         self.btnFire.hidden = true;
         self.btnFire.setTitle("Loading torpedoes", forState: UIControlState.Disabled)
         
