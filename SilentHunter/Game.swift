@@ -30,10 +30,12 @@ class Game {
         static let MsgTypePlayerLocation = 1
         static let MsgTypeChat = 2
         static let MsgFiredTorpedo = 3
+        static let MsgPlayerEvadedTorpedo = 4
+        static let MsgPlayerHit = 5
     }
     
     
-    
+    // Receiving messages to be processed
     internal func ProcessMessage(fromPeer: MCPeerID!, msgType: Int!, data:[String])
     {
         switch (msgType)
@@ -51,6 +53,12 @@ class Game {
             break;
         case Messages.MsgFiredTorpedo:
             firedUpon(fromPeer)
+            break;
+        case Messages.MsgPlayerHit:
+            hit(fromPeer)
+            break;
+        case Messages.MsgPlayerEvadedTorpedo:
+            evade()
             break;
         default:
             break;
@@ -73,6 +81,16 @@ class Game {
     private func sendMyFireTorpedoMessage(peer: MCPeerID)
     {
         sendMessage(Messages.MsgFiredTorpedo, msgData: [], toPeer: peer)
+    }
+    // indicates "I" have been hit
+    private func sendPlayerHitMessage(peer: MCPeerID)
+    {
+        sendMessage(Messages.MsgPlayerHit, msgData: [], toPeer: peer)
+    }
+    // idnicates "I" have evaded the torpedo fired at me
+    private func sendPlayerEvadedTorpedoMessage(peer: MCPeerID)
+    {
+        sendMessage(Messages.MsgPlayerEvadedTorpedo, msgData: [], toPeer: peer)
     }
     
     private var players = [MCPeerID: PlayerInfo]()
