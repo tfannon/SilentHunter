@@ -176,7 +176,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
    
 
     @IBAction func btnSend(sender: UIButton) {
-        //sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        sessionManager.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
     }
 
     @IBAction func btnFire_Clicked(sender: AnyObject) {
