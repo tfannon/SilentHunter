@@ -258,9 +258,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
+        var cell:PlayerCell = self.tableView.dequeueReusableCellWithIdentifier("PlayerCell") as PlayerCell
         var player:MCPeerID = self.targetsForDataBinding[indexPath.row]
-        cell.textLabel?.text = player.displayName
+        cell.lblPlayerName.text = player.displayName
+        cell.btnFire.addTarget(self, action: "fireTorpedo:", forControlEvents: UIControlEvents.TouchUpInside)
         return cell
     }
     
@@ -268,5 +269,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
     }
     
+    func fireTorpedo(sender:UIButton!)
+    {
+       println("button clicked")
+    }
 }
 
