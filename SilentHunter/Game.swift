@@ -68,7 +68,6 @@ class Game : IProcessMessages {
         case Messages.MsgTypePlayerLocation:
             var lat = data[0].toDouble()
             var lng = data[1].toDouble()
-            self.delegate.logit("RECV: PlayerLoc: \(lat),\(lng)")
             
             var loc = CLLocation(latitude: lat!, longitude: lng!)
             self.playerUpdate(fromPeer, location: loc)
@@ -80,7 +79,7 @@ class Game : IProcessMessages {
             break;
         case Messages.MsgPlayerHit:
             self.delegate.logit("RECV: I HIT player: \(fromPeer.displayName)")
-            hit(fromPeer)
+            hitSuccess(fromPeer)
             break;
         case Messages.MsgPlayerEvadedTorpedo:
             self.delegate.logit("RECV: Player \(fromPeer.displayName) EVADED by torpedo")
@@ -177,6 +176,11 @@ class Game : IProcessMessages {
     func fire(playerID: MCPeerID!)
     {
         sendMyFireTorpedoMessage(playerID)
+        
+    }
+    
+    func hitSuccess(playerID: MCPeerID!)
+    {
         
     }
     
