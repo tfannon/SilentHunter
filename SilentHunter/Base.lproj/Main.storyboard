@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5hl-hD-0NJ">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5hl-hD-0NJ">
                                 <rect key="frame" x="16" y="472" width="568" height="94"/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -27,16 +27,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l36-v6-RqT">
-                                <rect key="frame" x="532" y="103" width="52" height="30"/>
-                                <state key="normal" title="Browse">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="btnBrowse:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="7O2-fM-JuK"/>
-                                </connections>
-                            </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-I7-vpp">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-I7-vpp">
                                 <rect key="frame" x="16" y="150" width="568" height="125"/>
                                 <color key="backgroundColor" red="0.0" green="0.59999999999999998" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -46,21 +37,12 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bzo-8s-a4w">
-                                <rect key="frame" x="16" y="59" width="568" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bzo-8s-a4w">
+                                <rect key="frame" x="16" y="100" width="347" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Nk-gy-pN1">
-                                <rect key="frame" x="16" y="103" width="36" height="30"/>
-                                <state key="normal" title="Send">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="btnSend:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="LgU-xV-NTe"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UYL-po-0t5">
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UYL-po-0t5">
                                 <rect key="frame" x="16" y="294" width="568" height="41"/>
                                 <color key="backgroundColor" red="1" green="0.040183829110187141" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -89,12 +71,19 @@
                                     <action selector="handleSimulatorIdChanged:" destination="vXZ-lx-hvc" eventType="editingDidEnd" id="4hl-em-F2N"/>
                                 </connections>
                             </textField>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Nk-gy-pN1">
+                                <rect key="frame" x="390" y="99" width="36" height="30"/>
+                                <state key="normal" title="Send">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="btnSend:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="LgU-xV-NTe"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="p2Y-I7-vpp" firstAttribute="top" secondItem="6Nk-gy-pN1" secondAttribute="bottom" constant="17" id="0x9-Cw-fw3"/>
-                            <constraint firstItem="l36-v6-RqT" firstAttribute="baseline" secondItem="6Nk-gy-pN1" secondAttribute="baseline" id="D1G-No-iwU"/>
-                            <constraint firstItem="l36-v6-RqT" firstAttribute="trailing" secondItem="bzo-8s-a4w" secondAttribute="trailing" id="DXs-U9-TY8"/>
                             <constraint firstItem="UYL-po-0t5" firstAttribute="leading" secondItem="p2Y-I7-vpp" secondAttribute="leading" id="GI4-y2-E0I"/>
                             <constraint firstItem="bzo-8s-a4w" firstAttribute="leading" secondItem="6Nk-gy-pN1" secondAttribute="leading" id="NUg-9e-cQd"/>
                             <constraint firstItem="bzo-8s-a4w" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="Y7S-kl-TUH"/>
@@ -103,7 +92,6 @@
                             <constraint firstItem="6Nk-gy-pN1" firstAttribute="top" secondItem="bzo-8s-a4w" secondAttribute="bottom" constant="14" id="bcW-jV-wKH"/>
                             <constraint firstItem="6Nk-gy-pN1" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="d84-TI-Bcj"/>
                             <constraint firstItem="5hl-hD-0NJ" firstAttribute="trailing" secondItem="p2Y-I7-vpp" secondAttribute="trailing" id="ocb-Kz-zCY"/>
-                            <constraint firstItem="p2Y-I7-vpp" firstAttribute="trailing" secondItem="l36-v6-RqT" secondAttribute="trailing" id="ooe-I4-vMp"/>
                             <constraint firstItem="5hl-hD-0NJ" firstAttribute="leading" secondItem="p2Y-I7-vpp" secondAttribute="leading" id="pqs-70-njB"/>
                             <constraint firstItem="bzo-8s-a4w" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="39" id="uQn-6q-QEP"/>
                             <constraint firstItem="UYL-po-0t5" firstAttribute="trailing" secondItem="p2Y-I7-vpp" secondAttribute="trailing" id="uXG-g7-FbQ"/>
