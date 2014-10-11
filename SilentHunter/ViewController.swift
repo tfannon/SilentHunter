@@ -59,11 +59,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         self.game!.delegate = self;
         
         self.btnFire.hidden = true;
-        
-        // HACK for other player
-        var playerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
-        var location : CLLocation! = CLLocation(latitude: 37.33150351, longitude: -122.03071596)
-        self.game!.playerUpdate(playerID, location: location)
     }
     
     override func didReceiveMemoryWarning() {
@@ -138,6 +133,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         // tell the assistant to start advertising our fabulous chat
         self.assistant.start()
     }
+    
+    //MARK: browser 
     
     func browserViewControllerDidFinish(
         browserViewController: MCBrowserViewController!)  {
@@ -337,23 +334,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         self.btnFire.hidden = false
     }
     
-    func outofRange(playerID : MCPeerID!)
+    func outOfRange(playerID : MCPeerID!)
     {
-        targetPeers[playerID] = false
+        targetPeers[playerID] = false;
         if (targetPeer == playerID)
         {
             findNextTarget()
         }
     }
     
+    func hit(playerID: MCPeerID!)
+    {
+        audioHit.play()
+    }
+    
     func firedUpon(playerID: MCPeerID!) {
-        var random = Int(arc4random_uniform(UInt32(4)));
-        var hit = random == 0 || true;
-        if (hit)
-        {
-            audioHit.play()
-            game.hit(self.peerID)
-        }
     }
     
     func notify(message: NSString!) {
@@ -364,7 +359,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     func findNextTarget()
     {
         self.targetPeer = nil
-        self.btnFire.hidden = false
+        self.btnFire.hidden = true
         for (id, playerInRange) in targetPeers
         {
             if (playerInRange)

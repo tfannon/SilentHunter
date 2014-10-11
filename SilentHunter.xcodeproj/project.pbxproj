@@ -97,6 +97,7 @@
 		65B16B1619E97078008D728D /* SilentHunter */ = {
 			isa = PBXGroup;
 			children = (
+				65FCE3AF19E98DAC006D79B7 /* SessionManager.swift */,
 				51EBE2D319E9932D0016CB77 /* hit.mp3 */,
 				709E5DF319E973AA005E9348 /* Misc.swift */,
 				709E5DF119E97391005E9348 /* ping.mp3 */,
