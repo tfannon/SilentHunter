@@ -50,7 +50,7 @@ class Game {
             
             break;
         case Messages.MsgFiredTorpedo:
-            
+            firedUpon(fromPeer)
             break;
         default:
             break;
