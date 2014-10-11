@@ -39,7 +39,7 @@
 /* Begin PBXFileReference section */
 		5158EEF219E9E7DC00B5FDC2 /* fire.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = fire.mp3; sourceTree = "<group>"; };
 		51EBE2D319E9932D0016CB77 /* hit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = hit.mp3; sourceTree = "<group>"; };
-		657E69F719E9ED4A00F4AC4D /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
+		657E69F719E9ED4A00F4AC4D /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Async.swift; path = ../Async.swift; sourceTree = "<group>"; };
 		65B16B1419E97078008D728D /* SilentHunter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SilentHunter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65B16B1819E97078008D728D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65B16B1919E97078008D728D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -83,7 +83,6 @@
 		65B16B0B19E97078008D728D = {
 			isa = PBXGroup;
 			children = (
-				657E69F719E9ED4A00F4AC4D /* Async.swift */,
 				65B16B3B19E970B5008D728D /* CoreLocation.framework */,
 				65B16B3919E970A5008D728D /* MultipeerConnectivity.framework */,
 				65B16B1619E97078008D728D /* SilentHunter */,
@@ -104,6 +103,7 @@
 		65B16B1619E97078008D728D /* SilentHunter */ = {
 			isa = PBXGroup;
 			children = (
+				657E69F719E9ED4A00F4AC4D /* Async.swift */,
 				5158EEF219E9E7DC00B5FDC2 /* fire.mp3 */,
 				65FCE3AF19E98DAC006D79B7 /* Networking.swift */,
 				51EBE2D319E9932D0016CB77 /* hit.mp3 */,
