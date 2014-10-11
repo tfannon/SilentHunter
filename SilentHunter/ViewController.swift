@@ -14,10 +14,12 @@ import MultipeerConnectivity
 protocol NetworkDelegate
 {
     func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
+    func sendToPeers(msgType:Int, data: String)
+    func sendToPeer(peer: MCPeerID, msgType:Int, data: String)
 }
 
 class ViewController: UIViewController, CLLocationManagerDelegate
-    ,MCBrowserViewControllerDelegate, MCSessionDelegate, NetworkDelegate,UITextFieldDelegate, GameDelegate
+    ,MCBrowserViewControllerDelegate, MCSessionDelegate, UITextFieldDelegate, GameDelegate
 {
     var game: Game!
     
@@ -30,6 +32,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var browser : MCBrowserViewController!
     var assistant : MCAdvertiserAssistant!
     var session : MCSession!
+    var network : NetworkDelegate!
     var peerID: MCPeerID!
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
@@ -39,19 +42,31 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     
     //MARK: Outlets
     @IBOutlet var txtSimulatorId: UITextField!
+    @IBOutlet var btnFire: UIButton!
+    @IBOutlet weak var txtLocation: UILabel!
+    @IBOutlet weak var txtMessages: UITextView!
+    @IBOutlet weak var txtChatMsg: UITextField!
     
+    //MARK: Actions
     @IBAction func handleSimulatorIdChanged(sender: AnyObject) {
         prefs["SimulatorId"] = txtSimulatorId.text
         let userDefaults = NSUserDefaults.standardUserDefaults()
         userDefaults.setObject(prefs as Dictionary<NSObject,AnyObject>, forKey: "prefs")
     }
-
-    @IBOutlet var btnFire: UIButton!
-    @IBOutlet weak var txtLocation: UILabel!
-    @IBOutlet weak var txtMessages: UITextView!
-    @IBOutlet weak var txtChatMsg: UITextField!
-
-
+    
+    @IBAction func btnSend(sender: UIButton) {
+         network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+    }
+    @IBAction func btnFire_Clicked(sender: AnyObject) {
+        self.btnFire.hidden = true
+        var target = self.targetPeer
+        if (target != nil)
+        {
+            self.targetPeer = nil
+            self.targetPeers[target!] = false
+            self.game.fire(target)
+        }
+    }
    
     //MARK:  controller
     override func viewDidLoad() {
@@ -68,10 +83,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
         
-        //initNetworking()
-        
         game = Game(id: sessionManager.peerID)
-        game.network = self
+        network = sessionManager
+        game.network = network
+        
         self.game!.delegate = self;
         
         self.btnFire.hidden = true;
@@ -81,17 +96,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         var location : CLLocation! = CLLocation(latitude: 37.33150351, longitude: -122.03071596)
         self.game!.playerUpdate(playerID, location: location)
         
-        println("storage objects being initialized from NSDefaults\n")
+        restoreUserPrefs()
+    }
+    
+    func restoreUserPrefs() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
         if let prefs = userDefaults.objectForKey("prefs") as? Dictionary<String,String> {
             txtSimulatorId.text = prefs["SimulatorId"]
         }
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     //MARK:  location
     
@@ -124,7 +138,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     }
     
     func textFieldShouldReturn(textField: UITextField!) -> Bool {   //delegate method
-        sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
         txtChatMsg.text = "";
         return false;
     }
@@ -138,28 +152,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate
             var joiner = "|"
             var joinedStrings = joiner.join(msgData)
             if (toPeer == nil) {
-                sendToPeers(msgType, data: joinedStrings)
+                network.sendToPeers(msgType, data: joinedStrings)
             }
             else {
-                sendToPeer(toPeer!, msgType: msgType, data: joinedStrings)
+                network.sendToPeer(toPeer!, msgType: msgType, data: joinedStrings)
             }
         }
     }
     
-    func initNetworking()
-    {
-        self.peerID = MCPeerID(displayName: UIDevice.currentDevice().name)
-        self.session = MCSession(peer: peerID)
-        self.session.delegate = self
-        
-        // create the browser viewcontroller with a unique service name
-        self.browser = MCBrowserViewController(serviceType:serviceType, session:self.session)
-        self.browser.delegate = self;
-        self.assistant = MCAdvertiserAssistant(serviceType:serviceType, discoveryInfo:nil, session:self.session)
-        
-        // tell the assistant to start advertising our fabulous chat
-        self.assistant.start()
-    }
     
     //MARK: browser 
     
@@ -271,83 +271,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         
     }
     
-    /*
-    * Sends a message to ALL the connected peers.
-    * msgType - Type of Message to send (Game.Messages)
-    * data - '|' delimited string of additional data for the message type
-    */
-    private func sendToPeers(msgType:Int, data: String) {
-        var error : NSError?
-        
-        var msg = String(msgType) + "|" + data;
-        let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
-            allowLossyConversion: false)
-        
-        if (self.session.connectedPeers.count > 0) {
-        
-            self.session.sendData(rawMsg, toPeers: self.session.connectedPeers,
-                withMode: MCSessionSendDataMode.Unreliable, error: &error)
-        
-            if error != nil {
-                print("Error sending data: \(error?.localizedDescription)")
-            }
-        
-            // special case for chat (to display in window)
-            if (msgType == Game.Messages.MsgTypeChat) {
-                self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
-                self.txtChatMsg.text = ""
-            }
-        }
-        
-    }
-    
-    
-    /*
-    * Sends a message to the identified peer.
-    * msgType - Type of Message to send (Game.Messages)
-    * data - '|' delimited string of additional data for the message type
-    */
-    private func sendToPeer(peer: MCPeerID, msgType:Int, data: String) {
-        var error : NSError?
-        
-        var msg = String(msgType) + "|" + data;
-        let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
-            allowLossyConversion: false)
-        
-        // create an array of just this peer to send the message to
-        var peers = [ peer ];
-        self.session.sendData(rawMsg, toPeers: peers,
-            withMode: MCSessionSendDataMode.Unreliable, error: &error)
-        
-        if error != nil {
-            print("Error sending data: \(error?.localizedDescription)")
-        }
-        
-        // special case for chat (to display in window)
-        if (msgType == Game.Messages.MsgTypeChat) {
-            self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
-            self.txtChatMsg.text = ""
-        }
-        
-    }
-
-
-    @IBAction func btnBrowse(sender: UIButton) {
-        self.presentViewController(self.browser, animated: true, completion: nil)
-    }
-    @IBAction func btnSend(sender: UIButton) {
-        sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
-    }
-    @IBAction func btnFire_Clicked(sender: AnyObject) {
-        self.btnFire.hidden = true
-        var target = self.targetPeer
-        if (target != nil)
-        {
-            self.targetPeer = nil
-            self.targetPeers[target!] = false
-            self.game.fire(target)
-        }
-    }
     
     func inRange(playerID : MCPeerID!)
     {
