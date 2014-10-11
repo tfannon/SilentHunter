@@ -144,70 +144,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
             self.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    func session(session: MCSession!, didReceiveData data: NSData!,
-        fromPeer peerID: MCPeerID!)  {
-            // Called when a peer sends an NSData to us
-            
-            // This needs to run on the main queue
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                var msg = NSString(data: data, encoding: NSUTF8StringEncoding)
-                var msgParts:[String] = msg.componentsSeparatedByString("|") as [String];
-                
-                var msgType = msgParts[0]
-                if (msgType.toInt() == Game.Messages.MsgTypeChat) {
-                    self.updateChat(msgParts[1], fromPeer: peerID)
-                }
-                else
-                {
-                    msgParts.removeAtIndex(0)
-                    self.game.ProcessMessage(peerID, msgType: msgType.toInt(), data: msgParts)
-                }
-                
-            }
-    }
     
-    // The following methods do nothing, but the MCSessionDelegate protocol
-    // requires that we implement them.
-    func session(session: MCSession!,
-        didStartReceivingResourceWithName resourceName: String!,
-        fromPeer peerID: MCPeerID!, withProgress progress: NSProgress!)  {
-            
-            // Called when a peer starts sending a file to us
-    }
-    
-    func session(session: MCSession!,
-        didFinishReceivingResourceWithName resourceName: String!,
-        fromPeer peerID: MCPeerID!,
-        atURL localURL: NSURL!, withError error: NSError!)  {
-            // Called when a file has finished transferring from another peer
-    }
-    
-    func session(session: MCSession!, didReceiveStream stream: NSInputStream!,
-        withName streamName: String!, fromPeer peerID: MCPeerID!)  {
-            // Called when a peer establishes a stream with us
-    }
-    
-    func session(session: MCSession!, peer peerID: MCPeerID!,
-        didChangeState state: MCSessionState)  {
-            // Called when a connected peer changes state (for example, goes offline)
-            switch (state) {
-            case MCSessionState.Connected:
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.logit(peerID.displayName + " connected\n")
-                }
-                break
-            case MCSessionState.Connecting:
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.logit(peerID.displayName + " connecting\n")
-                }
-                break
-            default:
-                break
-            }
-            
-            
-    }
     
     /*
     * Logs a message in raw form to the output text view
