@@ -47,6 +47,7 @@ class Game : IProcessMessages {
     let MAX_DISTANCE = 10.0;
     var network: Networking?
     var hackOtherPlayerCount : Int = 0
+    var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
 
     
     init(network : Networking)
@@ -166,11 +167,16 @@ class Game : IProcessMessages {
                     }
                 }
                 else{
-                    hackOtherPlayerCount++
-                    if (hackOtherPlayerCount % 2 == 0)
+                    if (Misc.inSimulator)
                     {
-                        var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
-                        playerUpdate(hackOtherPlayerID, location: meInfo!.location)
+                        hackOtherPlayerCount++
+                        if (hackOtherPlayerCount % 10 == 0)
+                        {
+                            playerUpdate(hackOtherPlayerID, location: meInfo!.location)
+                        }
+                        else
+                        {
+                        }
                     }
                     sendMyLocationMessage(meInfo!.location)
                     
