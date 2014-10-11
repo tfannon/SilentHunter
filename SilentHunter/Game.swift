@@ -80,7 +80,7 @@ class Game : IProcessMessages {
             break;
         case Messages.MsgPlayerHit:
             self.delegate.logit("RECV: I HIT player: \(fromPeer.displayName)")
-            hit(fromPeer)
+            hitSuccess(fromPeer)
             break;
         case Messages.MsgPlayerEvadedTorpedo:
             self.delegate.logit("RECV: Player \(fromPeer.displayName) EVADED by torpedo")
@@ -167,17 +167,6 @@ class Game : IProcessMessages {
                     }
                 }
                 else{
-                    if (Misc.inSimulator)
-                    {
-                        hackOtherPlayerCount++
-                        if (hackOtherPlayerCount % 10 == 0)
-                        {
-                            playerUpdate(hackOtherPlayerID, location: meInfo!.location)
-                        }
-                        else
-                        {
-                        }
-                    }
                     sendMyLocationMessage(meInfo!.location)
                     
                 }
@@ -188,6 +177,11 @@ class Game : IProcessMessages {
     func fire(playerID: MCPeerID!)
     {
         sendMyFireTorpedoMessage(playerID)
+        
+    }
+    
+    func hitSuccess(playerID: MCPeerID!)
+    {
         
     }
     
