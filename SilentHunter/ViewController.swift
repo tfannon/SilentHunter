@@ -14,7 +14,7 @@ import MultipeerConnectivity
 
 
 class ViewController: UIViewController, CLLocationManagerDelegate
-    ,MCBrowserViewControllerDelegate, MCSessionDelegate, UITextFieldDelegate, GameDelegate
+    ,MCBrowserViewControllerDelegate, MCSessionDelegate, NetworkDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource
 {
     var game: Game!
     
@@ -65,6 +65,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     //MARK:  controller
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         self.txtChatMsg.delegate = self;
         
@@ -246,27 +248,133 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         
     }
     
+    /*
+    * Sends a message to ALL the connected peers.
+    * msgType - Type of Message to send (Game.Messages)
+    * data - '|' delimited string of additional data for the message type
+    */
+    internal func sendToPeers(msgType:Int, data: String) {
+        var error : NSError?
+        
+        var msg = String(msgType) + "|" + data;
+        let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
+            allowLossyConversion: false)
+        
+        if (self.session.connectedPeers.count > 0) {
+        
+            self.session.sendData(rawMsg, toPeers: self.session.connectedPeers,
+                withMode: MCSessionSendDataMode.Unreliable, error: &error)
+        
+            if error != nil {
+                print("Error sending data: \(error?.localizedDescription)")
+            }
+        
+            // special case for chat (to display in window)
+            if (msgType == Game.Messages.MsgTypeChat) {
+                self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
+                self.txtChatMsg.text = ""
+            }
+        }
+        
+    }
+    
+    
+    /*
+    * Sends a message to the identified peer.
+    * msgType - Type of Message to send (Game.Messages)
+    * data - '|' delimited string of additional data for the message type
+    */
+    internal func sendToPeer(peer: MCPeerID, msgType:Int, data: String) {
+        var error : NSError?
+        
+        var msg = String(msgType) + "|" + data;
+        let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
+            allowLossyConversion: false)
+        
+        // create an array of just this peer to send the message to
+        var peers = [ peer ];
+        self.session.sendData(rawMsg, toPeers: peers,
+            withMode: MCSessionSendDataMode.Unreliable, error: &error)
+        
+        if error != nil {
+            print("Error sending data: \(error?.localizedDescription)")
+        }
+        
+        // special case for chat (to display in window)
+        if (msgType == Game.Messages.MsgTypeChat) {
+            self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
+            self.txtChatMsg.text = ""
+        }
+        
+    }
+
+
+    @IBAction func btnBrowse(sender: UIButton) {
+        self.presentViewController(self.browser, animated: true, completion: nil)
+    }
+    @IBAction func btnSend(sender: UIButton) {
+        sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+    }
+    @IBAction func btnFire_Clicked(sender: AnyObject) {
+        fire();
+    }
+    
+    func getTarget() -> MCPeerID?
+    {
+        var target = self.targetPeer
+        return target;
+    }
+    
+    func setPotentialTarget(target: MCPeerID!)
+    {
+        targetPeers[target] = true
+        if (getTarget() == nil)
+        {
+            audioPing.play()
+            self.targetPeer = target
+            self.btnFire.hidden = false
+        }
+    }
+ 
+    func clearPotentialTarget(target: MCPeerID!)
+    {
+        targetPeers[target] = false
+        if (getTarget() == target)
+        {
+            self.targetPeer = nil
+            self.btnFire.hidden = true
+            for (id, playerInRange) in targetPeers
+            {
+                if (playerInRange)
+                {
+                    setPotentialTarget(id)
+                    break
+                }
+            }
+        }
+    }
     
     func inRange(playerID : MCPeerID!)
     {
-        if (targetPeer == nil)
-        {
-            audioPing.play()
-        }
-        targetPeers[playerID] = true
-        targetPeer = playerID;
-        self.btnFire.hidden = false
+        setPotentialTarget(playerID)
     }
     
     func outOfRange(playerID : MCPeerID!)
     {
-        targetPeers[playerID] = false;
-        if (targetPeer == playerID)
-        {
-            findNextTarget()
-        }
+        clearPotentialTarget(playerID)
     }
     
+    func fire()
+    {
+        self.btnFire.hidden = true
+        var target = getTarget()
+        if (target != nil)
+        {
+            clearPotentialTarget(target)
+            self.game.fire(target)
+        }
+    }
+
     func hit(playerID: MCPeerID!)
     {
         audioHit.play()
@@ -279,19 +387,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         var alert = UIAlertController(title: "Alert", message: message, preferredStyle : UIAlertControllerStyle.Alert)
         self.presentViewController(alert, animated: false, completion: nil)
     }
+   
     
-    func findNextTarget()
-    {
-        self.targetPeer = nil
-        self.btnFire.hidden = true
-        for (id, playerInRange) in targetPeers
-        {
-            if (playerInRange)
-            {
-                inRange(id)
-                break
-            }
-        }
+    @IBOutlet weak var tableView: UITableView!
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.game.getPlayerCount();
     }
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
+        var playerInfo:PlayerInfo = self.game.getPlayer(indexPath.row)
+        cell.textLabel?.text = playerInfo.playerID.displayName
+        return cell
+    }
+    
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+    }
+    
 }
 
