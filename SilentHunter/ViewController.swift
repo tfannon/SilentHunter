@@ -92,7 +92,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
             if (lastLocation == nil || lastLocation != location)
             {
                 var coordinate = location.coordinate
-                //audioPing.play()
                 var lat = coordinate.latitude
                 var long = coordinate.longitude
                 var distanceInMeters = 0.0;
@@ -341,6 +340,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     
     func inRange(playerID : MCPeerID!)
     {
+        if (targetPeer == nil)
+        {
+            audioPing.play()
+        }
         targetPeers[playerID] = true
         targetPeer = playerID;
         self.btnFire.hidden = false
