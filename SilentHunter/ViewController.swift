@@ -74,7 +74,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         
         // HACK for other player
         var playerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
-        var location : CLLocation! = CLLocation(latitude: 37.33497737, longitude: -122.03281282)
+        var location : CLLocation! = CLLocation(latitude: 37.33150351, longitude: -122.03071596)
         self.game!.playerUpdate(playerID, location: location)
     }
     
