@@ -136,8 +136,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         
     }
     
-    func inRange(playerID : MCPeerID!)
+    func inRange(playerID : MCPeerID!) -> Bool
     {
+        var result = false
+        
         // play is in range, fire!
         var alert = UIAlertController(title: "Player in Range", message:
             "FIRE?", preferredStyle: UIAlertControllerStyle.Alert)
@@ -145,11 +147,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         self.presentViewController(alert, animated: false, completion: nil)
         
         alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.Default,
-            handler: nil))
+            handler: { action in result = false} ))
         alert.addAction(UIAlertAction(title: "Yes", style: .Default, handler:
             {action in
                 // CODE
+                result = true
         }))
+        return result
     }
     
     func notify(message: NSString!) {

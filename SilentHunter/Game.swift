@@ -18,7 +18,7 @@ extension String {
 
 @objc protocol GameDelegate
 {
-    optional func inRange(playerID : MCPeerID!)
+    optional func inRange(playerID : MCPeerID!) -> Bool
     optional func notify(message : NSString!);
 }
 
@@ -29,6 +29,7 @@ class Game {
     struct Messages {
         static let MsgTypePlayerLocation = 1
         static let MsgTypeChat = 2
+        static let MsgFiredTorpedo = 3
     }
     
     
@@ -66,6 +67,10 @@ class Game {
         var locData = [ lat, lng ]
         sendMessage(Game.Messages.MsgTypePlayerLocation, msgData: locData, toPeer: nil)
     }
+    private func sendMyFireTorpedoMessage(peer: MCPeerID)
+    {
+        sendMessage(Messages.MsgFiredTorpedo, msgData: [], toPeer: peer)
+    }
     
     private var players = [MCPeerID: PlayerInfo]()
     private var meId : MCPeerID!
@@ -79,8 +84,21 @@ class Game {
     
     func playerUpdate(id : MCPeerID!, location: CLLocation!)
     {
+        var prevPlayerInfo = players[id]
+        
         var info = PlayerInfo(playerID: id, location: location)
         players[id] = info
+        
+        var prevLat = prevPlayerInfo?.location.coordinate.latitude
+        var prevLng = prevPlayerInfo?.location.coordinate.longitude
+        var currLat = location.coordinate.latitude
+        var currLng = location.coordinate.longitude
+        var positionSame = (prevLat == currLat && prevLng == currLng)
+        
+        // Display other connected players GPS coordinates when they change
+        if (id != meId && !positionSame) {
+            println("\(id.displayName): \(location.coordinate.latitude),\(location.coordinate.longitude)")
+        }
         
         var meInfo = players[meId]
         var displayName = id.displayName
@@ -93,7 +111,10 @@ class Game {
                     var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
                     if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
                     {
-                        delegate?.inRange?(id)
+                        var result = delegate?.inRange!(id)
+                        if (result == true) {
+                            sendMyFireTorpedoMessage(id)
+                        }
                     }
                 }
                 else{
