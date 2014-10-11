@@ -143,7 +143,7 @@ class Game : IProcessMessages {
         
         // Display other connected players GPS coordinates when they change
         if (playerID != meId && !positionSame) {
-            println("\(playerID.displayName): \(location.coordinate.latitude),\(location.coordinate.longitude)")
+            //println("\(playerID.displayName): \(location.coordinate.latitude),\(location.coordinate.longitude)")
         }
         
         var meInfo = players[meId]

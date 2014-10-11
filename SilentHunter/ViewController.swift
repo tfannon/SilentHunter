@@ -36,19 +36,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     
     //MARK: Outlets
-    @IBOutlet var txtSimulatorId: UITextField!
     @IBOutlet var btnFire: UIButton!
     @IBOutlet weak var txtLocation: UILabel!
     @IBOutlet weak var txtMessages: UITextView!
     @IBOutlet weak var txtChatMsg: UITextField!
     
-    //MARK: Actions
-    @IBAction func handleSimulatorIdChanged(sender: AnyObject) {
-        prefs["SimulatorId"] = txtSimulatorId.text
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setObject(prefs as Dictionary<NSObject,AnyObject>, forKey: "prefs")
-    }
-
    
     //MARK:  controller
     override func viewDidLoad() {
@@ -66,12 +58,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
 
-        restoreUserPrefs()
-        /*
-                var name = (Misc.inSimulator && prefs["SimulatorId"] != nil) ? prefs["SimulatorId"]! : UIDevice.currentDevice().name
-                */
         let name = UIDevice.currentDevice().name
-        
         network = Networking(name: name)
         game = Game(network: network)
         network.msgProcessor = game;
@@ -83,14 +70,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         self.btnFire.setTitle("Loading torpedoes", forState: UIControlState.Disabled)
         
 
-    }
-    
-    func restoreUserPrefs() {
-        let userDefaults = NSUserDefaults.standardUserDefaults();
-        if let prefs = userDefaults.objectForKey("prefs") as? Dictionary<String,String> {
-            self.prefs = prefs
-            txtSimulatorId.text = prefs["SimulatorId"]
-        }
     }
     
     
