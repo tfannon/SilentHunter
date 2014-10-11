@@ -118,7 +118,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     }
     
     func textFieldShouldReturn(textField: UITextField!) -> Bool {   //delegate method
-        //network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
         txtChatMsg.text = "";
         return false;
     }
