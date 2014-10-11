@@ -12,6 +12,7 @@ import MultipeerConnectivity
 
 protocol IChat {
     func updateChat(text : String, fromPeer peerID: MCPeerID)
+    func logit(message:String)
 }
 
 class ViewController: UIViewController, CLLocationManagerDelegate

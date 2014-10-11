@@ -106,6 +106,7 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
             default:""
             }
             println("\(peerID) changed state to \(message)")
+            self.chat?.logit("\(peerID) changed state to \(message)")
             // Called when a connected peer changes state (for example, goes offline)
     }
     
