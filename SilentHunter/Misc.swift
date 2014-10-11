@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import UIKit
+
 
 class Misc
 {
@@ -17,6 +19,15 @@ class Misc
         let loop = NSRunLoop.currentRunLoop()
         loop.runUntilDate(until)
     }
+    
+    class var inSimulator : Bool {
+        get {
+            let device = UIDevice.currentDevice().model
+            return NSString(string:device).containsString("Simulator")
+        }
+    }
+    
+    
 }
 
 extension Array {

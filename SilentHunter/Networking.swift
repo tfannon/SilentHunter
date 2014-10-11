@@ -27,9 +27,9 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     var chat: IChat?
     let serviceType = "SilentHunter"
     
-    override init() {
+    init(name : String) {
         super.init()
-        peerID = MCPeerID(displayName: UIDevice.currentDevice().name)
+        peerID = MCPeerID(displayName: name)
         startServices()
     }
     

@@ -17,11 +17,11 @@ protocol IChat {
 
 class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
 {
-    var game: Game!
     
-    let serviceType = "LCOC-Chat"
-    
+    var game: Game! = nil
     var locationManager : CLLocationManager!
+    var network : Networking!
+    
     var lblOutput : UILabel!
     var lastLocation : CLLocation?
     var audioPing : AudioPlayer = AudioPlayer(filename: "ping")
@@ -30,7 +30,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     var targetPeer : MCPeerID?
     var targetsForDataBinding = [MCPeerID]()
     
-    var network = Networking()
     var prefs = Dictionary<String, String>()
     
     
@@ -64,25 +63,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         locationManager.distanceFilter = 0.0;//33
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
+
+        restoreUserPrefs()
+        /*
+                var name = (Misc.inSimulator && prefs["SimulatorId"] != nil) ? prefs["SimulatorId"]! : UIDevice.currentDevice().name
+                */
+        let name = UIDevice.currentDevice().name
         
+        network = Networking(name: name)
         game = Game(network: network)
         network.msgProcessor = game;
         network.chat = self;
         
-        self.game!.delegate = self;
+        
+        self.game.delegate = self;
         self.btnFire.hidden = true;
+        self.btnFire.setTitle("Loading torpedoes", forState: UIControlState.Disabled)
         
-        // HACK for other player
-        var playerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
-        var location : CLLocation! = CLLocation(latitude: 37.33150351, longitude: -122.03071596)
-        self.game!.playerUpdate(playerID, location: location)
-        
-        restoreUserPrefs()
+
     }
     
     func restoreUserPrefs() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
         if let prefs = userDefaults.objectForKey("prefs") as? Dictionary<String,String> {
+            self.prefs = prefs
             txtSimulatorId.text = prefs["SimulatorId"]
         }
     }
@@ -106,7 +110,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
                 }
                 var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)"
                 txtLocation.text = message
-                self.game!.playerUpdate(network.peerID, location: location)
+                self.game.playerUpdate(network.peerID, location: location)
                 lastLocation = location
             }
         }
@@ -173,7 +177,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         targetPeers[target] = true
         if (getTarget() == nil)
         {
-            audioPing.play()
+            //audioPing.play()
             self.targetPeer = target
             self.btnFire.hidden = false
         }
@@ -229,12 +233,28 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func fire()
     {
         self.btnFire.hidden = true
+        self.btnFire.enabled = false
+        self.btnFire.backgroundColor = UIColor.blackColor()
+        
         var target = getTarget()
         if (target != nil)
         {
-            clearPotentialTarget(target)
+            ableToFire = false;
+            timerAbleToFire = NSTimer.scheduledTimerWithTimeInterval(
+                10.0, target: self, selector:"torpedosLoaded", userInfo: nil, repeats: false)
+            
             self.game.fire(target)
+            println("fired at \(target!.displayName)")
         }
+    }
+    
+    func torpedosLoaded()
+    {
+        ableToFire = true
+        timerAbleToFire!.invalidate()
+        self.btnFire.enabled = true
+        self.btnFire.backgroundColor = UIColor.redColor()
+        println("torpedos loaded")
     }
 
     func hit(playerID: MCPeerID!)

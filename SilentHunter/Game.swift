@@ -155,7 +155,7 @@ class Game : IProcessMessages {
                 if (id != meId)
                 {
                     var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
-                    println("Distance: \(playerID.displayName): \(distanceInMeters)")
+                    //println("Distance: \(playerID.displayName): \(distanceInMeters)")
                     if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
                     {
                         delegate.inRange(id)
@@ -166,8 +166,8 @@ class Game : IProcessMessages {
                     }
                 }
                 else{
-                    //hackOtherPlayerCount++
-                    if (hackOtherPlayerCount == 6)
+                    hackOtherPlayerCount++
+                    if (hackOtherPlayerCount % 2 == 0)
                     {
                         var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
                         playerUpdate(hackOtherPlayerID, location: meInfo!.location)
