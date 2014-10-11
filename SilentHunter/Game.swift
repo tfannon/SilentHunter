@@ -20,6 +20,7 @@ extension String {
 {
     optional func inRange(playerID : MCPeerID!) -> Bool
     optional func notify(message : NSString!);
+    func logit(msg: String)
 }
 
 class Game {
@@ -46,18 +47,22 @@ class Game {
         case Messages.MsgTypePlayerLocation:
             var lat = data[0].toDouble()
             var lng = data[1].toDouble()
+            self.delegate?.logit("RECV: PlayerLoc: \(lat),\(lng)")
             
             var loc = CLLocation(latitude: lat!, longitude: lng!)
             self.playerUpdate(fromPeer, location: loc)
             
             break;
         case Messages.MsgFiredTorpedo:
+            self.delegate?.logit("RECV: Torpedo Fired at me by: \(fromPeer.displayName)")
             firedUpon(fromPeer)
             break;
         case Messages.MsgPlayerHit:
+            self.delegate?.logit("RECV: I HIT player: \(fromPeer.displayName)")
             hit(fromPeer)
             break;
         case Messages.MsgPlayerEvadedTorpedo:
+            self.delegate?.logit("RECV: Player \(fromPeer.displayName) EVADED by torpedo")
             evade()
             break;
         default:
