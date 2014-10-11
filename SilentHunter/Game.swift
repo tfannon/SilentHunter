@@ -16,7 +16,12 @@ extension String {
     }
 }
 
-@objc protocol GameDelegate
+protocol IProcessMessages
+{
+    func ProcessMessage(fromPeer: MCPeerID!, msgType: Int!, data:[String])
+}
+
+protocol GameDelegate
 {
     func logit(msg: String)
     func inRange(playerID : MCPeerID!)
@@ -26,10 +31,7 @@ extension String {
     func hit(playerID: MCPeerID!)
 }
 
-class Game {
-    
-    var network: NetworkDelegate?
-    var hackOtherPlayerCount : Int = 0
+class Game : IProcessMessages {
     
     struct Messages {
         static let MsgTypePlayerLocation = 1
@@ -39,6 +41,20 @@ class Game {
         static let MsgPlayerHit = 5
     }
     
+    private var players = [MCPeerID: PlayerInfo]()
+    private var meId : MCPeerID!
+    var delegate: GameDelegate!
+    let MAX_DISTANCE = 10.0;
+    var network: Networking?
+    var hackOtherPlayerCount : Int = 0
+
+    
+    init(network : Networking)
+    {
+        self.network = network
+        self.meId = network.peerID
+    }
+
     
     // Receiving messages to be processed
     internal func ProcessMessage(fromPeer: MCPeerID!, msgType: Int!, data:[String])
@@ -111,15 +127,6 @@ class Game {
         return playerInfo!
     }
     
-    private var players = [MCPeerID: PlayerInfo]()
-    private var meId : MCPeerID!
-    var delegate: GameDelegate!
-    let MAX_DISTANCE = 10.0;
-    
-    init(id : MCPeerID)
-    {
-        self.meId = id;
-    }
     
     func playerUpdate(playerID : MCPeerID!, location: CLLocation!)
     {

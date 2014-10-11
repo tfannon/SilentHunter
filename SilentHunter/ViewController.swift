@@ -10,9 +10,12 @@ import UIKit
 import CoreLocation
 import MultipeerConnectivity
 
+protocol IChat {
+    func updateChat(text : String, fromPeer peerID: MCPeerID)
+    func logit(message:String)
+}
 
-class ViewController: UIViewController, CLLocationManagerDelegate
-    ,MCBrowserViewControllerDelegate, MCSessionDelegate, UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource
+class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
 {
 
     required init(coder aDecoder: NSCoder) {
@@ -21,22 +24,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate
      }
     
     var game: Game!
-    
-    let serviceType = "LCOC-Chat"
-    
     var locationManager : CLLocationManager!
+    var network : Networking!
+    
     var lblOutput : UILabel!
     var lastLocation : CLLocation?
     var audioPing : AudioPlayer = AudioPlayer(filename: "ping")
     var audioHit : AudioPlayer = AudioPlayer(filename: "hit")
-    var network : NetworkDelegate!
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
     var ableToFire : Bool = true
     var timerAbleToFire : NSTimer?
     
-    var sessionManager = SessionMananger()
     var prefs = Dictionary<String, String>()
+    
     
     //MARK: Outlets
     @IBOutlet var txtSimulatorId: UITextField!
@@ -74,15 +75,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         
         self.game.delegate = self;
         
+        self.game!.delegate = self;
         self.btnFire.hidden = true;
         self.btnFire.setTitle("Loading torpedoes", forState: UIControlState.Disabled)
         
-        restoreUserPrefs()
+
     }
     
     func restoreUserPrefs() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
         if let prefs = userDefaults.objectForKey("prefs") as? Dictionary<String,String> {
+            self.prefs = prefs
             txtSimulatorId.text = prefs["SimulatorId"]
         }
     }
@@ -124,94 +127,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     }
     
     
-    //MARK: browser
-    
-    func browserViewControllerDidFinish(
-        browserViewController: MCBrowserViewController!)  {
-            // Called when the browser view controller is dismissed (ie the Done
-            // button was tapped)
-            
-            self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func browserViewControllerWasCancelled(
-        browserViewController: MCBrowserViewController!)  {
-            // Called when the browser view controller is cancelled
-            
-            self.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func session(session: MCSession!, didReceiveData data: NSData!,
-        fromPeer peerID: MCPeerID!)  {
-            // Called when a peer sends an NSData to us
-            
-            // This needs to run on the main queue
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                var msg = NSString(data: data, encoding: NSUTF8StringEncoding)
-                var msgParts:[String] = msg.componentsSeparatedByString("|") as [String];
-                
-                var msgType = msgParts[0]
-                if (msgType.toInt() == Game.Messages.MsgTypeChat) {
-                    self.updateChat(msgParts[1], fromPeer: peerID)
-                }
-                else
-                {
-                    msgParts.removeAtIndex(0)
-                    self.game.ProcessMessage(peerID, msgType: msgType.toInt(), data: msgParts)
-                }
-                
-            }
-    }
-    
-    // The following methods do nothing, but the MCSessionDelegate protocol
-    // requires that we implement them.
-    func session(session: MCSession!,
-        didStartReceivingResourceWithName resourceName: String!,
-        fromPeer peerID: MCPeerID!, withProgress progress: NSProgress!)  {
-            
-            // Called when a peer starts sending a file to us
-    }
-    
-    func session(session: MCSession!,
-        didFinishReceivingResourceWithName resourceName: String!,
-        fromPeer peerID: MCPeerID!,
-        atURL localURL: NSURL!, withError error: NSError!)  {
-            // Called when a file has finished transferring from another peer
-    }
-    
-    func session(session: MCSession!, didReceiveStream stream: NSInputStream!,
-        withName streamName: String!, fromPeer peerID: MCPeerID!)  {
-            // Called when a peer establishes a stream with us
-    }
-    
-    func session(session: MCSession!, peer peerID: MCPeerID!,
-        didChangeState state: MCSessionState)  {
-            // Called when a connected peer changes state (for example, goes offline)
-            switch (state) {
-            case MCSessionState.Connected:
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.logit(peerID.displayName + " connected\n")
-                }
-                break
-            case MCSessionState.Connecting:
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.logit(peerID.displayName + " connecting\n")
-                }
-                break
-            default:
-                break
-            }
-            
-            
-    }
     
     /*
     * Logs a message in raw form to the output text view
     */
     func logit(message: String) {
-        self.txtMessages.text = self.txtMessages.text + message
-        
+        println(message)
+        self.txtMessages.text = self.txtMessages.text + message + "\n"
     }
     
     func updateChat(text : String, fromPeer peerID: MCPeerID) {
@@ -222,7 +144,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         var name : String
         
         switch peerID {
-        case sessionManager.peerID:
+        case network.peerID:
             name = "Me"
         default:
             name = peerID.displayName
@@ -231,12 +153,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         // Add the name to the message and display it
         let message = "\(name): \(text)\n"
         self.txtMessages.text = self.txtMessages.text + message
-        
+        self.txtChatMsg.text = ""
     }
    
 
     @IBAction func btnSend(sender: UIButton) {
-        //sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
     }
 
     @IBAction func btnFire_Clicked(sender: AnyObject) {

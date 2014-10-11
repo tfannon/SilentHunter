@@ -14,12 +14,8 @@ protocol SessionManagerDelegate {
     func sessionDidChangeState()
 }
 
-protocol NetworkDelegate
-{
-    func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
-}
 
-class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate, NetworkDelegate
+class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate
 {
     var peerID : MCPeerID!
     var session : MCSession!
@@ -27,12 +23,13 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
     var serviceBrowser : MCNearbyServiceBrowser!
     var connectedPeers : Int = 0
     var delegate : SessionManagerDelegate?
-    
+    var msgProcessor: IProcessMessages?
+    var chat: IChat?
     let serviceType = "SilentHunter"
     
-    override init() {
+    init(name : String) {
         super.init()
-        peerID = MCPeerID(displayName: UIDevice.currentDevice().name)
+        peerID = MCPeerID(displayName: name)
         startServices()
     }
     
@@ -50,17 +47,29 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
         serviceBrowser.delegate = self
     }
     
-    
+
     //MARK: MCSessionDelegate
     // Called when a peer sends an NSData to us
     func session(session: MCSession!, didReceiveData data: NSData!,
         fromPeer peerID: MCPeerID!)  {
             // This needs to run on the main queue
             dispatch_async(dispatch_get_main_queue()) {
+                
                 var msg = NSString(data: data, encoding: NSUTF8StringEncoding)
-                //self.updateChat(msg, fromPeer: peerID)
-                println(msg)
+                var msgParts:[String] = msg.componentsSeparatedByString("|") as [String];
+                
+                var msgType = msgParts[0]
+                if (msgType.toInt() == Game.Messages.MsgTypeChat) {
+                    self.chat?.updateChat(msgParts[1], fromPeer: peerID)
+                }
+                else
+                {
+                    msgParts.removeAtIndex(0)
+                    self.msgProcessor?.ProcessMessage(peerID, msgType: msgType.toInt(), data: msgParts)
+                }
+                
             }
+            
     }
     
     // The following methods do nothing, but the MCSessionDelegate protocol
@@ -93,6 +102,7 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
             default:""
             }
             println("\(peerID) changed state to \(message)")
+            self.chat?.logit("\(peerID) changed state to \(message)")
             // Called when a connected peer changes state (for example, goes offline)
     }
     
@@ -106,13 +116,13 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
         var shouldInvite = false
         var remotePeerName = peerID.displayName
         var myName = self.peerID.displayName
-        println("Found \(remotePeerName)")
+        var message = ("Found \(remotePeerName)")
+        self.chat?.logit(message)
         shouldInvite = remotePeerName != myName
         if shouldInvite {
             browser.invitePeer(peerID, toSession: self.session, withContext: nil, timeout: 30.0)
-            println("Inviting \(remotePeerName)")
-            //tell anyone who cares that we changed state
-            self.delegate?.sessionDidChangeState()
+            message = "Inviting \(remotePeerName)"
+            self.chat?.logit(message)
         }
         else {
         }
@@ -124,10 +134,15 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
     
     //MARK: MCNearbyServiceAdvertiserDelegate
     func advertiser(advertiser: MCNearbyServiceAdvertiser!, didNotStartAdvertisingPeer error: NSError!) {
-        
+
     }
     
     func advertiser(advertiser: MCNearbyServiceAdvertiser!, didReceiveInvitationFromPeer peerID: MCPeerID!, withContext context: NSData!, invitationHandler: ((Bool, MCSession!) -> Void)!) {
+        var message = "Received invitation from: \(peerID.displayName)"
+        self.chat?.logit(message)
+        invitationHandler(true, self.session)
+        message = "Accepted invitation from: \(peerID.displayName)"
+        self.chat?.logit(message)
     }
     
     
@@ -146,6 +161,7 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
             }
         }
     }
+    
     
     
     /*
@@ -169,13 +185,6 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
                 print("Error sending data: \(error?.localizedDescription)")
             }
             
-            /*
-            // special case for chat (to display in window)
-            if (msgType == Game.Messages.MsgTypeChat) {
-                self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
-                self.txtChatMsg.text = ""
-            }
-            */
         }
         
     }
