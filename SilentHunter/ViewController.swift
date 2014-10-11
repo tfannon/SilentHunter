@@ -31,6 +31,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var network : NetworkDelegate!
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
+    var targetsForDataBinding = [MCPeerID]()
     
     var sessionManager = SessionMananger()
     var prefs = Dictionary<String, String>()
@@ -199,6 +200,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
             self.targetPeer = target
             self.btnFire.hidden = false
         }
+        RegenerateTargetListForBinding()
     }
  
     func clearPotentialTarget(target: MCPeerID!)
@@ -217,6 +219,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate
                 }
             }
         }
+        
+        if (contains(targetsForDataBinding, target)) {
+            RegenerateTargetListForBinding()
+        }
+    }
+ 
+    func RegenerateTargetListForBinding()
+    {
+        targetsForDataBinding.removeAll(keepCapacity: true)
+        for (id, playerInRange) in targetPeers
+        {
+            if (playerInRange)
+            {
+                targetsForDataBinding.append(id)
+            }
+        }
+        logit("In/Out range change: reloading data")
+        tableView.reloadData()
     }
     
     func inRange(playerID : MCPeerID!)
@@ -256,13 +276,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     
     @IBOutlet weak var tableView: UITableView!
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.game.getPlayerCount();
+        var count = self.targetsForDataBinding.count
+        return count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
-        var playerInfo:PlayerInfo = self.game.getPlayer(indexPath.row)
-        cell.textLabel?.text = playerInfo.playerID.displayName
+        var player:MCPeerID = self.targetsForDataBinding[indexPath.row]
+        cell.textLabel?.text = player.displayName
         return cell
     }
     
