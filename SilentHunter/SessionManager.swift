@@ -9,7 +9,9 @@
 import Foundation
 import MultipeerConnectivity
 
-
+protocol SessionManagerDelegate {
+    func sessionDidChangeState()
+}
 
 class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate {
     
@@ -20,6 +22,8 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
     var connectedPeers : Int = 0
     
     let serviceType = "SilentHunter"
+    
+    var delegate : SessionManagerDelegate?
 
     override init() {
         super.init()
@@ -88,7 +92,7 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
     }
     
     
-    //MARK: MCNearbyServiceBrowserDelegage
+    //MARK: MCNearbyServiceBrowserDelegate
     func browser(browser: MCNearbyServiceBrowser!, didNotStartBrowsingForPeers error: NSError!) {
         
     }
@@ -98,10 +102,11 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
         var remotePeerName = peerID.displayName
         var myName = self.peerID.displayName
         println("Found \(remotePeerName)")
-        shouldInvite = remotePeerName == myName
+        shouldInvite = remotePeerName != myName
         if shouldInvite {
             browser.invitePeer(peerID, toSession: self.session, withContext: nil, timeout: 30.0)
             println("Inviting \(remotePeerName)")
+            self.delegate?.sessionDidChangeState()
         }
         else {
         }

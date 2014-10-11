@@ -75,6 +75,20 @@
                                     <action selector="btnFire_Clicked:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="FR0-gq-mrU"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Simulator Id" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mpi-gE-Lzs">
+                                <rect key="frame" x="16" y="25" width="110" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ixZ-1E-Mrw">
+                                <rect key="frame" x="134" y="21" width="113" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="handleSimulatorIdChanged:" destination="vXZ-lx-hvc" eventType="editingDidEnd" id="4hl-em-F2N"/>
+                                </connections>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -101,10 +115,12 @@
                         <outlet property="txtChatMsg" destination="bzo-8s-a4w" id="W4c-ky-io3"/>
                         <outlet property="txtLocation" destination="5hl-hD-0NJ" id="bfN-of-AzY"/>
                         <outlet property="txtMessages" destination="p2Y-I7-vpp" id="hAu-S7-acv"/>
+                        <outlet property="txtSimulatorId" destination="ixZ-1E-Mrw" id="KKg-Iw-pOh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="281" y="429"/>
         </scene>
     </scenes>
 </document>

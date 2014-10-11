@@ -36,13 +36,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var targetPeer : MCPeerID?
     
     var sessionManager = SessionMananger()
+    var prefs = Dictionary<String, String>()
     
+    //MARK: Outlets
+    @IBOutlet var txtSimulatorId: UITextField!
+    
+    @IBAction func handleSimulatorIdChanged(sender: AnyObject) {
+        prefs["SimulatorId"] = txtSimulatorId.text
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        userDefaults.setObject(prefs as Dictionary<NSObject,AnyObject>, forKey: "prefs")
+    }
+
+    @IBOutlet var btnFire: UIButton!
+    @IBOutlet weak var txtLocation: UILabel!
+    @IBOutlet weak var txtMessages: UITextView!
+    @IBOutlet weak var txtChatMsg: UITextField!
+
+
    
     //MARK:  controller
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.txtChatMsg.delegate = self;
+        self.txtSimulatorId.delegate = self;
         
         // Do any additional setup after loading the view, typically from a nib.
         locationManager = CLLocationManager()
@@ -304,11 +321,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         
     }
 
-
-    @IBOutlet var btnFire: UIButton!
-    @IBOutlet weak var txtLocation: UILabel!
-    @IBOutlet weak var txtMessages: UITextView!
-    @IBOutlet weak var txtChatMsg: UITextField!
 
     @IBAction func btnBrowse(sender: UIButton) {
         self.presentViewController(self.browser, animated: true, completion: nil)
