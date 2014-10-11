@@ -18,14 +18,18 @@ extension String {
 
 @objc protocol GameDelegate
 {
-    optional func inRange(playerID : MCPeerID!) -> Bool
-    optional func notify(message : NSString!);
     func logit(msg: String)
+    func inRange(playerID : MCPeerID!)
+    func outOfRange(playerID : MCPeerID!)
+    func notify(message : NSString!)
+    func firedUpon(playerID : MCPeerID!)
+    func hit(playerID: MCPeerID!)
 }
 
 class Game {
     
     var network: NetworkDelegate?
+    var hackOtherPlayerCount : Int = 0
     
     struct Messages {
         static let MsgTypePlayerLocation = 1
@@ -47,22 +51,22 @@ class Game {
         case Messages.MsgTypePlayerLocation:
             var lat = data[0].toDouble()
             var lng = data[1].toDouble()
-            self.delegate?.logit("RECV: PlayerLoc: \(lat),\(lng)")
+            self.delegate.logit("RECV: PlayerLoc: \(lat),\(lng)")
             
             var loc = CLLocation(latitude: lat!, longitude: lng!)
             self.playerUpdate(fromPeer, location: loc)
             
             break;
         case Messages.MsgFiredTorpedo:
-            self.delegate?.logit("RECV: Torpedo Fired at me by: \(fromPeer.displayName)")
+            self.delegate.logit("RECV: Torpedo Fired at me by: \(fromPeer.displayName)")
             firedUpon(fromPeer)
             break;
         case Messages.MsgPlayerHit:
-            self.delegate?.logit("RECV: I HIT player: \(fromPeer.displayName)")
+            self.delegate.logit("RECV: I HIT player: \(fromPeer.displayName)")
             hit(fromPeer)
             break;
         case Messages.MsgPlayerEvadedTorpedo:
-            self.delegate?.logit("RECV: Player \(fromPeer.displayName) EVADED by torpedo")
+            self.delegate.logit("RECV: Player \(fromPeer.displayName) EVADED by torpedo")
             evade()
             break;
         default:
@@ -109,7 +113,7 @@ class Game {
     
     private var players = [MCPeerID: PlayerInfo]()
     private var meId : MCPeerID!
-    var delegate: GameDelegate?
+    var delegate: GameDelegate!
     let MAX_DISTANCE = 10.0;
     
     init(id : MCPeerID)
@@ -117,12 +121,12 @@ class Game {
         self.meId = id;
     }
     
-    func playerUpdate(id : MCPeerID!, location: CLLocation!)
+    func playerUpdate(playerID : MCPeerID!, location: CLLocation!)
     {
-        var prevPlayerInfo = players[id]
+        var prevPlayerInfo = players[playerID]
         
-        var info = PlayerInfo(playerID: id, location: location)
-        players[id] = info
+        var info = PlayerInfo(playerID: playerID, location: location)
+        players[playerID] = info
         
         var prevLat = prevPlayerInfo?.location.coordinate.latitude
         var prevLng = prevPlayerInfo?.location.coordinate.longitude
@@ -131,12 +135,12 @@ class Game {
         var positionSame = (prevLat == currLat && prevLng == currLng)
         
         // Display other connected players GPS coordinates when they change
-        if (id != meId && !positionSame) {
-            println("\(id.displayName): \(location.coordinate.latitude),\(location.coordinate.longitude)")
+        if (playerID != meId && !positionSame) {
+            println("\(playerID.displayName): \(location.coordinate.latitude),\(location.coordinate.longitude)")
         }
         
         var meInfo = players[meId]
-        var displayName = id.displayName
+        var displayName = playerID.displayName
         if (meInfo != nil)
         {
             for (id, info) in players
@@ -144,15 +148,23 @@ class Game {
                 if (id != meId)
                 {
                     var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
+                    println("Distance: \(playerID.displayName): \(distanceInMeters)")
                     if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
                     {
-                        var result = delegate?.inRange!(id)
-                        if (result == true) {
-                            sendMyFireTorpedoMessage(id)
-                        }
+                        delegate.inRange(id)
+                    }
+                    else
+                    {
+                        delegate.outOfRange(id)
                     }
                 }
                 else{
+                    hackOtherPlayerCount++
+                    if (hackOtherPlayerCount == 6)
+                    {
+                        var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
+                        playerUpdate(hackOtherPlayerID, location: meInfo!.location)
+                    }
                     sendMyLocationMessage(meInfo!.location)
                     
                 }
@@ -168,10 +180,19 @@ class Game {
     
     func hit(playerID: MCPeerID!)
     {
+        delegate.hit(playerID);
+        sendPlayerHitMessage(playerID)
     }
     
     func firedUpon(playerID: MCPeerID!)
     {
+        delegate.firedUpon(playerID)
+        var random = Int(arc4random_uniform(UInt32(4)));
+        var amHit = random == 0 || true
+        if (amHit)
+        {
+            hit(playerID)
+        }
     }
     
     func evade()

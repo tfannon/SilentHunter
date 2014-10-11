@@ -14,6 +14,8 @@ import MultipeerConnectivity
 protocol NetworkDelegate
 {
     func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
+    func sendToPeers(msgType:Int, data: String)
+    func sendToPeer(peer: MCPeerID, msgType:Int, data: String)
 }
 
 class ViewController: UIViewController, CLLocationManagerDelegate
@@ -27,15 +29,32 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var lblOutput : UILabel!
     var lastLocation : CLLocation?
     var audioPing : AudioPlayer = AudioPlayer(filename: "ping")
+    var audioHit : AudioPlayer = AudioPlayer(filename: "hit")
     var browser : MCBrowserViewController!
     var assistant : MCAdvertiserAssistant!
     var session : MCSession!
+    var network : NetworkDelegate!
     var peerID: MCPeerID!
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
     
     var sessionManager = SessionMananger()
+    var prefs = Dictionary<String, String>()
     
+    //MARK: Outlets
+    @IBOutlet var txtSimulatorId: UITextField!
+    @IBOutlet var btnFire: UIButton!
+    @IBOutlet weak var txtLocation: UILabel!
+    @IBOutlet weak var txtMessages: UITextView!
+    @IBOutlet weak var txtChatMsg: UITextField!
+    
+    //MARK: Actions
+    @IBAction func handleSimulatorIdChanged(sender: AnyObject) {
+        prefs["SimulatorId"] = txtSimulatorId.text
+        let userDefaults = NSUserDefaults.standardUserDefaults()
+        userDefaults.setObject(prefs as Dictionary<NSObject,AnyObject>, forKey: "prefs")
+    }
+
    
     //MARK:  controller
     override func viewDidLoad() {
@@ -44,6 +63,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         self.txtChatMsg.delegate = self;
+        self.txtSimulatorId.delegate = self;
         
         // Do any additional setup after loading the view, typically from a nib.
         locationManager = CLLocationManager()
@@ -53,10 +73,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
         
-        //initNetworking()
-        
         game = Game(id: sessionManager.peerID)
-        game.network = self
+        network = sessionManager
+        game.network = network
+        
         self.game!.delegate = self;
         
         self.btnFire.hidden = true;
@@ -65,12 +85,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         var playerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
         var location : CLLocation! = CLLocation(latitude: 37.33150351, longitude: -122.03071596)
         self.game!.playerUpdate(playerID, location: location)
+        
+        restoreUserPrefs()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func restoreUserPrefs() {
+        let userDefaults = NSUserDefaults.standardUserDefaults();
+        if let prefs = userDefaults.objectForKey("prefs") as? Dictionary<String,String> {
+            txtSimulatorId.text = prefs["SimulatorId"]
+        }
     }
+    
     
     //MARK:  location
     
@@ -81,7 +106,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
             if (lastLocation == nil || lastLocation != location)
             {
                 var coordinate = location.coordinate
-                //audioPing.play()
                 var lat = coordinate.latitude
                 var long = coordinate.longitude
                 var distanceInMeters = 0.0;
@@ -103,7 +127,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     }
     
     func textFieldShouldReturn(textField: UITextField!) -> Bool {   //delegate method
-        sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
         txtChatMsg.text = "";
         return false;
     }
@@ -117,28 +141,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate
             var joiner = "|"
             var joinedStrings = joiner.join(msgData)
             if (toPeer == nil) {
-                sendToPeers(msgType, data: joinedStrings)
+                network.sendToPeers(msgType, data: joinedStrings)
             }
             else {
-                sendToPeer(toPeer!, msgType: msgType, data: joinedStrings)
+                network.sendToPeer(toPeer!, msgType: msgType, data: joinedStrings)
             }
         }
     }
     
-    func initNetworking()
-    {
-        self.peerID = MCPeerID(displayName: UIDevice.currentDevice().name)
-        self.session = MCSession(peer: peerID)
-        self.session.delegate = self
-        
-        // create the browser viewcontroller with a unique service name
-        self.browser = MCBrowserViewController(serviceType:serviceType, session:self.session)
-        self.browser.delegate = self;
-        self.assistant = MCAdvertiserAssistant(serviceType:serviceType, discoveryInfo:nil, session:self.session)
-        
-        // tell the assistant to start advertising our fabulous chat
-        self.assistant.start()
-    }
     
     //MARK: browser 
     
@@ -311,11 +321,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     }
 
 
-    @IBOutlet var btnFire: UIButton!
-    @IBOutlet weak var txtLocation: UILabel!
-    @IBOutlet weak var txtMessages: UITextView!
-    @IBOutlet weak var txtChatMsg: UITextField!
-
     @IBAction func btnBrowse(sender: UIButton) {
         self.presentViewController(self.browser, animated: true, completion: nil)
     }
@@ -323,30 +328,72 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
     }
     @IBAction func btnFire_Clicked(sender: AnyObject) {
-        self.btnFire.hidden = true
+        fire();
+    }
+    
+    func getTarget() -> MCPeerID?
+    {
         var target = self.targetPeer
-        if (target != nil)
+        return target;
+    }
+    
+    func setPotentialTarget(target: MCPeerID!)
+    {
+        targetPeers[target] = true
+        if (getTarget() == nil)
+        {
+            audioPing.play()
+            self.targetPeer = target
+            targetPeers[target] = true
+            self.btnFire.hidden = false
+        }
+    }
+ 
+    func clearPotentialTarget(target: MCPeerID!)
+    {
+        targetPeers[target] = false
+        if (getTarget() == target)
         {
             self.targetPeer = nil
-            self.targetPeers[target!] = false
-            self.game.fire(target)
+            self.btnFire.hidden = true
+            for (id, playerInRange) in targetPeers
+            {
+                if (playerInRange)
+                {
+                    setPotentialTarget(id)
+                    break
+                }
+            }
         }
     }
     
     func inRange(playerID : MCPeerID!)
     {
-        targetPeers[playerID] = true
-        targetPeer = playerID;
-        self.btnFire.hidden = false
+        setPotentialTarget(playerID)
     }
     
-    func outofRange(playerID : MCPeerID!)
+    func outOfRange(playerID : MCPeerID!)
     {
-        targetPeers[playerID] = false
-        if (targetPeer == playerID)
+        clearPotentialTarget(playerID)
+    }
+    
+    func fire()
+    {
+        self.btnFire.hidden = true
+        var target = getTarget()
+        if (target != nil)
         {
-            findNextTarget()
+            clearPotentialTarget(target)
+            self.game.fire(target)
         }
+    }
+
+    func hit(playerID: MCPeerID!)
+    {
+        audioHit.play()
+    }
+    
+    func firedUpon(playerID: MCPeerID!) {
     }
     
     func notify(message: NSString!) {
@@ -356,16 +403,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     
     func findNextTarget()
     {
-        self.targetPeer = nil
-        self.btnFire.hidden = false
-        for (id, playerInRange) in targetPeers
-        {
-            if (playerInRange)
-            {
-                inRange(id)
-                break
-            }
-        }
     }
     
     @IBOutlet weak var tableView: UITableView!

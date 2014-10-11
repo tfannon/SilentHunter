@@ -110,10 +110,12 @@
                         <outlet property="txtChatMsg" destination="bzo-8s-a4w" id="W4c-ky-io3"/>
                         <outlet property="txtLocation" destination="5hl-hD-0NJ" id="bfN-of-AzY"/>
                         <outlet property="txtMessages" destination="p2Y-I7-vpp" id="hAu-S7-acv"/>
+                        <outlet property="txtSimulatorId" destination="ixZ-1E-Mrw" id="KKg-Iw-pOh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="281" y="429"/>
         </scene>
     </scenes>
 </document>

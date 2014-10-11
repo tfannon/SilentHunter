@@ -9,9 +9,12 @@
 import Foundation
 import MultipeerConnectivity
 
+protocol SessionManagerDelegate {
+    func sessionDidChangeState()
+}
 
-
-class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate {
+class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate, NetworkDelegate
+{
     
     var peerID : MCPeerID!
     var session : MCSession!
@@ -20,6 +23,8 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
     var connectedPeers : Int = 0
     
     let serviceType = "SilentHunter"
+    
+    var delegate : SessionManagerDelegate?
 
     override init() {
         super.init()
@@ -88,7 +93,7 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
     }
     
     
-    //MARK: MCNearbyServiceBrowserDelegage
+    //MARK: MCNearbyServiceBrowserDelegate
     func browser(browser: MCNearbyServiceBrowser!, didNotStartBrowsingForPeers error: NSError!) {
         
     }
@@ -98,10 +103,11 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
         var remotePeerName = peerID.displayName
         var myName = self.peerID.displayName
         println("Found \(remotePeerName)")
-        shouldInvite = remotePeerName == myName
+        shouldInvite = remotePeerName != myName
         if shouldInvite {
             browser.invitePeer(peerID, toSession: self.session, withContext: nil, timeout: 30.0)
             println("Inviting \(remotePeerName)")
+            self.delegate?.sessionDidChangeState()
         }
         else {
         }
@@ -117,5 +123,87 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
     }
     
     func advertiser(advertiser: MCNearbyServiceAdvertiser!, didReceiveInvitationFromPeer peerID: MCPeerID!, withContext context: NSData!, invitationHandler: ((Bool, MCSession!) -> Void)!) {
+    }
+    
+    
+    //MARK:  networking
+    func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
+    {
+        if (connectedPeers > 0)
+        {
+            var joiner = "|"
+            var joinedStrings = joiner.join(msgData)
+            if (toPeer == nil) {
+                sendToPeers(msgType, data: joinedStrings)
+            }
+            else {
+                sendToPeer(toPeer!, msgType: msgType, data: joinedStrings)
+            }
+        }
+    }
+    
+    
+    /*
+    * Sends a message to ALL the connected peers.
+    * msgType - Type of Message to send (Game.Messages)
+    * data - '|' delimited string of additional data for the message type
+    */
+    func sendToPeers(msgType:Int, data: String) {
+        var error : NSError?
+        
+        var msg = String(msgType) + "|" + data;
+        let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
+            allowLossyConversion: false)
+        
+        if (self.session.connectedPeers.count > 0) {
+            
+            self.session.sendData(rawMsg, toPeers: self.session.connectedPeers,
+                withMode: MCSessionSendDataMode.Unreliable, error: &error)
+            
+            if error != nil {
+                print("Error sending data: \(error?.localizedDescription)")
+            }
+            
+            /*
+            // special case for chat (to display in window)
+            if (msgType == Game.Messages.MsgTypeChat) {
+                self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
+                self.txtChatMsg.text = ""
+            }
+            */
+        }
+        
+    }
+    
+    
+    /*
+    * Sends a message to the identified peer.
+    * msgType - Type of Message to send (Game.Messages)
+    * data - '|' delimited string of additional data for the message type
+    */
+    func sendToPeer(peer: MCPeerID, msgType:Int, data: String) {
+        var error : NSError?
+        
+        var msg = String(msgType) + "|" + data;
+        let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
+            allowLossyConversion: false)
+        
+        // create an array of just this peer to send the message to
+        var peers = [ peer ];
+        self.session.sendData(rawMsg, toPeers: peers,
+            withMode: MCSessionSendDataMode.Unreliable, error: &error)
+        
+        if error != nil {
+            print("Error sending data: \(error?.localizedDescription)")
+        }
+        
+        /*
+        
+        // special case for chat (to display in window)
+        if (msgType == Game.Messages.MsgTypeChat) {
+            self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
+            self.txtChatMsg.text = ""
+        }
+        */
     }
 }
