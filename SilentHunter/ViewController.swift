@@ -16,7 +16,6 @@ import MultipeerConnectivity
     optional func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
 }
 
-
 class ViewController: UIViewController, CLLocationManagerDelegate
     ,MCBrowserViewControllerDelegate, MCSessionDelegate, NetworkDelegate,UITextFieldDelegate, GameDelegate
 {
@@ -32,7 +31,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var assistant : MCAdvertiserAssistant!
     var session : MCSession!
     var peerID: MCPeerID!
-    
+    var targetPeers = [MCPeerID : Bool]()
+    var targetPeer : MCPeerID?
     
     /*
     *
@@ -71,6 +71,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         game = Game(id: self.peerID)
         game.network = self
         self.game!.delegate = self;
+        
+        self.btnFire.hidden = true;
         
         // HACK for other player
         var playerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
@@ -138,18 +140,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     
     func inRange(playerID : MCPeerID!)
     {
-        // play is in range, fire!
-        var alert = UIAlertController(title: "Player in Range", message:
-            "FIRE?", preferredStyle: UIAlertControllerStyle.Alert)
-        
-        self.presentViewController(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "No", style: UIAlertActionStyle.Default,
-            handler: nil))
-        alert.addAction(UIAlertAction(title: "Yes", style: .Default, handler:
-            {action in
-                // CODE
-        }))
+        targetPeers[playerID] = true
+        targetPeer = playerID;
+        self.btnFire.hidden = false
     }
     
     func notify(message: NSString!) {
@@ -327,6 +320,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     }
 
 
+    @IBOutlet var btnFire: UIButton!
     @IBOutlet weak var txtLocation: UILabel!
     @IBOutlet weak var txtMessages: UITextView!
     @IBOutlet weak var txtChatMsg: UITextField!
@@ -336,6 +330,27 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     }
     @IBAction func btnSend(sender: UIButton) {
         sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+    }
+    @IBAction func btnFire_Clicked(sender: AnyObject) {
+        self.btnFire.hidden = true
+        var target = self.targetPeer
+        if (target != nil)
+        {
+            self.targetPeer = nil
+            self.targetPeers[target!] = false
+            self.game.fire(target)
+        }
+    }
+    
+    func findNextTarget()
+    {
+        for (id, inRange) in targetPeers
+        {
+            if (inRange)
+            {
+                
+            }
+        }
     }
 }
 

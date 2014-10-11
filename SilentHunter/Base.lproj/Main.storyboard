@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="14A388a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -16,23 +17,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5hl-hD-0NJ">
-                                <rect key="frame" x="16" y="358" width="478" height="208"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5hl-hD-0NJ">
+                                <rect key="frame" x="16" y="472" width="568" height="94"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="94" id="b2A-4S-2xp"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Nk-gy-pN1">
-                                <rect key="frame" x="23" y="103" width="36" height="30"/>
-                                <state key="normal" title="Send">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="btnSend:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="LgU-xV-NTe"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l36-v6-RqT">
-                                <rect key="frame" x="129" y="103" width="52" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l36-v6-RqT">
+                                <rect key="frame" x="532" y="103" width="52" height="30"/>
                                 <state key="normal" title="Browse">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -40,21 +36,68 @@
                                     <action selector="btnBrowse:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="7O2-fM-JuK"/>
                                 </connections>
                             </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-I7-vpp">
-                                <rect key="frame" x="16" y="150" width="418" height="232"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-I7-vpp">
+                                <rect key="frame" x="16" y="150" width="568" height="125"/>
+                                <color key="backgroundColor" red="0.0" green="0.59999999999999998" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="125" id="HRU-DR-rTz"/>
+                                </constraints>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bzo-8s-a4w">
-                                <rect key="frame" x="23" y="59" width="284" height="30"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bzo-8s-a4w">
+                                <rect key="frame" x="16" y="59" width="568" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6Nk-gy-pN1">
+                                <rect key="frame" x="16" y="103" width="36" height="30"/>
+                                <state key="normal" title="Send">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="btnSend:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="LgU-xV-NTe"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UYL-po-0t5">
+                                <rect key="frame" x="16" y="294" width="568" height="41"/>
+                                <color key="backgroundColor" red="1" green="0.040183829110187141" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="41" id="j2W-36-TWG"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                <state key="normal" title="Fire!">
+                                    <color key="titleColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="btnFire_Clicked:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="FR0-gq-mrU"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="p2Y-I7-vpp" firstAttribute="top" secondItem="6Nk-gy-pN1" secondAttribute="bottom" constant="17" id="0x9-Cw-fw3"/>
+                            <constraint firstItem="l36-v6-RqT" firstAttribute="baseline" secondItem="6Nk-gy-pN1" secondAttribute="baseline" id="D1G-No-iwU"/>
+                            <constraint firstItem="l36-v6-RqT" firstAttribute="trailing" secondItem="bzo-8s-a4w" secondAttribute="trailing" id="DXs-U9-TY8"/>
+                            <constraint firstItem="UYL-po-0t5" firstAttribute="leading" secondItem="p2Y-I7-vpp" secondAttribute="leading" id="GI4-y2-E0I"/>
+                            <constraint firstItem="bzo-8s-a4w" firstAttribute="leading" secondItem="6Nk-gy-pN1" secondAttribute="leading" id="NUg-9e-cQd"/>
+                            <constraint firstItem="bzo-8s-a4w" firstAttribute="trailing" secondItem="kh9-bI-dsS" secondAttribute="trailingMargin" id="Y7S-kl-TUH"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="5hl-hD-0NJ" secondAttribute="bottom" constant="34" id="ZKo-wZ-SCs"/>
+                            <constraint firstItem="UYL-po-0t5" firstAttribute="top" secondItem="p2Y-I7-vpp" secondAttribute="bottom" constant="19" id="ZZi-ha-22O"/>
+                            <constraint firstItem="6Nk-gy-pN1" firstAttribute="top" secondItem="bzo-8s-a4w" secondAttribute="bottom" constant="14" id="bcW-jV-wKH"/>
+                            <constraint firstItem="6Nk-gy-pN1" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leadingMargin" id="d84-TI-Bcj"/>
+                            <constraint firstItem="5hl-hD-0NJ" firstAttribute="trailing" secondItem="p2Y-I7-vpp" secondAttribute="trailing" id="ocb-Kz-zCY"/>
+                            <constraint firstItem="p2Y-I7-vpp" firstAttribute="trailing" secondItem="l36-v6-RqT" secondAttribute="trailing" id="ooe-I4-vMp"/>
+                            <constraint firstItem="5hl-hD-0NJ" firstAttribute="leading" secondItem="p2Y-I7-vpp" secondAttribute="leading" id="pqs-70-njB"/>
+                            <constraint firstItem="bzo-8s-a4w" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="39" id="uQn-6q-QEP"/>
+                            <constraint firstItem="UYL-po-0t5" firstAttribute="trailing" secondItem="p2Y-I7-vpp" secondAttribute="trailing" id="uXG-g7-FbQ"/>
+                            <constraint firstItem="6Nk-gy-pN1" firstAttribute="leading" secondItem="p2Y-I7-vpp" secondAttribute="leading" id="xSO-6j-Ve8"/>
+                        </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnFire" destination="UYL-po-0t5" id="SxO-oW-TJC"/>
                         <outlet property="txtChatMsg" destination="bzo-8s-a4w" id="W4c-ky-io3"/>
                         <outlet property="txtLocation" destination="5hl-hD-0NJ" id="bfN-of-AzY"/>
                         <outlet property="txtMessages" destination="p2Y-I7-vpp" id="hAu-S7-acv"/>
