@@ -27,6 +27,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var lblOutput : UILabel!
     var lastLocation : CLLocation?
     var audioPing : AudioPlayer = AudioPlayer(filename: "ping")
+    var audioHit : AudioPlayer = AudioPlayer(filename: "hit")
     var browser : MCBrowserViewController!
     var assistant : MCAdvertiserAssistant!
     var session : MCSession!
@@ -137,10 +138,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         
         
     }
-    
-    
-   
-    
     
     func browserViewControllerDidFinish(
         browserViewController: MCBrowserViewController!)  {
@@ -346,6 +343,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         if (targetPeer == playerID)
         {
             findNextTarget()
+        }
+    }
+    
+    func firedUpon(playerID: MCPeerID!) {
+        var random = Int(arc4random_uniform(UInt32(4)));
+        var hit = random == 0 || true;
+        if (hit)
+        {
+            audioHit.play()
+            game.hit(self.peerID)
         }
     }
     

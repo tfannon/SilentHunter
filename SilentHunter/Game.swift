@@ -18,8 +18,9 @@ extension String {
 
 @objc protocol GameDelegate
 {
-    optional func inRange(playerID : MCPeerID!) -> Bool
-    optional func notify(message : NSString!);
+    func inRange(playerID : MCPeerID!)
+    func notify(message : NSString!)
+    func firedUpon(playerID : MCPeerID!)
 }
 
 class Game {
@@ -77,7 +78,7 @@ class Game {
     
     private var players = [MCPeerID: PlayerInfo]()
     private var meId : MCPeerID!
-    var delegate: GameDelegate?
+    var delegate: GameDelegate!
     let MAX_DISTANCE = 10.0;
     
     init(id : MCPeerID)
@@ -114,10 +115,7 @@ class Game {
                     var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
                     if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
                     {
-                        var result = delegate?.inRange!(id)
-                        if (result == true) {
-                            sendMyFireTorpedoMessage(id)
-                        }
+                        delegate.inRange(id)
                     }
                 }
                 else{
@@ -140,6 +138,7 @@ class Game {
     
     func firedUpon(playerID: MCPeerID!)
     {
+        delegate.firedUpon(playerID)
     }
     
     func evade()
