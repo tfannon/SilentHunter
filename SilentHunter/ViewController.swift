@@ -28,6 +28,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     var audioHit : AudioPlayer = AudioPlayer(filename: "hit")
     var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
+    var targetsForDataBinding = [MCPeerID]()
     var ableToFire : Bool = true
     var timerAbleToFire : NSTimer?
     
@@ -123,7 +124,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     }
     
     func textFieldShouldReturn(textField: UITextField!) -> Bool {   //delegate method
-        //network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
         txtChatMsg.text = "";
         return false;
     }
@@ -182,6 +183,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
             self.targetPeer = target
             self.btnFire.hidden = false
         }
+        RegenerateTargetListForBinding()
     }
  
     func clearPotentialTarget(target: MCPeerID!)
@@ -200,6 +202,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
                 }
             }
         }
+        
+        if (contains(targetsForDataBinding, target)) {
+            RegenerateTargetListForBinding()
+        }
+    }
+ 
+    func RegenerateTargetListForBinding()
+    {
+        targetsForDataBinding.removeAll(keepCapacity: true)
+        for (id, playerInRange) in targetPeers
+        {
+            if (playerInRange)
+            {
+                targetsForDataBinding.append(id)
+            }
+        }
+        logit("In/Out range change: reloading data")
+        tableView.reloadData()
     }
     
     func inRange(playerID : MCPeerID!)
@@ -255,13 +275,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     @IBOutlet weak var tableView: UITableView!
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.game.getPlayerCount();
+        var count = self.targetsForDataBinding.count
+        return count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
-        var playerInfo:PlayerInfo = self.game.getPlayer(indexPath.row)
-        cell.textLabel?.text = playerInfo.playerID.displayName
+        var player:MCPeerID = self.targetsForDataBinding[indexPath.row]
+//        cell.lblPlayerName.text = player.displayName
+//        cell.btnFire.addTarget(self, action: "fireTorpedo:", forControlEvents: UIControlEvents.TouchUpInside)
+        cell.textLabel?.text = player.displayName
         return cell
     }
     
@@ -269,5 +292,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
     }
     
+    func fireTorpedo(sender:UIButton!)
+    {
+       println("button clicked")
+    }
 }
 
