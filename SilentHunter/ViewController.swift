@@ -17,13 +17,8 @@ protocol IChat {
 
 class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
 {
-
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        game = Game(id: sessionManager.peerID)
-     }
     
-    var game: Game!
+    var game: Game! = nil
     var locationManager : CLLocationManager!
     var network : Networking!
     
@@ -69,8 +64,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         locationManager.distanceFilter = 0.0;//33
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
+
+        restoreUserPrefs()
+        /*
+                var name = (Misc.inSimulator && prefs["SimulatorId"] != nil) ? prefs["SimulatorId"]! : UIDevice.currentDevice().name
+                */
+        let name = UIDevice.currentDevice().name
         
-        game.network = network
+        network = Networking(name: name)
+        game = Game(network: network)
+        network.msgProcessor = game;
+        network.chat = self;
+        
         
         self.game.delegate = self;
         self.btnFire.hidden = true;
@@ -106,7 +111,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
                 }
                 var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)"
                 txtLocation.text = message
-                self.game.playerUpdate(sessionManager.peerID, location: location)
+                self.game.playerUpdate(network.peerID, location: location)
                 lastLocation = location
             }
         }
