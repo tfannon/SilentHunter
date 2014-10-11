@@ -21,11 +21,11 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     var session : MCSession!
     var serviceAdvertiser : MCNearbyServiceAdvertiser!
     var serviceBrowser : MCNearbyServiceBrowser!
-    var connectedPeers : Int = 0
+    //var connectedPeers : Int = 0
     var delegate : SessionManagerDelegate?
     var msgProcessor: IProcessMessages?
     var chat: IChat?
-    let serviceType = "SilentHunter"
+    let serviceType = "SilentHunterX"
     
     init(name : String) {
         super.init()
@@ -109,7 +109,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     
     //MARK: MCNearbyServiceBrowserDelegate
     func browser(browser: MCNearbyServiceBrowser!, didNotStartBrowsingForPeers error: NSError!) {
-        
+        self.chat?.logit("browser.didNotStartBrowsing")
     }
     
     func browser(browser: MCNearbyServiceBrowser!, foundPeer peerID: MCPeerID!, withDiscoveryInfo info: [NSObject : AnyObject]!) {
@@ -129,12 +129,12 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     }
     
     func browser(browser: MCNearbyServiceBrowser!, lostPeer peerID: MCPeerID!) {
-        
+        self.chat?.logit("browser.lostPeer")
     }
     
     //MARK: MCNearbyServiceAdvertiserDelegate
     func advertiser(advertiser: MCNearbyServiceAdvertiser!, didNotStartAdvertisingPeer error: NSError!) {
-
+         self.chat?.logit("browser.didNotStartAdvertising")
     }
     
     func advertiser(advertiser: MCNearbyServiceAdvertiser!, didReceiveInvitationFromPeer peerID: MCPeerID!, withContext context: NSData!, invitationHandler: ((Bool, MCSession!) -> Void)!) {
@@ -149,7 +149,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     //MARK:  networking
     func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?=nil)
     {
-        if (connectedPeers > 0)
+        if (self.session.connectedPeers.count > 0)
         {
             var joiner = "|"
             var joinedStrings = joiner.join(msgData)
