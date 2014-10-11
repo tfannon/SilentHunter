@@ -60,8 +60,8 @@ class Game {
     }
     private func sendMyLocationMessage(location: CLLocation)
     {
-        var lat = String(format: "%.2f", location.coordinate.latitude)
-        var lng = String(format: "%.2f", location.coordinate.longitude)
+        var lat = String(format: "%f", location.coordinate.latitude)
+        var lng = String(format: "%f", location.coordinate.longitude)
         
         var locData = [ lat, lng ]
         sendMessage(Game.Messages.MsgTypePlayerLocation, msgData: locData, toPeer: nil)

@@ -40,13 +40,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     */
     func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
     {
-        var joiner = "|"
-        var joinedStrings = joiner.join(msgData)
-        if (toPeer == nil) {
-            sendToPeers(msgType, data: joinedStrings)
-        }
-        else {
-            sendToPeer(toPeer!, msgType: msgType, data: joinedStrings)
+        if (self.session.connectedPeers.count > 0)
+        {
+            var joiner = "|"
+            var joinedStrings = joiner.join(msgData)
+            if (toPeer == nil) {
+                sendToPeers(msgType, data: joinedStrings)
+            }
+            else {
+                sendToPeer(toPeer!, msgType: msgType, data: joinedStrings)
+            }
         }
     }
 
@@ -271,17 +274,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
             allowLossyConversion: false)
         
-        self.session.sendData(rawMsg, toPeers: self.session.connectedPeers,
-            withMode: MCSessionSendDataMode.Unreliable, error: &error)
+        if (self.session.connectedPeers.count > 0) {
         
-        if error != nil {
-            print("Error sending data: \(error?.localizedDescription)")
-        }
+            self.session.sendData(rawMsg, toPeers: self.session.connectedPeers,
+                withMode: MCSessionSendDataMode.Unreliable, error: &error)
         
-        // special case for chat (to display in window)
-        if (msgType == Game.Messages.MsgTypeChat) {
-            self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
-            self.txtChatMsg.text = ""
+            if error != nil {
+                print("Error sending data: \(error?.localizedDescription)")
+            }
+        
+            // special case for chat (to display in window)
+            if (msgType == Game.Messages.MsgTypeChat) {
+                self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
+                self.txtChatMsg.text = ""
+            }
         }
         
     }
