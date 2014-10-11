@@ -27,7 +27,8 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
     var serviceBrowser : MCNearbyServiceBrowser!
     var connectedPeers : Int = 0
     var delegate : SessionManagerDelegate?
-    
+    var msgProcessor: IProcessMessages?
+    var chat: IChat?
     let serviceType = "SilentHunter"
     
     override init() {
@@ -57,10 +58,22 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
         fromPeer peerID: MCPeerID!)  {
             // This needs to run on the main queue
             dispatch_async(dispatch_get_main_queue()) {
+                
                 var msg = NSString(data: data, encoding: NSUTF8StringEncoding)
-                //self.updateChat(msg, fromPeer: peerID)
-                println(msg)
+                var msgParts:[String] = msg.componentsSeparatedByString("|") as [String];
+                
+                var msgType = msgParts[0]
+                if (msgType.toInt() == Game.Messages.MsgTypeChat) {
+                    self.chat?.updateChat(msgParts[1], fromPeer: peerID)
+                }
+                else
+                {
+                    msgParts.removeAtIndex(0)
+                    self.msgProcessor?.ProcessMessage(peerID, msgType: msgType.toInt(), data: msgParts)
+                }
+                
             }
+            
     }
     
     // The following methods do nothing, but the MCSessionDelegate protocol
@@ -169,13 +182,6 @@ class SessionMananger : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDeleg
                 print("Error sending data: \(error?.localizedDescription)")
             }
             
-            /*
-            // special case for chat (to display in window)
-            if (msgType == Game.Messages.MsgTypeChat) {
-                self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
-                self.txtChatMsg.text = ""
-            }
-            */
         }
         
     }

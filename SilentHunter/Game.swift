@@ -16,6 +16,11 @@ extension String {
     }
 }
 
+protocol IProcessMessages
+{
+    func ProcessMessage(fromPeer: MCPeerID!, msgType: Int!, data:[String])
+}
+
 @objc protocol GameDelegate
 {
     func logit(msg: String)
@@ -26,7 +31,7 @@ extension String {
     func hit(playerID: MCPeerID!)
 }
 
-class Game {
+class Game : IProcessMessages {
     
     var network: NetworkDelegate?
     var hackOtherPlayerCount : Int = 0

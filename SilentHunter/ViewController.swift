@@ -10,9 +10,13 @@ import UIKit
 import CoreLocation
 import MultipeerConnectivity
 
+protocol IChat {
+    func updateChat(text : String, fromPeer peerID: MCPeerID)
+}
 
 class ViewController: UIViewController, CLLocationManagerDelegate
-    ,MCBrowserViewControllerDelegate, MCSessionDelegate, UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource
+    //,MCBrowserViewControllerDelegate, MCSessionDelegate, 
+,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
 {
     var game: Game!
     
@@ -29,6 +33,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     
     var sessionManager = SessionMananger()
     var prefs = Dictionary<String, String>()
+    
     
     //MARK: Outlets
     @IBOutlet var txtSimulatorId: UITextField!
@@ -64,9 +69,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         game = Game(id: sessionManager.peerID)
         network = sessionManager
         game.network = network
+        sessionManager.msgProcessor = game;
+        sessionManager.chat = self;
         
         self.game!.delegate = self;
-        
         self.btnFire.hidden = true;
         
         // HACK for other player
@@ -228,7 +234,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         // Add the name to the message and display it
         let message = "\(name): \(text)\n"
         self.txtMessages.text = self.txtMessages.text + message
-        
+        self.txtChatMsg.text = ""
     }
    
 
