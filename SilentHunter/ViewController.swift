@@ -82,8 +82,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         if (manager.location != nil)
         {
             var location = locations[locations.endIndex - 1] as CLLocation
-            if (lastLocation == nil)
-            {
+            //if (lastLocation == nil || location != lastLocation)
+            //{
                 var coordinate = location.coordinate
                 var lat = coordinate.latitude
                 var long = coordinate.longitude
@@ -96,7 +96,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
                 txtLocation.text = message
                 self.game.playerUpdate(network.peerID, location: location)
                 lastLocation = location
-            }
+            //}
         }
     }
     

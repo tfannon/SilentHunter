@@ -170,9 +170,12 @@ class Game : IProcessMessages {
                     if (Misc.inSimulator)
                     {
                         hackOtherPlayerCount++
-                        if (hackOtherPlayerCount % 2 == 0)
+                        if (hackOtherPlayerCount % 10 == 0)
                         {
                             playerUpdate(hackOtherPlayerID, location: meInfo!.location)
+                        }
+                        else
+                        {
                         }
                     }
                     sendMyLocationMessage(meInfo!.location)
