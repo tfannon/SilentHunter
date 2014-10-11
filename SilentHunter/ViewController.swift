@@ -344,7 +344,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         {
             audioPing.play()
             self.targetPeer = target
-            targetPeers[target] = true
             self.btnFire.hidden = false
         }
     }
@@ -400,10 +399,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         var alert = UIAlertController(title: "Alert", message: message, preferredStyle : UIAlertControllerStyle.Alert)
         self.presentViewController(alert, animated: false, completion: nil)
     }
-    
-    func findNextTarget()
-    {
-    }
+   
     
     @IBOutlet weak var tableView: UITableView!
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
