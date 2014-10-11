@@ -19,7 +19,6 @@ class Misc
     }
 }
 
-
 extension Array {
     var last: T {
         return self[self.endIndex - 1]

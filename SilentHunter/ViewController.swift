@@ -16,7 +16,6 @@ import MultipeerConnectivity
     optional func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?)
 }
 
-
 class ViewController: UIViewController, CLLocationManagerDelegate
     ,MCBrowserViewControllerDelegate, MCSessionDelegate, NetworkDelegate,UITextFieldDelegate, GameDelegate
 {
@@ -32,7 +31,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     var assistant : MCAdvertiserAssistant!
     var session : MCSession!
     var peerID: MCPeerID!
-    
+    var targetPeers = [MCPeerID : Bool]()
+    var targetPeer : MCPeerID?
     
     /*
     *
@@ -71,6 +71,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate
         game = Game(id: self.peerID)
         game.network = self
         self.game!.delegate = self;
+        
+        self.btnFire.hidden = true;
         
         // HACK for other player
         var playerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
@@ -331,6 +333,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     }
 
 
+    @IBOutlet var btnFire: UIButton!
     @IBOutlet weak var txtLocation: UILabel!
     @IBOutlet weak var txtMessages: UITextView!
     @IBOutlet weak var txtChatMsg: UITextField!
@@ -340,6 +343,51 @@ class ViewController: UIViewController, CLLocationManagerDelegate
     }
     @IBAction func btnSend(sender: UIButton) {
         sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+    }
+    @IBAction func btnFire_Clicked(sender: AnyObject) {
+        self.btnFire.hidden = true
+        var target = self.targetPeer
+        if (target != nil)
+        {
+            self.targetPeer = nil
+            self.targetPeers[target!] = false
+            self.game.fire(target)
+        }
+    }
+    
+    func inRange(playerID : MCPeerID!)
+    {
+        targetPeers[playerID] = true
+        targetPeer = playerID;
+        self.btnFire.hidden = false
+    }
+    
+    func outofRange(playerID : MCPeerID!)
+    {
+        targetPeers[playerID] = false
+        if (targetPeer == playerID)
+        {
+            findNextTarget()
+        }
+    }
+    
+    func notify(message: NSString!) {
+        var alert = UIAlertController(title: "Alert", message: message, preferredStyle : UIAlertControllerStyle.Alert)
+        self.presentViewController(alert, animated: false, completion: nil)
+    }
+    
+    func findNextTarget()
+    {
+        self.targetPeer = nil
+        self.btnFire.hidden = false
+        for (id, playerInRange) in targetPeers
+        {
+            if (playerInRange)
+            {
+                inRange(id)
+                break
+            }
+        }
     }
 }
 
