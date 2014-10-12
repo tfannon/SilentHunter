@@ -34,8 +34,12 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         super.viewDidLoad()
         
         var edgeSwipe = UIScreenEdgePanGestureRecognizer(target: self, action: "respondToSwipeGesture:")
-        edgeSwipe.edges = UIRectEdge.Left;
+        edgeSwipe.edges = UIRectEdge.Left
         self.view.addGestureRecognizer(edgeSwipe)
+        
+        var swipe = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        swipe.direction = .Down
+        view.addGestureRecognizer(swipe)
         
         lblSession.delegate = self
         
