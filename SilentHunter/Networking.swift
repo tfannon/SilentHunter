@@ -32,9 +32,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
         peerID = MCPeerID(displayName: name)
         if gSettings.serverOverride {
             sessionName = gSettings.sessionName
-            println("Starting session: \(sessionName)")
         }
-        startServices()
     }
     
     func startServices() {
@@ -44,6 +42,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     }
     
     func setupSession() {
+        chat.logit("Setting up session: \(sessionName)")
         session = MCSession(peer: peerID)
         session.delegate = self
         serviceAdvertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType:sessionName)
@@ -163,8 +162,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     
     
     //MARK:  networking
-    func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?=nil)
-    {
+    func sendMessage(msgType: Int, msgData: [String], toPeer:MCPeerID?=nil) {
         if (self.session.connectedPeers.count > 0)
         {
             var joiner = "|"
