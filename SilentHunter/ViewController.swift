@@ -206,9 +206,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
                 }
             }
         }
+        
+        findPotentialTarget()
         RegenerateTargetListForBinding()
     }
     
+    func findPotentialTarget()
+    {
+        for (id, playerInRange) in targetPeers
+        {
+            if (playerInRange)
+            {
+                setPotentialTarget(id)
+                break
+            }
+        }
+    }
+ 
     func RegenerateTargetListForBinding()
     {
         targetsForDataBinding.removeAll(keepCapacity: true)
