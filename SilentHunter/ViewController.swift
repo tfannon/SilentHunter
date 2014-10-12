@@ -297,7 +297,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         }
     }
     
-    func torpedoeLoading()
+    func torpedosLoading()
     {
         self.secondsOfTorpedoLoading++;
         self.btnFire.setTitle("Loading torpedos \(SECONDS_FOR_LOAD_TORPEDOS - secondsOfTorpedoLoading)", forState: UIControlState.Disabled)
