@@ -155,12 +155,9 @@ class Game : IProcessMessages {
         
         var meInfo = players[meId]
         var displayName = playerID.displayName
-        if (meInfo != nil)
-        {
-            for (id, info) in players
-            {
-                if (id != meId)
-                {
+        if (meInfo != nil) {
+            for (id, info) in players {
+                if (id != meId) {
                     var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
                     //println("Distance: \(playerID.displayName): \(distanceInMeters)")
                     if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
@@ -173,9 +170,7 @@ class Game : IProcessMessages {
                     }
                 }
                 else if (!positionSame) {
-                    
                     sendMyLocationMessage(meInfo!.location)
-                    
                 }
             }
         }

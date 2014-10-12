@@ -54,28 +54,28 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         self.txtChatMsg.delegate = self;
         
-        // Do any additional setup after loading the view, typically from a nib.
-        locationManager = CLLocationManager()
-        locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-        locationManager.distanceFilter = 0.0;//33
-        locationManager.requestAlwaysAuthorization()
-        locationManager.startUpdatingLocation()
-
         let name = UIDevice.currentDevice().name
+        //order is important here so dependencies are all hooked up
         network = Networking(name: name)
         game = Game(network: network)
         network.msgProcessor = game;
         network.chat = self;
+        network.startServices()
         
         self.game.delegate = self;
         self.btnFire.hidden = true;
         self.btnFire.setTitle("Loading torpedoes", forState: UIControlState.Disabled)
         
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        locationManager.distanceFilter = 0.0;
+        locationManager.requestAlwaysAuthorization()
+        locationManager.startUpdatingLocation()
+        
         var edgeSwipe = UIScreenEdgePanGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         edgeSwipe.edges = UIRectEdge.Right;
         self.view.addGestureRecognizer(edgeSwipe)
-        
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
