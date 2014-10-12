@@ -191,18 +191,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         {
             self.targetPeer = nil
             self.btnFire.hidden = true
-            for (id, playerInRange) in targetPeers
-            {
-                if (playerInRange)
-                {
-                    setPotentialTarget(id)
-                    break
-                }
-            }
         }
+        
+        findPotentialTarget()
         
         if (contains(targetsForDataBinding, target)) {
             RegenerateTargetListForBinding()
+        }
+    }
+    
+    func findPotentialTarget()
+    {
+        for (id, playerInRange) in targetPeers
+        {
+            if (playerInRange)
+            {
+                setPotentialTarget(id)
+                break
+            }
         }
     }
  
@@ -270,6 +276,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         self.btnFire.enabled = true
         self.btnFire.backgroundColor = UIColor.redColor()
         println("torpedos loaded")
+        findPotentialTarget();
     }
 
     func hit(playerID: MCPeerID!)
