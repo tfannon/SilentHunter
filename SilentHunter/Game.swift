@@ -162,7 +162,7 @@ class Game : IProcessMessages {
                     if (id != meId)
                     {
                         var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
-                        //println("Distance: \(playerID.displayName): \(distanceInMeters)")
+                        delegate.logit("Dist \(id.displayName) :: \(distanceInMeters)")
                         if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
                         {
                             delegate.inRange(id)
