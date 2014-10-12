@@ -141,14 +141,15 @@ class Game : IProcessMessages {
         var info = PlayerInfo(playerID: playerID, location: location)
         players[playerID] = info
         
-        var positionSame = false
-        if (prevPlayerInfo != nil)
-        {
-            var prevLat = prevPlayerInfo?.location.coordinate.latitude
-            var prevLng = prevPlayerInfo?.location.coordinate.longitude
-            var currLat = location.coordinate.latitude
-            var currLng = location.coordinate.longitude
-            positionSame = prevLat == currLat && prevLng == currLng
+        var prevLat = prevPlayerInfo?.location.coordinate.latitude
+        var prevLng = prevPlayerInfo?.location.coordinate.longitude
+        var currLat = location.coordinate.latitude
+        var currLng = location.coordinate.longitude
+        var positionSame = prevPlayerInfo != nil && (prevLat == currLat && prevLng == currLng)
+        
+        // Display other connected players GPS coordinates when they change
+        if (playerID != meId && !positionSame) {
+            //println("\(playerID.displayName): \(location.coordinate.latitude),\(location.coordinate.longitude)")
         }
         
         var meInfo = players[meId]
