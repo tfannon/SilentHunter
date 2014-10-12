@@ -213,11 +213,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     func findPotentialTarget()
     {
-        for (id, playerInRange) in targetPeers
+        for (id, playerRangeInfo) in targetPeers
         {
-            if (playerInRange)
+            if (playerRangeInfo.inRange)
             {
-                setPotentialTarget(id)
+                setPotentialTarget(id, distance: playerRangeInfo.distance)
                 break
             }
         }
