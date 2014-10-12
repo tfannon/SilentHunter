@@ -43,3 +43,10 @@ extension Array {
         return self[self.endIndex - 1]
     }
 }
+
+extension String {
+    var isEmpty : Bool {
+        return self.utf16Count == 0
+    }
+}
+
