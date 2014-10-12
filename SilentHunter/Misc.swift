@@ -48,5 +48,8 @@ extension String {
     var isEmpty : Bool {
         return self.utf16Count == 0
     }
+    func toDouble() -> Double? {
+        return NSNumberFormatter().numberFromString(self)!.doubleValue
+    }
 }
 
