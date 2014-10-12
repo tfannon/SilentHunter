@@ -37,6 +37,7 @@ class Settings {
     var latitude : Double = 0.0
     var maxLogMsgs: Int = 100
     var fakeLocation: CLLocation = CLLocation(latitude: 0.0,longitude: 0.0)
+    var listeners = [SettingsListener]()
     
     init() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
