@@ -106,7 +106,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
-                <screenEdgePanGestureRecognizer minimumNumberOfTouches="1" id="iqv-W2-f7y"/>
             </objects>
             <point key="canvasLocation" x="89" y="202"/>
         </scene>
