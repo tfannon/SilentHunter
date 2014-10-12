@@ -264,7 +264,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     func fire()
     {
-        self.btnFire.hidden = true
         self.btnFire.enabled = false
         self.btnFire.backgroundColor = UIColor.blackColor()
         
