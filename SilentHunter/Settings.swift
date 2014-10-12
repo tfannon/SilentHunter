@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 let gSettings = Settings()
 
@@ -35,6 +36,7 @@ class Settings {
     var longitude : Double = 0.0
     var latitude : Double = 0.0
     var maxLogMsgs: Int = 100
+    var fakeLocation: CLLocation = CLLocation(latitude: 0.0,longitude: 0.0)
     var listeners = [SettingsListener]()
     
     init() {

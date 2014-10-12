@@ -18,8 +18,6 @@ protocol IChat {
 class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate, SettingsListener
 {
     
-    var debugViewController : DebugViewController! = DebugViewController()
-    
     var game: Game! = nil
     var locationManager : CLLocationManager!
     var network : Networking!
@@ -37,9 +35,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     var targetsForDataBinding = [PlayerRangeInfo]()
     var ableToFire : Bool = true
     var repairing : Bool = false
-    var timerAbleToFire : NSTimer?
+    var timerLoadingTorpedos : NSTimer?
     var timerReparing : NSTimer?
     var numLogMsgs:Int = 0
+    
+    var secondsOfTorpedoLoading = 0;
+    var secondsOfRepairing = 0;
+    
+    let SECONDS_FOR_REPAIR = 10
+    let SECONDS_FOR_LOAD_TORPEDOS = 5
     
     var prefs = Dictionary<String, String>()
     
@@ -89,7 +93,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil);
-        let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as UIViewController;
+        let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as DebugViewController;
+        vc.mainViewController = self
         self.presentViewController(vc, animated: true, completion: nil);
     }
     func respondToTap(gesture: UITapGestureRecognizer) {
@@ -101,6 +106,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
         
         var location = locations[locations.endIndex - 1] as CLLocation
+        if (!gSettings.locationOverride) {
+            x(location)
+        }
+    }
+    
+    func x(location: CLLocation)
+    {
         self.game.playerLocationUpdate(network.peerID, location: location)
         
         var coordinate = location.coordinate
@@ -115,7 +127,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)\nAccuracy: \(accuracy)"
         txtLocation.text = message
         lastLocation = location
-        
+
     }
     
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
@@ -269,14 +281,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     {
         if (ableToFire)
         {
-            disableButton("Loading torpedoes")
+            disableFireButton("Loading torpedos")
             
             var target = getTarget()
             if (target != nil)
             {
                 ableToFire = false;
-                timerAbleToFire = NSTimer.scheduledTimerWithTimeInterval(
-                    5.0, target: self, selector:"torpedosLoaded", userInfo: nil, repeats: false)
+                timerLoadingTorpedos = NSTimer.scheduledTimerWithTimeInterval(
+                    1.0, target: self, selector:"torpedosLoading", userInfo: nil, repeats: false)
                 
                 audioFire.play()
                 self.game.fire(target)
@@ -285,27 +297,53 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         }
     }
     
+    func torpedosLoading()
+    {
+        self.secondsOfTorpedoLoading++;
+        self.btnFire.setTitle("Loading torpedos \(SECONDS_FOR_LOAD_TORPEDOS - secondsOfTorpedoLoading)", forState: UIControlState.Disabled)
+        if (secondsOfTorpedoLoading >= SECONDS_FOR_LOAD_TORPEDOS)
+        {
+            timerLoadingTorpedos?.invalidate()
+            torpedosLoaded()
+        }
+    }
     func torpedosLoaded()
     {
+        self.secondsOfTorpedoLoading = 0;
         ableToFire = true
-        self.btnFire.enabled = true
-        self.btnFire.backgroundColor = UIColor.redColor()
+        enableFireButton()
         println("torpedos loaded")
         findPotentialTarget();
     }
 
+    func reparing()
+    {
+        self.secondsOfRepairing++
+        self.btnFire.setTitle("Repairing \(SECONDS_FOR_REPAIR - secondsOfRepairing)", forState: UIControlState.Disabled)
+        if (secondsOfTorpedoLoading >= SECONDS_FOR_REPAIR)
+        {
+            timerReparing?.invalidate()
+            repairsComplete()
+        }
+    }
     func repairsComplete()
     {
+        self.secondsOfRepairing = 0;
         ableToFire = true
-        
+        enableFireButton()
+        println("repairs complete")
     }
     
     func hit(playerID: MCPeerID!)
     {
+        if (timerReparing != nil)
+        {
+            timerReparing!.invalidate()
+        }
         ableToFire = false
-        disableButton("Repairing")
+        disableFireButton("Repairing")
         timerReparing = NSTimer.scheduledTimerWithTimeInterval(
-            10.0, target: self, selector:"repairsComplete", userInfo: nil, repeats: false)
+            1.0, target: self, selector:"repairing", userInfo: nil, repeats: false)
         audioHit.play()
         AudioPlayer.vibrate()
     }
@@ -313,7 +351,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func firedUpon(playerID: MCPeerID!) {
     }
     
-    func disableButton(label : NSString!)
+    func enableFireButton()
+    {
+        self.btnFire.enabled = true
+        self.btnFire.backgroundColor = UIColor.redColor()
+    }
+    
+    func disableFireButton(label : NSString!)
     {
         self.btnFire.setTitle(label, forState: UIControlState.Disabled)
         self.btnFire.enabled = false
