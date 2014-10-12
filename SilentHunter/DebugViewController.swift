@@ -8,8 +8,26 @@
 
 import UIKit
 
-class DebugViewController: UIViewController
+class DebugViewController: UIViewController, UITextFieldDelegate
 {
+    
+    @IBOutlet var lblSession: UITextField!
+    @IBOutlet var serverOverride: UISwitch!
+    
+    @IBAction func handleServerOverride(sender: UISwitch) {
+        gSettings.serverOverride = sender.on
+        gSettings.persist()
+    }
+    
+    @IBAction func handleSessionNameChanged(sender: UITextField) {
+        gSettings.sessionName = sender.text
+        gSettings.persist()
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        lblSession.resignFirstResponder()
+        return true
+    }
     
     //MARK:  controller
     override func viewDidLoad() {
@@ -18,7 +36,11 @@ class DebugViewController: UIViewController
         var edgeSwipe = UIScreenEdgePanGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         edgeSwipe.edges = UIRectEdge.Left;
         self.view.addGestureRecognizer(edgeSwipe)
-   
+        
+        lblSession.delegate = self
+        
+        lblSession.text = gSettings.sessionName
+        serverOverride.on = gSettings.serverOverride
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
