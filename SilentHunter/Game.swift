@@ -79,7 +79,7 @@ class Game : IProcessMessages {
             self.delegate.logit("RECV: Torpedo Fired at me by: \(fromPeer.displayName)")
             firedUpon(fromPeer)
             break;
-        case Messages.MsgPlayerHit:
+        case Messages.MsgPlayerHit: // response from player that torpedo was fired at
             self.delegate.logit("RECV: I HIT player: \(fromPeer.displayName)")
             hitSuccess(fromPeer)
             break;

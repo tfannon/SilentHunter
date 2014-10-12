@@ -167,28 +167,33 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
         }
     }
     
-    
-    
-    /*
-    * Sends a message to ALL the connected peers.
-    * msgType - Type of Message to send (Game.Messages)
-    * data - '|' delimited string of additional data for the message type
-    */
-    func sendToPeers(msgType:Int, data: String) {
+    func sendToPeers(msgType:Int, data: String, peers: [MCPeerID]? = nil) {
         var error : NSError?
         
         var msg = String(msgType) + "|" + data;
         let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
             allowLossyConversion: false)
         
-        var peerCount = self.session.connectedPeers.count
+        var sendToPeers: [MCPeerID]
+        if (peers == nil || peers?.count == 0){
+            sendToPeers = self.session.connectedPeers as [MCPeerID]
+        }
+        else {
+            sendToPeers = peers!
+        }
+        
+        var peerCount = sendToPeers.count
         if (peerCount > 0) {
             
-            self.session.sendData(rawMsg, toPeers: self.session.connectedPeers,
+            self.session.sendData(rawMsg, toPeers: sendToPeers,
                 withMode: MCSessionSendDataMode.Unreliable, error: &error)
             
             if error != nil {
                 print("Error sending data: \(error?.localizedDescription)")
+            }
+            
+            if (msgType == Game.Messages.MsgTypeChat) {
+                chat?.updateChat(data, fromPeer: self.peerID)
             }
             
         }
@@ -202,28 +207,8 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     * data - '|' delimited string of additional data for the message type
     */
     func sendToPeer(peer: MCPeerID, msgType:Int, data: String) {
-        var error : NSError?
-        
-        var msg = String(msgType) + "|" + data;
-        let rawMsg = msg.dataUsingEncoding(NSUTF8StringEncoding,
-            allowLossyConversion: false)
-        
         // create an array of just this peer to send the message to
         var peers = [ peer ];
-        self.session.sendData(rawMsg, toPeers: peers,
-            withMode: MCSessionSendDataMode.Unreliable, error: &error)
-        
-        if error != nil {
-            print("Error sending data: \(error?.localizedDescription)")
-        }
-        
-        /*
-        
-        // special case for chat (to display in window)
-        if (msgType == Game.Messages.MsgTypeChat) {
-            self.updateChat(self.txtChatMsg.text, fromPeer: self.peerID)
-            self.txtChatMsg.text = ""
-        }
-        */
+        sendToPeers(msgType, data: data, peers: peers)
     }
 }
