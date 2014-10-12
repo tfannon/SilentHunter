@@ -54,4 +54,10 @@ class AudioPlayer : NSObject, AVAudioPlayerDelegate
     {
         return player.playing
     }
+    
+    class func vibrate()
+    {
+        var vibrateSound:SystemSoundID = 1352
+        AudioServicesPlaySystemSound(vibrateSound)
+    }
 }

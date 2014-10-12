@@ -292,6 +292,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func hit(playerID: MCPeerID!)
     {
         audioHit.play()
+        AudioPlayer.vibrate()
     }
     
     func firedUpon(playerID: MCPeerID!) {
