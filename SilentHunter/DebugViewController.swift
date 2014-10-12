@@ -13,6 +13,7 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     
     @IBOutlet var lblSession: UITextField!
     @IBOutlet var serverOverride: UISwitch!
+    @IBOutlet weak var lblMsgs: UILabel!
     
     @IBOutlet var locationOverride: UISwitch!
     @IBOutlet var txtLatitude: UITextField!

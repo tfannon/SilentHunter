@@ -31,11 +31,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     var audioHit : AudioPlayer = AudioPlayer(filename: "hit")
     var audioFire : AudioPlayer = AudioPlayer(filename: "fire")
     
-    var targetPeers = [MCPeerID : Bool]()
+    var targetPeers = [MCPeerID : PlayerRangeInfo]()
+//    var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
-    var targetsForDataBinding = [MCPeerID]()
+    var targetsForDataBinding = [PlayerRangeInfo]()
     var ableToFire : Bool = true
     var timerAbleToFire : NSTimer?
+    var numLogMsgs:Int = 0
     
     var prefs = Dictionary<String, String>()
     
@@ -125,6 +127,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         return true;
     }
     
+
     
     
     /*
@@ -132,6 +135,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     */
     func logit(message: String) {
         println(message)
+        if (++numLogMsgs > gSettings.maxLogMsgs) {
+            self.txtMessages.text = ""
+            numLogMsgs = 0
+        }
         self.txtMessages.text = message + "\n" + self.txtMessages.text
     }
     
@@ -170,64 +177,74 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         return target;
     }
     
-    func setPotentialTarget(target: MCPeerID!)
+    private func setPotentialTarget(target: MCPeerID!, distance:Double)
     {
-        targetPeers[target] = true
+        targetPeers[target] = PlayerRangeInfo(target: target, range: true, dist:distance)
         if (getTarget() == nil)
         {
             //audioPing.play()
             self.targetPeer = target
             self.btnFire.hidden = false
         }
-        if (contains(targetsForDataBinding, target) == false) {
-            RegenerateTargetListForBinding()
-        }
+
+        RegenerateTargetListForBinding()
     }
  
-    func clearPotentialTarget(target: MCPeerID!)
+    private func clearPotentialTarget(target: MCPeerID!, distance:Double)
     {
-        targetPeers[target] = false
+        targetPeers[target] = PlayerRangeInfo(target: target, range: false, dist: distance)
         if (getTarget() == target)
         {
             self.targetPeer = nil
             self.btnFire.hidden = true
-            for (id, playerInRange) in targetPeers
+            for (id, playerRangeInfo) in targetPeers
             {
-                if (playerInRange)
+                if (playerRangeInfo.inRange)
                 {
-                    setPotentialTarget(id)
+                    setPotentialTarget(id, distance: playerRangeInfo.distance)
                     break
                 }
             }
         }
         
-        if (contains(targetsForDataBinding, target)) {
-            RegenerateTargetListForBinding()
+        findPotentialTarget()
+        RegenerateTargetListForBinding()
+    }
+    
+    func findPotentialTarget()
+    {
+        for (id, playerRangeInfo) in targetPeers
+        {
+            if (playerRangeInfo.inRange)
+            {
+                setPotentialTarget(id, distance: playerRangeInfo.distance)
+                break
+            }
         }
     }
  
     func RegenerateTargetListForBinding()
     {
         targetsForDataBinding.removeAll(keepCapacity: true)
-        for (id, playerInRange) in targetPeers
+        for (id, playerRangeInfo) in targetPeers
         {
-            if (playerInRange)
+            if (playerRangeInfo.inRange)
             {
-                targetsForDataBinding.append(id)
+                targetsForDataBinding.append(playerRangeInfo)
             }
         }
         //logit("In/Out range change: reloading data")
         tableView.reloadData()
     }
     
-    func inRange(playerID : MCPeerID!)
+    func inRange(playerID : MCPeerID!, distance:Double)
     {
-        setPotentialTarget(playerID)
+        setPotentialTarget(playerID, distance: distance)
     }
     
-    func outOfRange(playerID : MCPeerID!)
+    func outOfRange(playerID : MCPeerID!, distance:Double)
     {
-        clearPotentialTarget(playerID)
+        clearPotentialTarget(playerID, distance: distance)
     }
     
     func handlePlayerDisconnect(playerID: MCPeerID)
@@ -237,11 +254,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         if (getTarget() == playerID)
         {
             self.targetPeer = nil
+            self.btnFire.hidden = true
+            // look to see if there is another candidate peer target
+            findPotentialTarget()
         }
-        // regenerate the table view
-        if (contains(targetsForDataBinding, playerID)) {
-            RegenerateTargetListForBinding()
-        }
+        RegenerateTargetListForBinding()
     }
     
     func fire()
@@ -270,6 +287,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         self.btnFire.enabled = true
         self.btnFire.backgroundColor = UIColor.redColor()
         println("torpedos loaded")
+        findPotentialTarget();
     }
 
     func hit(playerID: MCPeerID!)
@@ -294,10 +312,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
-        var player:MCPeerID = self.targetsForDataBinding[indexPath.row]
-//        cell.lblPlayerName.text = player.displayName
-//        cell.btnFire.addTarget(self, action: "fireTorpedo:", forControlEvents: UIControlEvents.TouchUpInside)
-        var playerName = player.displayName
+        var playerInfo:PlayerRangeInfo = self.targetsForDataBinding[indexPath.row]
+        var playerName = "\(playerInfo.player.displayName) (\(playerInfo.distance))"
         cell.textLabel?.text = playerName
         return cell
     }
@@ -310,5 +326,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     {
        println("button clicked")
     }
+}
+
+class PlayerRangeInfo {
+    init(target:MCPeerID!, range:Bool, dist:Double) {
+        inRange = range
+        distance = dist
+        player = target
+    }
+    var player:MCPeerID
+    var inRange:Bool
+    var distance:Double
 }
 

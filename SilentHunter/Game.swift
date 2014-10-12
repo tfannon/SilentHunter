@@ -20,8 +20,8 @@ protocol IProcessMessages
 protocol GameDelegate
 {
     func logit(msg: String)
-    func inRange(playerID : MCPeerID!)
-    func outOfRange(playerID : MCPeerID!)
+    func inRange(playerID : MCPeerID!, distance:Double)
+    func outOfRange(playerID : MCPeerID!, distance:Double)
     func notify(message : NSString!)
     func firedUpon(playerID : MCPeerID!)
     func hit(playerID: MCPeerID!)
@@ -65,7 +65,7 @@ class Game : IProcessMessages {
         case Messages.MsgTypePlayerLocation:
             var lat = data[0].toDouble()
             var lng = data[1].toDouble()
-            //self.delegate.logit("RECV: PlayerLoc: \(lat),\(lng)")
+            self.delegate.logit("RECV: PlayerLoc: \(fromPeer.displayName) :: \(lat!),\(lng!)")
             
             var loc = CLLocation(latitude: lat!, longitude: lng!)
             self.playerUpdate(fromPeer, location: loc)
@@ -146,33 +146,30 @@ class Game : IProcessMessages {
             positionSame = (prevLat == currLat && prevLng == currLng)
         }
         
-        if (!positionSame)
-        {
-            var meInfo = players[meId]
-            var displayName = playerID.displayName
-            for (id, info) in players {
-                if (id != meId) {
-                    var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
+        var meInfo = players[meId]
+        var displayName = playerID.displayName
+        for (id, info) in players {
+            if (id != meId) {
+                var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
+                delegate.logit("Dist \(id.displayName) :: \(distanceInMeters)")
+                if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
+                {
                     if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
                     {
-                        var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
-                        delegate.logit("Dist \(id.displayName) :: \(distanceInMeters)")
-                        if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
-                        {
-                            delegate.inRange(id)
-                        }
-                        else
-                        {
-                            delegate.outOfRange(id)
-                        }
+                        delegate.inRange(id, distance: distanceInMeters)
+                    }
+                    else
+                    {
+                        delegate.outOfRange(id, distance: distanceInMeters)
                     }
                 }
-                else {
-                    sendMyLocationMessage(meInfo!.location)
-                }
+            }
+            else if (!positionSame) {
+                self.sendMyLocationMessage(meInfo!.location)
             }
         }
     }
+    
     
     func fire(playerID: MCPeerID!) {
         sendMyFireTorpedoMessage(playerID)
