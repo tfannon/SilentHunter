@@ -36,7 +36,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     var targetPeer : MCPeerID?
     var targetsForDataBinding = [PlayerRangeInfo]()
     var ableToFire : Bool = true
+    var repairing : Bool = false
     var timerAbleToFire : NSTimer?
+    var timerReparing : NSTimer?
     var numLogMsgs:Int = 0
     
     var prefs = Dictionary<String, String>()
@@ -66,7 +68,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
         self.game.delegate = self;
         self.btnFire.hidden = true;
-        self.btnFire.setTitle("Loading torpedoes", forState: UIControlState.Disabled)
         
         locationManager = CLLocationManager()
         locationManager.delegate = self
@@ -180,10 +181,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     private func setPotentialTarget(target: MCPeerID!, distance:Double)
     {
         targetPeers[target] = PlayerRangeInfo(target: target, range: true, dist:distance)
-        if (getTarget() == nil)
+        if (getTarget() == nil && ableToFire)
         {
             //audioPing.play()
             self.targetPeer = target
+            self.btnFire.enabled = true
             self.btnFire.hidden = false
         }
 
@@ -263,39 +265,57 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     func fire()
     {
-        self.btnFire.enabled = false
-        self.btnFire.backgroundColor = UIColor.blackColor()
-        
-        var target = getTarget()
-        if (target != nil)
+        if (ableToFire)
         {
-            ableToFire = false;
-            timerAbleToFire = NSTimer.scheduledTimerWithTimeInterval(
-                5.0, target: self, selector:"torpedosLoaded", userInfo: nil, repeats: false)
+            disableButton("Loading torpedoes")
             
-            audioFire.play()
-            self.game.fire(target)
-            println("fired at \(target!.displayName)")
+            var target = getTarget()
+            if (target != nil)
+            {
+                ableToFire = false;
+                timerAbleToFire = NSTimer.scheduledTimerWithTimeInterval(
+                    5.0, target: self, selector:"torpedosLoaded", userInfo: nil, repeats: false)
+                
+                audioFire.play()
+                self.game.fire(target)
+                println("fired at \(target!.displayName)")
+            }
         }
     }
     
     func torpedosLoaded()
     {
         ableToFire = true
-        timerAbleToFire!.invalidate()
         self.btnFire.enabled = true
         self.btnFire.backgroundColor = UIColor.redColor()
         println("torpedos loaded")
         findPotentialTarget();
     }
 
+    func repairsComplete()
+    {
+        ableToFire = true
+        
+    }
+    
     func hit(playerID: MCPeerID!)
     {
+        ableToFire = false
+        disableButton("Repairing")
+        timerReparing = NSTimer.scheduledTimerWithTimeInterval(
+            10.0, target: self, selector:"repairsComplete", userInfo: nil, repeats: false)
         audioHit.play()
         AudioPlayer.vibrate()
     }
     
     func firedUpon(playerID: MCPeerID!) {
+    }
+    
+    func disableButton(label : NSString!)
+    {
+        self.btnFire.setTitle(label, forState: UIControlState.Disabled)
+        self.btnFire.enabled = false
+        self.btnFire.backgroundColor = UIColor.blackColor()
     }
     
     func notify(message: NSString!) {
