@@ -261,7 +261,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         {
             ableToFire = false;
             timerAbleToFire = NSTimer.scheduledTimerWithTimeInterval(
-                10.0, target: self, selector:"torpedosLoaded", userInfo: nil, repeats: false)
+                5.0, target: self, selector:"torpedosLoaded", userInfo: nil, repeats: false)
             
             audioFire.play()
             self.game.fire(target)
