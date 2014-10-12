@@ -14,6 +14,7 @@ let gSettings = Settings()
 enum SettingType {
     case Location
     case Session
+    case LocationOffset
 }
 
 protocol SettingsListener {
@@ -36,7 +37,7 @@ class Settings {
     var longitude : Double = 0.0
     var latitude : Double = 0.0
     var maxLogMsgs: Int = 100
-    var fakeLocation: CLLocation = CLLocation(latitude: 0.0,longitude: 0.0)
+    var fakeLocationOffset : Double = 0.0
     var listeners = [SettingsListener]()
     
     init() {
@@ -50,6 +51,9 @@ class Settings {
                 latitude = result["latitude"]!.toDouble()!
                 if let tmp = result["longitude"] {
                     longitude = result["longitude"]!.toDouble()!
+                    if let tmp = result["locationOffset"] {
+                        fakeLocationOffset = result["locationOffset"]!.toDouble()!
+                    }
                 }
             }
             
@@ -58,6 +62,13 @@ class Settings {
                 maxLogMsgs = strMaxLogMsgs!.toInt()!
             }
         }
+    }
+    
+    func getFakeLocation () -> CLLocation
+    {
+        var loc = CLLocation(latitude: self.latitude, longitude: self.longitude)
+        var loc2 = Misc.offsetLocation(loc, offsetMeters: self.fakeLocationOffset, bearing: 270.0)
+        return loc2
     }
     
     func registerListener(listener : SettingsListener) {
@@ -71,6 +82,7 @@ class Settings {
         userPrefs["locationOverride"] = locationOverride ? "true" : "false"
         userPrefs["latitude"] = "\(latitude)"
         userPrefs["longitude"] = "\(longitude)"
+        userPrefs["locationOffset"] = "\(fakeLocationOffset)"
 
         var strMaxLogMsgs = String(maxLogMsgs)
         userPrefs["maxLogMsgs"] = strMaxLogMsgs

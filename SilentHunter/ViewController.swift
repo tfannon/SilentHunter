@@ -89,6 +89,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         var swipeUp = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         swipeUp.direction = .Up
         view.addGestureRecognizer(swipeUp)
+        
+        if (gSettings.locationOverride)
+        {
+            x(gSettings.getFakeLocation())
+        }
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
