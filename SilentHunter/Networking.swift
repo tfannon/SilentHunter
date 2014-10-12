@@ -107,7 +107,8 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
                 msgProcessor?.HandleDisconnect(peerID)
             default:""
             }
-            Async.main {
+            //Async.main {
+            dispatch_async(dispatch_get_main_queue()) {
                 println("\(peerID.displayName) changed state to \(message)")
                 self.chat?.logit("\(peerID.displayName) changed state to \(message)")
             }

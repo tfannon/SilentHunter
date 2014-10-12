@@ -165,6 +165,7 @@ class Game : IProcessMessages {
                     //println("Distance: \(playerID.displayName): \(distanceInMeters)")
                     if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
                     {
+                        delegate.logit("Dist \(id.displayName) :: \(distanceInMeters)")
                         delegate.inRange(id)
                     }
                     else

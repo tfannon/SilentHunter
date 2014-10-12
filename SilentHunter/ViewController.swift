@@ -127,7 +127,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     */
     func logit(message: String) {
         println(message)
-        self.txtMessages.text = self.txtMessages.text + message + "\n"
+        self.txtMessages.text = message + "\n" + self.txtMessages.text
     }
     
     func updateChat(text : String, fromPeer peerID: MCPeerID) {
@@ -146,7 +146,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
         // Add the name to the message and display it
         let message = "\(name): \(text)\n"
-        self.txtMessages.text = self.txtMessages.text + message
+        self.txtMessages.text =  message + self.txtMessages.text
         self.txtChatMsg.text = ""
     }
    
