@@ -25,11 +25,15 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     var delegate : SessionManagerDelegate?
     var msgProcessor: IProcessMessages!
     var chat: IChat!
-    let serviceType = "SilentHunter"
+    let sessionName = "SilentHunter"
     
     init(name : String) {
         super.init()
         peerID = MCPeerID(displayName: name)
+        if gSettings.serverOverride {
+            sessionName = gSettings.sessionName
+            println("Starting session: \(sessionName)")
+        }
         startServices()
     }
     
@@ -42,9 +46,9 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     func setupSession() {
         session = MCSession(peer: peerID)
         session.delegate = self
-        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType:serviceType)
+        serviceAdvertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType:sessionName)
         serviceAdvertiser.delegate = self
-        serviceBrowser = MCNearbyServiceBrowser(peer: peerID, serviceType: serviceType)
+        serviceBrowser = MCNearbyServiceBrowser(peer: peerID, serviceType: sessionName)
         serviceBrowser.delegate = self
     }
     
