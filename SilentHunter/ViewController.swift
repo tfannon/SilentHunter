@@ -99,6 +99,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
         var location = locations[locations.endIndex - 1] as CLLocation
         self.game.playerUpdate(network.peerID, location: location)
+        logit("MY Location updated")
         
         var coordinate = location.coordinate
         var accuracy = location.horizontalAccuracy
