@@ -254,15 +254,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         if (getTarget() == playerID)
         {
             self.targetPeer = nil
+            self.btnFire.hidden = true
             // look to see if there is another candidate peer target
-            for (id, playerRangeInfo) in targetPeers
-            {
-                if (playerRangeInfo.inRange)
-                {
-                    setPotentialTarget(id, distance: playerRangeInfo.distance)
-                    break
-                }
-            }
+            findPotentialTarget()
         }
         RegenerateTargetListForBinding()
     }
