@@ -17,7 +17,7 @@ class Settings {
     var sessionName : String = ""
     var longitude : Double = 0.0
     var latitude : Double = 0.0
-    var maxLogMsgs: Int = 20
+    var maxLogMsgs: Int = 100
     
     init() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
