@@ -50,7 +50,7 @@ class Game : IProcessMessages {
     var network: Networking?
     var hackOtherPlayerCount : Int = 0
     var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
-
+    var timeLastPlayerUpdateSent : NSDate?
     
     init(network : Networking)
     {
@@ -137,6 +137,7 @@ class Game : IProcessMessages {
     
     func playerUpdate(playerID : MCPeerID!, location: CLLocation!) {
 
+        var now : NSDate = NSDate()
         var prevPlayerInfo = players[playerID]
         var info = PlayerInfo(playerID: playerID, location: location)
         players[playerID] = info
