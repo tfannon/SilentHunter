@@ -25,12 +25,18 @@ class Settings {
         if let result = userDefaults.objectForKey("Prefs") as? Dictionary<String,String> {
             serverOverride = result["serverOverride"] == "true"
             sessionName = result["sessionName"]!
+            
             locationOverride = result["locationOverride"] == "true"
             if let tmp = result["latitude"] {
                 latitude = result["latitude"]!.toDouble()!
+                if let tmp = result["longitude"] {
+                    longitude = result["longitude"]!.toDouble()!
+                }
             }
-            if let tmp = result["longitude"] {
-                longitude = result["longitude"]!.toDouble()!
+            
+            var strMaxLogMsgs  = result["maxLogMsgs"]
+            if (strMaxLogMsgs != nil) {
+                maxLogMsgs = strMaxLogMsgs!.toInt()!
             }
         }
     }
@@ -42,6 +48,9 @@ class Settings {
         userPrefs["locationOverride"] = serverOverride ? "true" : "false"
         userPrefs["latitude"] = "\(latitude)"
         userPrefs["longitude"] = "\(longitude)"
+
+        var strMaxLogMsgs = String(maxLogMsgs)
+        userPrefs["maxLogMsgs"] = strMaxLogMsgs
         userDefaults.setObject(userPrefs as Dictionary<NSObject,AnyObject>, forKey: "Prefs")
     }
 }

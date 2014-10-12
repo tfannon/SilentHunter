@@ -19,6 +19,12 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     @IBOutlet var txtLatitude: UITextField!
     @IBOutlet var txtLongitude: UITextField!
     
+    @IBOutlet weak var stepLogMsgs: UIStepper!
+    @IBAction func stepLogMsgs(sender: UIStepper) {
+        gSettings.maxLogMsgs = Int(sender.value)
+        lblMsgs.text = String(gSettings.maxLogMsgs)
+        gSettings.persist()
+    }
     @IBAction func handleServerOverride(sender: UISwitch) {
         gSettings.serverOverride = sender.on
         gSettings.persist()
@@ -65,6 +71,9 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         locationOverride.on = gSettings.locationOverride
         txtLatitude.text = "\(gSettings.latitude)"
         txtLongitude.text = "\(gSettings.longitude)"
+        serverOverride.on = gSettings.serverOverride
+        lblMsgs.text = String(gSettings.maxLogMsgs)
+        stepLogMsgs.value = Double(gSettings.maxLogMsgs)
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
