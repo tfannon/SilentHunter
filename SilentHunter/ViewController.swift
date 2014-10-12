@@ -15,10 +15,8 @@ protocol IChat {
     func logit(message:String)
 }
 
-class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate
+class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate, SettingsListener
 {
-    
-    var debugViewController : DebugViewController! = DebugViewController()
     
     var game: Game! = nil
     var locationManager : CLLocationManager!
@@ -82,6 +80,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
         
+        gSettings.registerListener(self)
+        
         var edgeSwipe = UIScreenEdgePanGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         edgeSwipe.edges = UIRectEdge.Right;
         self.view.addGestureRecognizer(edgeSwipe)
@@ -93,7 +93,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil);
-        let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as UIViewController;
+        let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as DebugViewController;
+        vc.mainViewController = self
         self.presentViewController(vc, animated: true, completion: nil);
     }
     func respondToTap(gesture: UITapGestureRecognizer) {
@@ -105,6 +106,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
         
         var location = locations[locations.endIndex - 1] as CLLocation
+        if (!gSettings.locationOverride) {
+            x(location)
+        }
+    }
+    
+    func x(location: CLLocation)
+    {
         self.game.playerLocationUpdate(network.peerID, location: location)
         
         var coordinate = location.coordinate
@@ -119,7 +127,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)\nAccuracy: \(accuracy)"
         txtLocation.text = message
         lastLocation = location
-        
+
     }
     
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
@@ -384,6 +392,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func fireTorpedo(sender:UIButton!)
     {
        println("button clicked")
+    }
+    
+    //Mark: Settings Listener
+    func settingDidChange(settingType: SettingType) {
+        if settingType == SettingType.Session {
+            network.restartServices()
+        }
     }
 }
 
