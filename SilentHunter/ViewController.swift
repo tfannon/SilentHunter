@@ -216,6 +216,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         clearPotentialTarget(playerID)
     }
     
+    func handlePlayerDisconnect(playerID: MCPeerID)
+    {
+        targetPeers.removeValueForKey(playerID)
+        // if the player disconnecting was my target, null it out
+        if (getTarget() == playerID)
+        {
+            self.targetPeer = nil
+        }
+        // regenerate the table view
+        RegenerateTargetListForBinding()
+    }
+    
     func fire()
     {
         self.btnFire.hidden = true
