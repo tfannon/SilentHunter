@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-
+import CoreLocation
 
 class Misc
 {
@@ -25,6 +25,16 @@ class Misc
             let device = UIDevice.currentDevice().model
             return NSString(string:device).containsString("Simulator")
         }
+    }
+    
+    class func offsetLocation(startLocation:CLLocation, offsetMeters: Double, bearing: Double) -> CLLocation
+    {
+        let EARTH_MEAN_RADIUS_METERS = 6372796.99;
+        var lat2 =  asin( sin(startLocation.coordinate.latitude) * cos(offsetMeters/EARTH_MEAN_RADIUS_METERS) + cos(startLocation.coordinate.latitude) * sin(offsetMeters/EARTH_MEAN_RADIUS_METERS) * cos(bearing) );
+        var lon2 = startLocation.coordinate.longitude + atan2( sin(bearing) * sin(offsetMeters/EARTH_MEAN_RADIUS_METERS) * cos(startLocation.coordinate.latitude), cos(offsetMeters/EARTH_MEAN_RADIUS_METERS) - sin(startLocation.coordinate.latitude) * sin(lat2));
+        var tempLocation:CLLocation = CLLocation(latitude: lat2, longitude: lon2)
+    
+        return tempLocation;
     }
 }
 

@@ -144,7 +144,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
    
 
     @IBAction func btnSend(sender: UIButton) {
-        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)        
     }
 
     @IBAction func btnFire_Clicked(sender: AnyObject) {
