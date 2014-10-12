@@ -7,13 +7,17 @@
 //
 
 import UIKit
+import CoreLocation
 
 class DebugViewController: UIViewController, UITextFieldDelegate
 {
+    internal var mainViewController: ViewController?
     
     @IBOutlet var lblSession: UITextField!
     @IBOutlet var serverOverride: UISwitch!
     @IBOutlet weak var lblMsgs: UILabel!
+    
+    @IBOutlet weak var txtMoveLeftGPSAmount: UITextField!
     
     @IBOutlet var locationOverride: UISwitch!
     @IBOutlet var txtLatitude: UITextField!
@@ -25,6 +29,13 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         lblMsgs.text = String(gSettings.maxLogMsgs)
         gSettings.persist()
     }
+    @IBAction func btnMoveLeftGPS(sender: UIButton) {
+        var moveLeftInMeters = txtMoveLeftGPSAmount.text.toDouble()!
+        var loc = CLLocation(latitude: txtLatitude.text.toDouble()!, longitude: txtLongitude.text.toDouble()!)
+        gSettings.fakeLocation = Misc.offsetLocation(loc, offsetMeters: moveLeftInMeters, bearing: 270.0)
+        mainViewController!.x(gSettings.fakeLocation)
+    }
+    
     @IBAction func handleServerOverride(sender: UISwitch) {
         gSettings.serverOverride = sender.on
         gSettings.persist()

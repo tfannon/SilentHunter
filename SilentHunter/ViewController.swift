@@ -18,8 +18,6 @@ protocol IChat {
 class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate
 {
     
-    var debugViewController : DebugViewController! = DebugViewController()
-    
     var game: Game! = nil
     var locationManager : CLLocationManager!
     var network : Networking!
@@ -87,7 +85,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil);
-        let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as UIViewController;
+        let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as DebugViewController;
+        vc.mainViewController = self
         self.presentViewController(vc, animated: true, completion: nil);
     }
     func respondToTap(gesture: UITapGestureRecognizer) {
@@ -99,6 +98,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
         
         var location = locations[locations.endIndex - 1] as CLLocation
+        if (!gSettings.locationOverride) {
+            x(location)
+        }
+    }
+    
+    func x(location: CLLocation)
+    {
         self.game.playerLocationUpdate(network.peerID, location: location)
         
         var coordinate = location.coordinate
@@ -113,7 +119,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)\nAccuracy: \(accuracy)"
         txtLocation.text = message
         lastLocation = location
-        
+
     }
     
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {

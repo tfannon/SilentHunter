@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 let gSettings = Settings()
 
@@ -19,6 +20,7 @@ class Settings {
     var longitude : Double = 0.0
     var latitude : Double = 0.0
     var maxLogMsgs: Int = 100
+    var fakeLocation: CLLocation = CLLocation(latitude: 0.0,longitude: 0.0)
     
     init() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
@@ -45,7 +47,7 @@ class Settings {
         let userDefaults = NSUserDefaults.standardUserDefaults();
         userPrefs["serverOverride"] = serverOverride ? "true" : "false"
         userPrefs["sessionName"] = sessionName
-        userPrefs["locationOverride"] = serverOverride ? "true" : "false"
+        userPrefs["locationOverride"] = locationOverride ? "true" : "false"
         userPrefs["latitude"] = "\(latitude)"
         userPrefs["longitude"] = "\(longitude)"
 
