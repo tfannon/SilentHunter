@@ -111,13 +111,11 @@ class Game : IProcessMessages {
         sendMessage(Messages.MsgFiredTorpedo, msgData: [], toPeer: peer)
     }
     // indicates "I" have been hit
-    private func sendPlayerHitMessage(peer: MCPeerID)
-    {
+    private func sendPlayerHitMessage(peer: MCPeerID) {
         sendMessage(Messages.MsgPlayerHit, msgData: [], toPeer: peer)
     }
     // idnicates "I" have evaded the torpedo fired at me
-    private func sendPlayerEvadedTorpedoMessage(peer: MCPeerID)
-    {
+    private func sendPlayerEvadedTorpedoMessage(peer: MCPeerID) {
         sendMessage(Messages.MsgPlayerEvadedTorpedo, msgData: [], toPeer: peer)
     }
     
@@ -130,16 +128,14 @@ class Game : IProcessMessages {
         return playerInfo!
     }
     
-    func HandleDisconnect(peer: MCPeerID)
-    {
+    func HandleDisconnect(peer: MCPeerID) {
         /// remove from game data
         players.removeValueForKey(peer)
         // remove from UI collections
         delegate.handlePlayerDisconnect(peer)
     }
     
-    func playerUpdate(playerID : MCPeerID!, location: CLLocation!)
-    {
+    func playerUpdate(playerID : MCPeerID!, location: CLLocation!) {
         var prevPlayerInfo = players[playerID]
         
         var info = PlayerInfo(playerID: playerID, location: location)
@@ -183,47 +179,36 @@ class Game : IProcessMessages {
         }
     }
     
-    func fire(playerID: MCPeerID!)
-    {
+    func fire(playerID: MCPeerID!) {
         sendMyFireTorpedoMessage(playerID)
-        
     }
     
-    func hitSuccess(playerID: MCPeerID!)
-    {
-        
+    func hitSuccess(playerID: MCPeerID!) {
     }
     
-    func hit(playerID: MCPeerID!)
-    {
+    func hit(playerID: MCPeerID!) {
         delegate.hit(playerID);
         sendPlayerHitMessage(playerID)
     }
     
-    func firedUpon(playerID: MCPeerID!)
-    {
+    func firedUpon(playerID: MCPeerID!) {
         delegate.firedUpon(playerID)
         var random = Int(arc4random_uniform(UInt32(4)));
         var amHit = random == 0 || true
-        if (amHit)
-        {
+        if (amHit) {
             hit(playerID)
         }
     }
     
-    func evade()
-    {
+    func evade() {
     }
     
-    func move()
-    {
+    func move() {
     }
     
-    func playerDestroyed(playerID : MCPeerID!)
-    {
+    func playerDestroyed(playerID : MCPeerID!) {
         var info = players[playerID];
-        if (info != nil)
-        {
+        if (info != nil) {
             info!.isAlive = false;
         }
     }
@@ -234,8 +219,7 @@ internal class PlayerInfo {
     private var location : CLLocation!
     private var isAlive : Bool! = true
     private var hits : Int16! = 0
-    init(playerID: MCPeerID, location: CLLocation)
-    {
+    init(playerID: MCPeerID, location: CLLocation) {
         self.playerID = playerID
         self.location = location
     }
