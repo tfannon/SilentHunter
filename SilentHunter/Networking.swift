@@ -103,6 +103,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
             case MCSessionState.Connected : message = "Connected"
             case MCSessionState.NotConnected:
                 message = "Not Connected"
+                var who = peerID.displayName
                 msgProcessor?.HandleDisconnect(peerID)
             default:""
             }

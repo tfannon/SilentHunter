@@ -173,7 +173,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
             self.targetPeer = target
             self.btnFire.hidden = false
         }
-        RegenerateTargetListForBinding()
+        if (contains(targetsForDataBinding, target) == false) {
+            RegenerateTargetListForBinding()
+        }
     }
  
     func clearPotentialTarget(target: MCPeerID!)
@@ -231,7 +233,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
             self.targetPeer = nil
         }
         // regenerate the table view
-        RegenerateTargetListForBinding()
+        if (contains(targetsForDataBinding, playerID)) {
+            RegenerateTargetListForBinding()
+        }
     }
     
     func fire()
@@ -287,7 +291,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         var player:MCPeerID = self.targetsForDataBinding[indexPath.row]
 //        cell.lblPlayerName.text = player.displayName
 //        cell.btnFire.addTarget(self, action: "fireTorpedo:", forControlEvents: UIControlEvents.TouchUpInside)
-        cell.textLabel?.text = player.displayName
+        var playerName = player.displayName
+        cell.textLabel?.text = playerName
         return cell
     }
     
