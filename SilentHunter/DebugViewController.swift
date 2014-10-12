@@ -23,17 +23,21 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     @IBOutlet var txtLatitude: UITextField!
     @IBOutlet var txtLongitude: UITextField!
     
+    @IBOutlet var stpLocationOverride: UIStepper!
+    
+    @IBAction func moveStepperChanged(sender: UIStepper) {
+        var moveLeftInMeters = sender.value;
+        txtMoveLeftGPSAmount.text = NSString(format: "%.1f", moveLeftInMeters)
+        gSettings.fakeLocationOffset = sender.value
+        gSettings.persist()
+        mainViewController!.setLocation(gSettings.getFakeLocation())
+    }
+    
     @IBOutlet weak var stepLogMsgs: UIStepper!
     @IBAction func stepLogMsgs(sender: UIStepper) {
         gSettings.maxLogMsgs = Int(sender.value)
         lblMsgs.text = String(gSettings.maxLogMsgs)
         gSettings.persist()
-    }
-    @IBAction func btnMoveLeftGPS(sender: UIButton) {
-        var moveLeftInMeters = txtMoveLeftGPSAmount.text.toDouble()!
-        var loc = CLLocation(latitude: txtLatitude.text.toDouble()!, longitude: txtLongitude.text.toDouble()!)
-        gSettings.fakeLocation = Misc.offsetLocation(loc, offsetMeters: moveLeftInMeters, bearing: 270.0)
-        mainViewController!.x(gSettings.fakeLocation)
     }
     
     @IBAction func handleServerOverride(sender: UISwitch) {
@@ -46,6 +50,14 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         gSettings.persist()
     }
     
+    @IBAction func handleLocationOverride(sender: UISwitch) {
+        gSettings.locationOverride = sender.on
+        if (sender.on)
+        {
+            moveStepperChanged(stpLocationOverride)
+        }
+        gSettings.persist()
+    }
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         lblSession.resignFirstResponder()
         return true
@@ -74,9 +86,9 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         edgeSwipe.edges = UIRectEdge.Left
         self.view.addGestureRecognizer(edgeSwipe)
         
-        var swipe = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
-        swipe.direction = .Down
-        view.addGestureRecognizer(swipe)
+        //var swipe = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        //swipe.direction = .Down
+        //view.addGestureRecognizer(swipe)
         
         let center = NSNotificationCenter.defaultCenter()
         center.addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardDidShowNotification, object: nil)
@@ -93,6 +105,8 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         txtLongitude.text = "\(gSettings.longitude)"
         lblMsgs.text = String(gSettings.maxLogMsgs)
         stepLogMsgs.value = Double(gSettings.maxLogMsgs)
+        stpLocationOverride.value = gSettings.fakeLocationOffset
+        txtMoveLeftGPSAmount.text = NSString(format: "%.1f", gSettings.fakeLocationOffset)
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
