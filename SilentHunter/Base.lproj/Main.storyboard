@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="14A388a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
-        <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
-        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -127,7 +125,7 @@
                                 <rect key="frame" x="16" y="20" width="568" height="270"/>
                                 <color key="backgroundColor" red="0.91618112992885514" green="1" blue="0.99827219702765602" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="270" id="Gug-WO-u79"/>
+                                    <constraint firstAttribute="height" constant="270" id="uyA-xj-5Ze"/>
                                 </constraints>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -136,7 +134,7 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Session" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Osf-aC-vbW">
                                 <rect key="frame" x="11" y="472" width="66" height="21"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="66" id="7o2-1Y-Wam"/>
+                                    <constraint firstAttribute="width" constant="66" id="Gto-CV-JzU"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -144,9 +142,6 @@
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Sdg-19-1FM">
                                 <rect key="frame" x="85" y="469" width="94" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="94" id="Ez3-qr-pr5"/>
-                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -159,24 +154,53 @@
                                     <action selector="handleServerOverride:" destination="NxI-Jf-QjG" eventType="valueChanged" id="k7a-hX-TSw"/>
                                 </connections>
                             </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Max # Log Messages" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zgY-Pb-PNf">
+                                <rect key="frame" x="11" y="422" width="165" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="cZe-Kg-1j6">
+                                <rect key="frame" x="192" y="422" width="94" height="29"/>
+                                <connections>
+                                    <action selector="stepLogMsgs:" destination="NxI-Jf-QjG" eventType="valueChanged" id="a5s-OA-shG"/>
+                                </connections>
+                            </stepper>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="200" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NYx-Cd-78u">
+                                <rect key="frame" x="294" y="426" width="34" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="25" id="JzP-xt-9av"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Sdg-19-1FM" firstAttribute="top" secondItem="N3J-hN-g9m" secondAttribute="top" id="OJX-3c-Y9o"/>
-                            <constraint firstItem="N3J-hN-g9m" firstAttribute="leading" secondItem="Sdg-19-1FM" secondAttribute="trailing" constant="13" id="PGR-yy-fz2"/>
-                            <constraint firstItem="izw-3g-PAy" firstAttribute="top" secondItem="ZCD-sG-ie3" secondAttribute="bottom" id="Re4-Ka-2c8"/>
-                            <constraint firstItem="Sdg-19-1FM" firstAttribute="baseline" secondItem="Osf-aC-vbW" secondAttribute="firstBaseline" id="Vnl-RS-rzR"/>
-                            <constraint firstItem="Sdg-19-1FM" firstAttribute="leading" secondItem="Osf-aC-vbW" secondAttribute="trailing" constant="8" symbolic="YES" id="XrB-cU-b1D"/>
-                            <constraint firstItem="izw-3g-PAy" firstAttribute="trailing" secondItem="9nC-B2-GC9" secondAttribute="trailingMargin" id="ayh-MF-i0U"/>
-                            <constraint firstItem="Osf-aC-vbW" firstAttribute="leading" secondItem="9nC-B2-GC9" secondAttribute="leadingMargin" constant="-5" id="cjt-U0-KHt"/>
-                            <constraint firstItem="0XD-iS-Uet" firstAttribute="top" secondItem="N3J-hN-g9m" secondAttribute="bottom" constant="100" id="e03-EH-dLm"/>
-                            <constraint firstItem="izw-3g-PAy" firstAttribute="leading" secondItem="9nC-B2-GC9" secondAttribute="leadingMargin" id="n0m-dH-ag2"/>
-                            <constraint firstItem="0XD-iS-Uet" firstAttribute="top" secondItem="Osf-aC-vbW" secondAttribute="bottom" constant="107" id="w4A-2W-hKY"/>
+                            <constraint firstItem="N3J-hN-g9m" firstAttribute="top" secondItem="cZe-Kg-1j6" secondAttribute="bottom" constant="18" id="050-8q-LXG"/>
+                            <constraint firstItem="izw-3g-PAy" firstAttribute="trailing" secondItem="9nC-B2-GC9" secondAttribute="trailingMargin" id="8EE-wr-ra4"/>
+                            <constraint firstItem="N3J-hN-g9m" firstAttribute="top" secondItem="Sdg-19-1FM" secondAttribute="top" id="Avu-Eo-Fxp"/>
+                            <constraint firstItem="cZe-Kg-1j6" firstAttribute="top" secondItem="zgY-Pb-PNf" secondAttribute="top" id="F8c-DF-1jO"/>
+                            <constraint firstItem="N3J-hN-g9m" firstAttribute="leading" secondItem="cZe-Kg-1j6" secondAttribute="leading" id="Fqk-hy-12l"/>
+                            <constraint firstItem="N3J-hN-g9m" firstAttribute="leading" secondItem="Sdg-19-1FM" secondAttribute="trailing" constant="13" id="PZs-Qu-HBj"/>
+                            <constraint firstItem="NYx-Cd-78u" firstAttribute="leading" secondItem="cZe-Kg-1j6" secondAttribute="trailing" constant="8" symbolic="YES" id="Rww-f7-LAb"/>
+                            <constraint firstItem="Sdg-19-1FM" firstAttribute="leading" secondItem="Osf-aC-vbW" secondAttribute="trailing" constant="8" symbolic="YES" id="TIq-oB-2UI"/>
+                            <constraint firstItem="Osf-aC-vbW" firstAttribute="top" secondItem="zgY-Pb-PNf" secondAttribute="bottom" constant="29" id="Yzl-L6-TPi"/>
+                            <constraint firstItem="NYx-Cd-78u" firstAttribute="bottom" secondItem="cZe-Kg-1j6" secondAttribute="bottom" id="Z7r-On-DDA"/>
+                            <constraint firstItem="0XD-iS-Uet" firstAttribute="top" secondItem="N3J-hN-g9m" secondAttribute="bottom" constant="100" id="fYT-m2-Ivc"/>
+                            <constraint firstItem="izw-3g-PAy" firstAttribute="top" secondItem="ZCD-sG-ie3" secondAttribute="bottom" id="fgk-fr-sdS"/>
+                            <constraint firstItem="izw-3g-PAy" firstAttribute="leading" secondItem="9nC-B2-GC9" secondAttribute="leadingMargin" id="fh9-KW-RM9"/>
+                            <constraint firstItem="zgY-Pb-PNf" firstAttribute="leading" secondItem="9nC-B2-GC9" secondAttribute="leadingMargin" constant="-5" id="iUz-h9-iXo"/>
+                            <constraint firstItem="cZe-Kg-1j6" firstAttribute="leading" secondItem="zgY-Pb-PNf" secondAttribute="trailing" constant="16" id="rlB-BU-HsM"/>
+                            <constraint firstItem="Osf-aC-vbW" firstAttribute="leading" secondItem="zgY-Pb-PNf" secondAttribute="leading" id="uPI-nx-hG2"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="lblMsgs" destination="NYx-Cd-78u" id="Zc4-QC-nk6"/>
                         <outlet property="lblSession" destination="Sdg-19-1FM" id="paA-ij-6bO"/>
                         <outlet property="serverOverride" destination="N3J-hN-g9m" id="1zg-Nq-eTE"/>
+                        <outlet property="stepLogMsgs" destination="cZe-Kg-1j6" id="NtD-GG-mrK"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="V1b-WB-34B" userLabel="First Responder" sceneMemberID="firstResponder"/>
