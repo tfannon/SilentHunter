@@ -10,20 +10,37 @@ import Foundation
 
 let gSettings = Settings()
 
+enum SettingType {
+    case Location
+    case Session
+}
+
+protocol SettingsListener {
+    func settingDidChange(settingType : SettingType)
+}
+
 class Settings {
     private var userPrefs = Dictionary<String,String>()
 
-    var serverOverride : Bool = false
+    var sessionOverride : Bool = false {
+        didSet {
+            for y in listeners {
+                y.settingDidChange(.Session)
+            }
+        }
+    }
+    
     var sessionName : String = ""
     var locationOverride: Bool = false
     var longitude : Double = 0.0
     var latitude : Double = 0.0
     var maxLogMsgs: Int = 100
+    var listeners = [SettingsListener]()
     
     init() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
         if let result = userDefaults.objectForKey("Prefs") as? Dictionary<String,String> {
-            serverOverride = result["serverOverride"] == "true"
+            sessionOverride = result["sessionOverride"] == "true"
             sessionName = result["sessionName"]!
             
             locationOverride = result["locationOverride"] == "true"
@@ -41,11 +58,15 @@ class Settings {
         }
     }
     
+    func registerListener(listener : SettingsListener) {
+        listeners.append(listener)
+    }
+    
     func persist() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
-        userPrefs["serverOverride"] = serverOverride ? "true" : "false"
+        userPrefs["sessionOverride"] = sessionOverride ? "true" : "false"
         userPrefs["sessionName"] = sessionName
-        userPrefs["locationOverride"] = serverOverride ? "true" : "false"
+        userPrefs["locationOverride"] = sessionOverride ? "true" : "false"
         userPrefs["latitude"] = "\(latitude)"
         userPrefs["longitude"] = "\(longitude)"
 
