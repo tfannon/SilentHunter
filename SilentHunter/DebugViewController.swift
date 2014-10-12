@@ -15,9 +15,14 @@ class DebugViewController: UIViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
-    
+        var edgeSwipe = UIScreenEdgePanGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        edgeSwipe.edges = UIRectEdge.Left;
+        self.view.addGestureRecognizer(edgeSwipe)
+   
     }
     
-
+    func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
 }
 
