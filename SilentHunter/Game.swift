@@ -19,6 +19,7 @@ extension String {
 protocol IProcessMessages
 {
     func ProcessMessage(fromPeer: MCPeerID!, msgType: Int!, data:[String])
+    func HandleDisconnect(peer: MCPeerID)
 }
 
 protocol GameDelegate
@@ -29,6 +30,7 @@ protocol GameDelegate
     func notify(message : NSString!)
     func firedUpon(playerID : MCPeerID!)
     func hit(playerID: MCPeerID!)
+    func handlePlayerDisconnect(playerID: MCPeerID)
 }
 
 class Game : IProcessMessages {
@@ -128,6 +130,13 @@ class Game : IProcessMessages {
         return playerInfo!
     }
     
+    func HandleDisconnect(peer: MCPeerID)
+    {
+        /// remove from game data
+        players.removeValueForKey(peer)
+        // remove from UI collections
+        delegate.handlePlayerDisconnect(peer)
+    }
     
     func playerUpdate(playerID : MCPeerID!, location: CLLocation!)
     {

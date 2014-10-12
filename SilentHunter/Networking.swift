@@ -101,7 +101,9 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
             switch state {
             case MCSessionState.Connecting : message = "Connecting"
             case MCSessionState.Connected : message = "Connected"
-            case MCSessionState.NotConnected : message = "Not Connected"
+            case MCSessionState.NotConnected:
+                message = "Not Connected"
+                msgProcessor?.HandleDisconnect(peerID)
             default:""
             }
             Async.main {

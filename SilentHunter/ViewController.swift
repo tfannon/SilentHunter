@@ -15,8 +15,10 @@ protocol IChat {
     func logit(message:String)
 }
 
-class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
+class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate
 {
+    
+    var debugViewController : DebugViewController! = DebugViewController()
     
     var game: Game! = nil
     var locationManager : CLLocationManager!
@@ -74,8 +76,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
 
     }
-    
-    
+     
     //MARK:  location
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
@@ -212,6 +213,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func outOfRange(playerID : MCPeerID!)
     {
         clearPotentialTarget(playerID)
+    }
+    
+    func handlePlayerDisconnect(playerID: MCPeerID)
+    {
+        targetPeers.removeValueForKey(playerID)
+        // if the player disconnecting was my target, null it out
+        if (getTarget() == playerID)
+        {
+            self.targetPeer = nil
+        }
+        // regenerate the table view
+        RegenerateTargetListForBinding()
     }
     
     func fire()
