@@ -76,6 +76,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         edgeSwipe.edges = UIRectEdge.Right;
         self.view.addGestureRecognizer(edgeSwipe)
         
+        var dblTap = UITapGestureRecognizer(target: self, action: "respondToTap:")
+        dblTap.numberOfTapsRequired = 2;
+        self.txtMessages.addGestureRecognizer(dblTap)
+        
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
@@ -83,30 +87,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as UIViewController;
         self.presentViewController(vc, animated: true, completion: nil);
     }
+    func respondToTap(gesture: UITapGestureRecognizer) {
+        self.txtMessages.text = ""
+    }
     
     //MARK:  location
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        if (manager.location != nil)
+        
+        var location = locations[locations.endIndex - 1] as CLLocation
+        self.game.playerUpdate(network.peerID, location: location)
+        
+        var coordinate = location.coordinate
+        var accuracy = location.horizontalAccuracy
+        var lat = coordinate.latitude
+        var long = coordinate.longitude
+        var distanceInMeters = 0.0;
+        if (lastLocation != nil)
         {
-            var location = locations[locations.endIndex - 1] as CLLocation
-            //if (lastLocation == nil || location != lastLocation)
-            //{
-                var coordinate = location.coordinate
-                var accuracy = location.horizontalAccuracy
-                var lat = coordinate.latitude
-                var long = coordinate.longitude
-                var distanceInMeters = 0.0;
-                if (lastLocation != nil)
-                {
-                    distanceInMeters = location.distanceFromLocation(lastLocation!)
-                }
-                var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)\nAccuracy: \(accuracy)"
-                txtLocation.text = message
-                self.game.playerUpdate(network.peerID, location: location)
-                lastLocation = location
-            //}
+            distanceInMeters = location.distanceFromLocation(lastLocation!)
         }
+        var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)\nAccuracy: \(accuracy)"
+        txtLocation.text = message
+        lastLocation = location
+        
     }
     
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
