@@ -279,6 +279,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         self.btnFire.enabled = true
         self.btnFire.backgroundColor = UIColor.redColor()
         println("torpedos loaded")
+        findPotentialTarget();
     }
 
     func hit(playerID: MCPeerID!)
