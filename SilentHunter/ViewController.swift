@@ -92,7 +92,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
         if (gSettings.locationOverride)
         {
-            x(gSettings.getFakeLocation())
+            setOverriddenLocation(gSettings.getFakeLocation())
         }
     }
     
@@ -112,11 +112,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
         var location = locations[locations.endIndex - 1] as CLLocation
         if (!gSettings.locationOverride) {
-            x(location)
+            setOverriddenLocation(location)
         }
     }
     
-    func x(location: CLLocation)
+    func setOverriddenLocation(location: CLLocation)
     {
         self.game.playerLocationUpdate(network.peerID, location: location)
         

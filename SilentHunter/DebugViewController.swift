@@ -30,7 +30,7 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         txtMoveLeftGPSAmount.text = NSString(format: "%.1f", moveLeftInMeters)
         gSettings.fakeLocationOffset = sender.value
         gSettings.persist()
-        mainViewController!.x(gSettings.getFakeLocation())
+        mainViewController!.setOverriddenLocation(gSettings.getFakeLocation())
     }
     
     @IBOutlet weak var stepLogMsgs: UIStepper!
