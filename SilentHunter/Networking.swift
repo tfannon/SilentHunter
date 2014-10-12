@@ -106,10 +106,12 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
             case MCSessionState.Connected : message = "Connected"
             case MCSessionState.NotConnected:
                 message = "Not Connected"
+                var who = peerID.displayName
                 msgProcessor?.HandleDisconnect(peerID)
             default:""
             }
-            Async.main {
+            //Async.main {
+            dispatch_async(dispatch_get_main_queue()) {
                 println("\(peerID.displayName) changed state to \(message)")
                 self.chat?.logit("\(peerID.displayName) changed state to \(message)")
             }

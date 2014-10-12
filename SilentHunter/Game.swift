@@ -137,20 +137,18 @@ class Game : IProcessMessages {
     
     func playerUpdate(playerID : MCPeerID!, location: CLLocation!) {
 
-        var now : NSDate = NSDate()
         var prevPlayerInfo = players[playerID]
         var info = PlayerInfo(playerID: playerID, location: location)
         players[playerID] = info
         
-        var prevLat = prevPlayerInfo?.location.coordinate.latitude
-        var prevLng = prevPlayerInfo?.location.coordinate.longitude
-        var currLat = location.coordinate.latitude
-        var currLng = location.coordinate.longitude
-        var positionSame = prevPlayerInfo != nil && (prevLat == currLat && prevLng == currLng)
-        
-        // Display other connected players GPS coordinates when they change
-        if (playerID != meId && !positionSame) {
-            //println("\(playerID.displayName): \(location.coordinate.latitude),\(location.coordinate.longitude)")
+        var positionSame = false
+        if (prevPlayerInfo != nil)
+        {
+            var prevLat = prevPlayerInfo?.location.coordinate.latitude
+            var prevLng = prevPlayerInfo?.location.coordinate.longitude
+            var currLat = location.coordinate.latitude
+            var currLng = location.coordinate.longitude
+            positionSame = prevLat == currLat && prevLng == currLng
         }
         
         var meInfo = players[meId]
@@ -162,11 +160,21 @@ class Game : IProcessMessages {
                     //println("Distance: \(playerID.displayName): \(distanceInMeters)")
                     if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
                     {
-                        delegate.inRange(id)
+                        var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
+                        delegate.logit("Dist \(id.displayName) :: \(distanceInMeters)")
+                        if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
+                        {
+                            delegate.inRange(id)
+                        }
+                        else
+                        {
+                            delegate.outOfRange(id)
+                        }
                     }
-                    else
-                    {
-                        delegate.outOfRange(id)
+                    else {
+                        
+                        sendMyLocationMessage(meInfo!.location)
+                        
                     }
                 }
                 else if (!positionSame) {

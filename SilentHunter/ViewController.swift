@@ -83,30 +83,30 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as UIViewController;
         self.presentViewController(vc, animated: true, completion: nil);
     }
+    func respondToTap(gesture: UITapGestureRecognizer) {
+        self.txtMessages.text = ""
+    }
     
     //MARK:  location
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-        if (manager.location != nil)
+        
+        var location = locations[locations.endIndex - 1] as CLLocation
+        self.game.playerUpdate(network.peerID, location: location)
+        
+        var coordinate = location.coordinate
+        var accuracy = location.horizontalAccuracy
+        var lat = coordinate.latitude
+        var long = coordinate.longitude
+        var distanceInMeters = 0.0;
+        if (lastLocation != nil)
         {
-            var location = locations[locations.endIndex - 1] as CLLocation
-            //if (lastLocation == nil || location != lastLocation)
-            //{
-                var coordinate = location.coordinate
-                var accuracy = location.horizontalAccuracy
-                var lat = coordinate.latitude
-                var long = coordinate.longitude
-                var distanceInMeters = 0.0;
-                if (lastLocation != nil)
-                {
-                    distanceInMeters = location.distanceFromLocation(lastLocation!)
-                }
-                var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)\nAccuracy: \(accuracy)"
-                txtLocation.text = message
-                self.game.playerUpdate(network.peerID, location: location)
-                lastLocation = location
-            //}
+            distanceInMeters = location.distanceFromLocation(lastLocation!)
         }
+        var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)\nAccuracy: \(accuracy)"
+        txtLocation.text = message
+        lastLocation = location
+        
     }
     
     func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
@@ -128,7 +128,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     */
     func logit(message: String) {
         println(message)
-        self.txtMessages.text = self.txtMessages.text + message + "\n"
+        self.txtMessages.text = message + "\n" + self.txtMessages.text
     }
     
     func updateChat(text : String, fromPeer peerID: MCPeerID) {
@@ -147,13 +147,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
         // Add the name to the message and display it
         let message = "\(name): \(text)\n"
-        self.txtMessages.text = self.txtMessages.text + message
+        self.txtMessages.text =  message + self.txtMessages.text
         self.txtChatMsg.text = ""
     }
    
 
     @IBAction func btnSend(sender: UIButton) {
-        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
+        network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)        
     }
 
     @IBAction func btnFire_Clicked(sender: AnyObject) {
@@ -175,7 +175,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
             self.targetPeer = target
             self.btnFire.hidden = false
         }
-        RegenerateTargetListForBinding()
+        if (contains(targetsForDataBinding, target) == false) {
+            RegenerateTargetListForBinding()
+        }
     }
  
     func clearPotentialTarget(target: MCPeerID!)
@@ -233,7 +235,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
             self.targetPeer = nil
         }
         // regenerate the table view
-        RegenerateTargetListForBinding()
+        if (contains(targetsForDataBinding, playerID)) {
+            RegenerateTargetListForBinding()
+        }
     }
     
     func fire()
@@ -289,7 +293,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         var player:MCPeerID = self.targetsForDataBinding[indexPath.row]
 //        cell.lblPlayerName.text = player.displayName
 //        cell.btnFire.addTarget(self, action: "fireTorpedo:", forControlEvents: UIControlEvents.TouchUpInside)
-        cell.textLabel?.text = player.displayName
+        var playerName = player.displayName
+        cell.textLabel?.text = playerName
         return cell
     }
     
