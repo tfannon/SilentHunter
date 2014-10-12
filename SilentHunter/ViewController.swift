@@ -314,7 +314,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
         var playerInfo:PlayerRangeInfo = self.targetsForDataBinding[indexPath.row]
-        var d = String(format: "%2f", playerInfo.distance)
+        var d = String(format: "%5.1f", playerInfo.distance)
         var playerName = "\(playerInfo.player.displayName) (\(d)"
         cell.textLabel?.text = playerName
         return cell
