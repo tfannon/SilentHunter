@@ -15,7 +15,7 @@ protocol IChat {
     func logit(message:String)
 }
 
-class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
+class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate
 {
     
     var debugViewController : DebugViewController! = DebugViewController()
@@ -76,8 +76,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
 
     }
-    
-    
+     
     //MARK:  location
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
