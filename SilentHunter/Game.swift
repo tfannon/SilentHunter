@@ -10,11 +10,6 @@ import Foundation
 import MultipeerConnectivity
 import CoreLocation
 
-extension String {
-    func toDouble() -> Double? {
-        return NSNumberFormatter().numberFromString(self)!.doubleValue
-    }
-}
 
 protocol IProcessMessages
 {

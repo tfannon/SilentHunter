@@ -159,6 +159,37 @@
                                     <action selector="handleServerOverride:" destination="NxI-Jf-QjG" eventType="valueChanged" id="k7a-hX-TSw"/>
                                 </connections>
                             </switch>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="N5j-9w-c5h">
+                                <rect key="frame" x="85" y="507" width="46" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="handleLatitudeChange:" destination="NxI-Jf-QjG" eventType="editingDidEnd" id="ko3-6a-Qsj"/>
+                                </connections>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0rm-sv-wo7">
+                                <rect key="frame" x="85" y="545" width="46" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="handleLongitudeChange:" destination="NxI-Jf-QjG" eventType="editingDidEnd" id="RQI-Ei-pbg"/>
+                                </connections>
+                            </textField>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="C5m-dm-Era">
+                                <rect key="frame" x="192" y="508" width="51" height="31"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Lat" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DOp-Eu-OLy">
+                                <rect key="frame" x="11" y="511" width="60" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Long" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eCy-e6-qlI">
+                                <rect key="frame" x="11" y="549" width="39" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -176,7 +207,10 @@
                     </view>
                     <connections>
                         <outlet property="lblSession" destination="Sdg-19-1FM" id="paA-ij-6bO"/>
+                        <outlet property="locationOverride" destination="C5m-dm-Era" id="zeK-81-6dk"/>
                         <outlet property="serverOverride" destination="N3J-hN-g9m" id="1zg-Nq-eTE"/>
+                        <outlet property="txtLatitude" destination="N5j-9w-c5h" id="7PA-N1-dEA"/>
+                        <outlet property="txtLongitude" destination="0rm-sv-wo7" id="JfN-f1-0gw"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="V1b-WB-34B" userLabel="First Responder" sceneMemberID="firstResponder"/>

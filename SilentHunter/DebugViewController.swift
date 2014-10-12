@@ -14,6 +14,10 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     @IBOutlet var lblSession: UITextField!
     @IBOutlet var serverOverride: UISwitch!
     
+    @IBOutlet var locationOverride: UISwitch!
+    @IBOutlet var txtLatitude: UITextField!
+    @IBOutlet var txtLongitude: UITextField!
+    
     @IBAction func handleServerOverride(sender: UISwitch) {
         gSettings.serverOverride = sender.on
         gSettings.persist()
@@ -29,6 +33,16 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         return true
     }
     
+    @IBAction func handleLatitudeChange(sender: UITextField) {
+        gSettings.latitude = txtLatitude.text.toDouble()!
+        gSettings.persist()
+    }
+    
+    @IBAction func handleLongitudeChange(sender: UITextField) {
+        gSettings.longitude = txtLongitude.text.toDouble()!
+        gSettings.persist()
+    }
+    
     //MARK:  controller
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,9 +56,14 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         view.addGestureRecognizer(swipe)
         
         lblSession.delegate = self
-        
-        lblSession.text = gSettings.sessionName
+        txtLatitude.delegate = self
+        txtLongitude.delegate = self
+
         serverOverride.on = gSettings.serverOverride
+        lblSession.text = gSettings.sessionName
+        locationOverride.on = gSettings.locationOverride
+        txtLatitude.text = "\(gSettings.latitude)"
+        txtLongitude.text = "\(gSettings.longitude)"
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
