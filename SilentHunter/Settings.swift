@@ -17,12 +17,17 @@ class Settings {
     var sessionName : String = ""
     var longitude : Double = 0.0
     var latitude : Double = 0.0
+    var maxLogMsgs: Int = 20
     
     init() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
         if let result = userDefaults.objectForKey("Prefs") as? Dictionary<String,String> {
             serverOverride = result["serverOverride"] == "true"
             sessionName = result["sessionName"]!
+            var strMaxLogMsgs  = result["maxLogMsgs"]
+            if (strMaxLogMsgs != nil) {
+                maxLogMsgs = strMaxLogMsgs!.toInt()!
+            }
         }
 
     }
@@ -31,6 +36,8 @@ class Settings {
         let userDefaults = NSUserDefaults.standardUserDefaults();
         userPrefs["sessionName"] = sessionName
         userPrefs["serverOverride"] = serverOverride ? "true" : "false"
+        var strMaxLogMsgs = String(maxLogMsgs)
+        userPrefs["maxLogMsgs"] = strMaxLogMsgs
         userDefaults.setObject(userPrefs as Dictionary<NSObject,AnyObject>, forKey: "Prefs")
     }
 }

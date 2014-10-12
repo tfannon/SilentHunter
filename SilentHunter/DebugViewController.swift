@@ -13,7 +13,14 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     
     @IBOutlet var lblSession: UITextField!
     @IBOutlet var serverOverride: UISwitch!
+    @IBOutlet weak var lblMsgs: UILabel!
     
+    @IBOutlet weak var stepLogMsgs: UIStepper!
+    @IBAction func stepLogMsgs(sender: UIStepper) {
+        gSettings.maxLogMsgs = Int(sender.value)
+        lblMsgs.text = String(gSettings.maxLogMsgs)
+        gSettings.persist()
+    }
     @IBAction func handleServerOverride(sender: UISwitch) {
         gSettings.serverOverride = sender.on
         gSettings.persist()
@@ -45,6 +52,8 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         
         lblSession.text = gSettings.sessionName
         serverOverride.on = gSettings.serverOverride
+        lblMsgs.text = String(gSettings.maxLogMsgs)
+        stepLogMsgs.value = Double(gSettings.maxLogMsgs)
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
