@@ -74,9 +74,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         self.btnFire.hidden = true;
         self.btnFire.setTitle("Loading torpedoes", forState: UIControlState.Disabled)
         
-
+        var edgeSwipe = UIScreenEdgePanGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        edgeSwipe.edges = UIRectEdge.Right;
+        self.view.addGestureRecognizer(edgeSwipe)
+        
     }
-     
+    
+    func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
+    }
+    
     //MARK:  location
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
