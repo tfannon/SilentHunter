@@ -37,7 +37,7 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     }
     
     @IBAction func handleServerOverride(sender: UISwitch) {
-        gSettings.serverOverride = sender.on
+        gSettings.sessionOverride = sender.on
         gSettings.persist()
     }
     
@@ -73,22 +73,33 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         swipe.direction = .Down
         view.addGestureRecognizer(swipe)
         
+        let center = NSNotificationCenter.defaultCenter()
+        center.addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardDidShowNotification, object: nil)
+        center.addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardDidHideNotification, object: nil)
+        
         lblSession.delegate = self
         txtLatitude.delegate = self
         txtLongitude.delegate = self
 
-        serverOverride.on = gSettings.serverOverride
+        serverOverride.on = gSettings.sessionOverride
         lblSession.text = gSettings.sessionName
         locationOverride.on = gSettings.locationOverride
         txtLatitude.text = "\(gSettings.latitude)"
         txtLongitude.text = "\(gSettings.longitude)"
-        serverOverride.on = gSettings.serverOverride
+        serverOverride.on = gSettings.sessionOverride
         lblMsgs.text = String(gSettings.maxLogMsgs)
         stepLogMsgs.value = Double(gSettings.maxLogMsgs)
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
         self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func keyboardWillShow(sender: NSNotification) {
+        self.view.frame.origin.y -= 200
+    }
+    func keyboardWillHide(sender: NSNotification) {
+        self.view.frame.origin.y += 200
     }
 }
 

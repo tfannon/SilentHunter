@@ -15,7 +15,7 @@ protocol IChat {
     func logit(message:String)
 }
 
-class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate
+class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate, SettingsListener
 {
     
     var game: Game! = nil
@@ -73,6 +73,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         locationManager.distanceFilter = 0.0;
         locationManager.requestAlwaysAuthorization()
         locationManager.startUpdatingLocation()
+        
+        gSettings.registerListener(self)
         
         var edgeSwipe = UIScreenEdgePanGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         edgeSwipe.edges = UIRectEdge.Right;
@@ -352,6 +354,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     func fireTorpedo(sender:UIButton!)
     {
        println("button clicked")
+    }
+    
+    //Mark: Settings Listener
+    func settingDidChange(settingType: SettingType) {
+        if settingType == SettingType.Session {
+            network.restartServices()
+        }
     }
 }
 
