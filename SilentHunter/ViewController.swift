@@ -52,7 +52,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         super.viewDidLoad()
         
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        
         self.txtChatMsg.delegate = self;
         
         // Do any additional setup after loading the view, typically from a nib.
@@ -68,7 +67,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         game = Game(network: network)
         network.msgProcessor = game;
         network.chat = self;
-        
         
         self.game.delegate = self;
         self.btnFire.hidden = true;
