@@ -33,7 +33,7 @@ protocol GameDelegate
     func handlePlayerDisconnect(playerID: MCPeerID)
 }
 
-class Game : IProcessMessages {
+class Game : NSObject, IProcessMessages {
     
     struct Messages {
         static let MsgTypePlayerLocation = 1
@@ -51,11 +51,16 @@ class Game : IProcessMessages {
     var hackOtherPlayerCount : Int = 0
     var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
     var timeLastPlayerUpdateSent : NSDate?
+    var checkingForTargets = false
+    var timerCheckForTargets : NSTimer!
     
     init(network : Networking)
     {
+        super.init()
         self.network = network
         self.meId = network.peerID
+        timerCheckForTargets = NSTimer.scheduledTimerWithTimeInterval(
+            1.0, target: self, selector:"checkForTargetsTimer", userInfo: nil, repeats: true)
     }
 
     
@@ -73,7 +78,7 @@ class Game : IProcessMessages {
             self.delegate.logit("RECV: PlayerLoc: \(fromPeer.displayName) :: \(lat!),\(lng!)")
             
             var loc = CLLocation(latitude: lat!, longitude: lng!)
-            self.playerUpdate(fromPeer, location: loc)
+            self.playerLocationUpdate(fromPeer, location: loc)
             
             break;
         case Messages.MsgFiredTorpedo:
@@ -135,30 +140,21 @@ class Game : IProcessMessages {
         delegate.handlePlayerDisconnect(peer)
     }
     
-    func playerUpdate(playerID : MCPeerID!, location: CLLocation!) {
-
-        var prevPlayerInfo = players[playerID]
-        var info = PlayerInfo(playerID: playerID, location: location)
-        players[playerID] = info
-        
-        var positionSame = false
-        if (prevPlayerInfo != nil)
+    func checkForTargetsTimer()
+    {
+        checkForTargets()
+    }
+    
+    func checkForTargets()
+    {
+        if (!checkingForTargets)
         {
-            var prevLat = prevPlayerInfo!.location.coordinate.latitude
-            var prevLng = prevPlayerInfo!.location.coordinate.longitude
-            var currLat = location.coordinate.latitude
-            var currLng = location.coordinate.longitude
-            positionSame = (prevLat == currLat && prevLng == currLng)
-        }
-        
-        var meInfo = players[meId]
-        var displayName = playerID.displayName
-        for (id, info) in players {
-            if (id != meId) {
-                var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
-                delegate.logit("Dist \(id.displayName) :: \(distanceInMeters)")
-                if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
-                {
+            checkingForTargets = true
+            var meInfo = players[meId]
+            var displayName = meId.displayName
+            for (id, info) in players {
+                if (id != meId) {
+                    var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
                     if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
                     {
                         delegate.inRange(id, distance: distanceInMeters)
@@ -169,10 +165,32 @@ class Game : IProcessMessages {
                     }
                 }
             }
-            else if (!positionSame) {
-                self.sendMyLocationMessage(meInfo!.location)
-            }
+            checkingForTargets = false
         }
+    }
+    
+    func playerLocationUpdate(playerID : MCPeerID!, location: CLLocation!) {
+
+        var prevPlayerInfo = players[playerID]
+        var info = PlayerInfo(playerID: playerID, location: location)
+        players[playerID] = info
+
+        var meInfo = players[meId]
+       
+        var positionSame = false
+        if (prevPlayerInfo != nil)
+        {
+            var prevLat = prevPlayerInfo!.location.coordinate.latitude
+            var prevLng = prevPlayerInfo!.location.coordinate.longitude
+            var currLat = location.coordinate.latitude
+            var currLng = location.coordinate.longitude
+            positionSame = (prevLat == currLat && prevLng == currLng)
+        }
+        if (self.meId == playerID && !positionSame) {
+            self.sendMyLocationMessage(meInfo!.location)
+        }
+
+        checkForTargets()
     }
     
     
