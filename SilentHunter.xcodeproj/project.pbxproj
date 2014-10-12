@@ -10,6 +10,7 @@
 		5158EEF319E9E7DC00B5FDC2 /* fire.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5158EEF219E9E7DC00B5FDC2 /* fire.mp3 */; };
 		51EBE2D419E9932D0016CB77 /* hit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 51EBE2D319E9932D0016CB77 /* hit.mp3 */; };
 		657E69F819E9ED4A00F4AC4D /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657E69F719E9ED4A00F4AC4D /* Async.swift */; };
+		657E69FA19EA147200F4AC4D /* sonar120.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 657E69F919EA147200F4AC4D /* sonar120.jpg */; };
 		65B16B1A19E97078008D728D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B16B1919E97078008D728D /* AppDelegate.swift */; };
 		65B16B1C19E97078008D728D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B16B1B19E97078008D728D /* ViewController.swift */; };
 		65B16B1F19E97078008D728D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 65B16B1D19E97078008D728D /* Main.storyboard */; };
@@ -40,6 +41,7 @@
 		5158EEF219E9E7DC00B5FDC2 /* fire.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = fire.mp3; sourceTree = "<group>"; };
 		51EBE2D319E9932D0016CB77 /* hit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = hit.mp3; sourceTree = "<group>"; };
 		657E69F719E9ED4A00F4AC4D /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Async.swift; path = ../Async.swift; sourceTree = "<group>"; };
+		657E69F919EA147200F4AC4D /* sonar120.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = sonar120.jpg; sourceTree = "<group>"; };
 		65B16B1419E97078008D728D /* SilentHunter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SilentHunter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65B16B1819E97078008D728D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		65B16B1919E97078008D728D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 		65B16B1619E97078008D728D /* SilentHunter */ = {
 			isa = PBXGroup;
 			children = (
+				657E69F919EA147200F4AC4D /* sonar120.jpg */,
 				657E69F719E9ED4A00F4AC4D /* Async.swift */,
 				5158EEF219E9E7DC00B5FDC2 /* fire.mp3 */,
 				65FCE3AF19E98DAC006D79B7 /* Networking.swift */,
@@ -232,6 +235,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				657E69FA19EA147200F4AC4D /* sonar120.jpg in Resources */,
 				709E5DF219E97391005E9348 /* ping.mp3 in Resources */,
 				65B16B1F19E97078008D728D /* Main.storyboard in Resources */,
 				5158EEF319E9E7DC00B5FDC2 /* fire.mp3 in Resources */,

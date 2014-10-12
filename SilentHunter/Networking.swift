@@ -23,9 +23,9 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     var serviceBrowser : MCNearbyServiceBrowser!
 
     var delegate : SessionManagerDelegate?
-    var msgProcessor: IProcessMessages?
-    var chat: IChat?
-    let serviceType = "SilentHunterXX"
+    var msgProcessor: IProcessMessages!
+    var chat: IChat!
+    let serviceType = "SilentHunter"
     
     init(name : String) {
         super.init()
@@ -99,6 +99,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
         didChangeState state: MCSessionState)  {
             var message : String = ""
             switch state {
+            case MCSessionState.Connecting : message = "Connecting"
             case MCSessionState.Connected : message = "Connected"
             case MCSessionState.NotConnected : message = "Not Connected"
             default:""
@@ -107,6 +108,10 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
                 println("\(peerID.displayName) changed state to \(message)")
                 self.chat?.logit("\(peerID.displayName) changed state to \(message)")
             }
+    }
+    
+    func session(session: MCSession!, didReceiveCertificate certificate: [AnyObject]!, fromPeer peerID: MCPeerID!, certificateHandler: ((Bool) -> Void)!) {
+        certificateHandler(true)
     }
     
     
@@ -120,7 +125,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
         var remotePeerName = peerID.displayName
         var myName = self.peerID.displayName
         var message = ("Found \(remotePeerName)")
-        self.chat?.logit(message)
+        self.chat.logit(message)
         shouldInvite = remotePeerName != myName
         if shouldInvite {
             browser.invitePeer(peerID, toSession: self.session, withContext: nil, timeout: 30.0)
@@ -132,17 +137,17 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     }
     
     func browser(browser: MCNearbyServiceBrowser!, lostPeer peerID: MCPeerID!) {
-        self.chat?.logit("browser.lostPeer")
+        self.chat.logit("browser.lostPeer: \(peerID.displayName)")
     }
     
     //MARK: MCNearbyServiceAdvertiserDelegate
     func advertiser(advertiser: MCNearbyServiceAdvertiser!, didNotStartAdvertisingPeer error: NSError!) {
-         self.chat?.logit("browser.didNotStartAdvertising")
+         self.chat.logit("browser.didNotStartAdvertising")
     }
     
     func advertiser(advertiser: MCNearbyServiceAdvertiser!, didReceiveInvitationFromPeer peerID: MCPeerID!, withContext context: NSData!, invitationHandler: ((Bool, MCSession!) -> Void)!) {
         var message = "Received invitation from: \(peerID.displayName)"
-        self.chat?.logit(message)
+        self.chat.logit(message)
         invitationHandler(true, self.session)
         message = "Accepted invitation from: \(peerID.displayName)"
         self.chat?.logit(message)
