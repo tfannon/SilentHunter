@@ -136,8 +136,8 @@ class Game : IProcessMessages {
     }
     
     func playerUpdate(playerID : MCPeerID!, location: CLLocation!) {
+
         var prevPlayerInfo = players[playerID]
-        
         var info = PlayerInfo(playerID: playerID, location: location)
         players[playerID] = info
         
@@ -145,7 +145,7 @@ class Game : IProcessMessages {
         var prevLng = prevPlayerInfo?.location.coordinate.longitude
         var currLat = location.coordinate.latitude
         var currLng = location.coordinate.longitude
-        var positionSame = (prevLat == currLat && prevLng == currLng)
+        var positionSame = prevPlayerInfo != nil && (prevLat == currLat && prevLng == currLng)
         
         // Display other connected players GPS coordinates when they change
         if (playerID != meId && !positionSame) {
@@ -171,7 +171,8 @@ class Game : IProcessMessages {
                         delegate.outOfRange(id)
                     }
                 }
-                else{
+                else if (!positionSame) {
+                    
                     sendMyLocationMessage(meInfo!.location)
                     
                 }
