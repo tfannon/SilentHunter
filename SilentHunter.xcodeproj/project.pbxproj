@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5158EEF319E9E7DC00B5FDC2 /* fire.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 5158EEF219E9E7DC00B5FDC2 /* fire.mp3 */; };
+		5158EEF519EA0F7300B5FDC2 /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5158EEF419EA0F7300B5FDC2 /* DebugViewController.swift */; };
 		51EBE2D419E9932D0016CB77 /* hit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 51EBE2D319E9932D0016CB77 /* hit.mp3 */; };
 		657E69F819E9ED4A00F4AC4D /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657E69F719E9ED4A00F4AC4D /* Async.swift */; };
 		65B16B1A19E97078008D728D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65B16B1919E97078008D728D /* AppDelegate.swift */; };
@@ -38,6 +39,7 @@
 
 /* Begin PBXFileReference section */
 		5158EEF219E9E7DC00B5FDC2 /* fire.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = fire.mp3; sourceTree = "<group>"; };
+		5158EEF419EA0F7300B5FDC2 /* DebugViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugViewController.swift; sourceTree = "<group>"; };
 		51EBE2D319E9932D0016CB77 /* hit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = hit.mp3; sourceTree = "<group>"; };
 		657E69F719E9ED4A00F4AC4D /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
 		65B16B1419E97078008D728D /* SilentHunter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SilentHunter.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +120,7 @@
 				65B16B2219E97078008D728D /* LaunchScreen.xib */,
 				65B16B1719E97078008D728D /* Supporting Files */,
 				708873E919E9D49000974A47 /* PlayerCell.swift */,
+				5158EEF419EA0F7300B5FDC2 /* DebugViewController.swift */,
 			);
 			path = SilentHunter;
 			sourceTree = "<group>";
@@ -255,6 +258,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5158EEF519EA0F7300B5FDC2 /* DebugViewController.swift in Sources */,
 				65B16B1C19E97078008D728D /* ViewController.swift in Sources */,
 				709E5DEE19E9737E005E9348 /* Game.swift in Sources */,
 				708873EA19E9D49000974A47 /* PlayerCell.swift in Sources */,

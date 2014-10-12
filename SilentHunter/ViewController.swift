@@ -18,6 +18,8 @@ protocol IChat {
 class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat
 {
     
+    var debugViewController : DebugViewController! = DebugViewController()
+    
     var game: Game! = nil
     var locationManager : CLLocationManager!
     var network : Networking!
