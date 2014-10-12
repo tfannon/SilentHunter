@@ -40,6 +40,11 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         return true
     }
     
+    @IBAction func handleLocationOverride(sender: UISwitch) {
+        gSettings.locationOverride = sender.on
+        gSettings.persist()
+    }
+    
     @IBAction func handleLatitudeChange(sender: UITextField) {
         gSettings.latitude = txtLatitude.text.toDouble()!
         gSettings.persist()
@@ -75,7 +80,6 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         locationOverride.on = gSettings.locationOverride
         txtLatitude.text = "\(gSettings.latitude)"
         txtLongitude.text = "\(gSettings.longitude)"
-        serverOverride.on = gSettings.sessionOverride
         lblMsgs.text = String(gSettings.maxLogMsgs)
         stepLogMsgs.value = Double(gSettings.maxLogMsgs)
     }

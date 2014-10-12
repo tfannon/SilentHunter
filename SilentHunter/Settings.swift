@@ -66,7 +66,7 @@ class Settings {
         let userDefaults = NSUserDefaults.standardUserDefaults();
         userPrefs["sessionOverride"] = sessionOverride ? "true" : "false"
         userPrefs["sessionName"] = sessionName
-        userPrefs["locationOverride"] = sessionOverride ? "true" : "false"
+        userPrefs["locationOverride"] = locationOverride ? "true" : "false"
         userPrefs["latitude"] = "\(latitude)"
         userPrefs["longitude"] = "\(longitude)"
 
