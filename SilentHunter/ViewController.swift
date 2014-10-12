@@ -81,7 +81,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
-        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil);
+        let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as UIViewController;
+        self.presentViewController(vc, animated: true, completion: nil);
     }
     
     //MARK:  location
