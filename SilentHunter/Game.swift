@@ -70,7 +70,7 @@ class Game : NSObject, IProcessMessages {
         case Messages.MsgTypePlayerLocation:
             var lat = data[0].toDouble()
             var lng = data[1].toDouble()
-            self.delegate.logit("RECV: PlayerLoc: \(fromPeer.displayName) :: \(lat!),\(lng!)")
+            //self.delegate.logit("RECV: PlayerLoc: \(fromPeer.displayName) :: \(lat!),\(lng!)")
             
             var loc = CLLocation(latitude: lat!, longitude: lng!)
             self.playerLocationUpdate(fromPeer, location: loc)
