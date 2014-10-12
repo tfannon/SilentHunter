@@ -15,6 +15,10 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     @IBOutlet var serverOverride: UISwitch!
     @IBOutlet weak var lblMsgs: UILabel!
     
+    @IBOutlet var locationOverride: UISwitch!
+    @IBOutlet var txtLatitude: UITextField!
+    @IBOutlet var txtLongitude: UITextField!
+    
     @IBOutlet weak var stepLogMsgs: UIStepper!
     @IBAction func stepLogMsgs(sender: UIStepper) {
         gSettings.maxLogMsgs = Int(sender.value)
@@ -36,6 +40,16 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         return true
     }
     
+    @IBAction func handleLatitudeChange(sender: UITextField) {
+        gSettings.latitude = txtLatitude.text.toDouble()!
+        gSettings.persist()
+    }
+    
+    @IBAction func handleLongitudeChange(sender: UITextField) {
+        gSettings.longitude = txtLongitude.text.toDouble()!
+        gSettings.persist()
+    }
+    
     //MARK:  controller
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,8 +63,14 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         view.addGestureRecognizer(swipe)
         
         lblSession.delegate = self
-        
+        txtLatitude.delegate = self
+        txtLongitude.delegate = self
+
+        serverOverride.on = gSettings.serverOverride
         lblSession.text = gSettings.sessionName
+        locationOverride.on = gSettings.locationOverride
+        txtLatitude.text = "\(gSettings.latitude)"
+        txtLongitude.text = "\(gSettings.longitude)"
         serverOverride.on = gSettings.serverOverride
         lblMsgs.text = String(gSettings.maxLogMsgs)
         stepLogMsgs.value = Double(gSettings.maxLogMsgs)
