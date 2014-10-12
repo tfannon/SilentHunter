@@ -15,7 +15,9 @@ protocol IChat {
     func logit(message:String)
 }
 
-class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate, SettingsListener
+class ViewController: UIViewController, CLLocationManagerDelegate,
+    UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate, SettingsListener,
+    TimerDelegate
 {
     
     var game: Game! = nil
@@ -30,20 +32,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     var audioFire : AudioPlayer = AudioPlayer(filename: "fire")
     
     var targetPeers = [MCPeerID : PlayerRangeInfo]()
-//    var targetPeers = [MCPeerID : Bool]()
     var targetPeer : MCPeerID?
     var targetsForDataBinding = [PlayerRangeInfo]()
-    var ableToFire : Bool = true
-    var repairing : Bool = false
-    var timerLoadingTorpedos : NSTimer?
-    var timerReparing : NSTimer?
+    
+    let LOADING_TORPEDOS : NSString! = "LOADING_TORPEDOS"
+    let REPAIRING : NSString! = "REPAIRING"
+    let SONAR : NSString! = "SONAR"
+    
+    var timerLoadingTorpedos : Timer!
+    var timerReparing : Timer!
+    var timerSonar : Timer!
     var numLogMsgs:Int = 0
-    
-    var secondsOfTorpedoLoading = 0;
-    var secondsOfRepairing = 0;
-    
-    let SECONDS_FOR_REPAIR = 10
-    let SECONDS_FOR_LOAD_TORPEDOS = 5
     
     var prefs = Dictionary<String, String>()
     
@@ -58,6 +57,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     //MARK:  controller
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        timerLoadingTorpedos = Timer(identifier: LOADING_TORPEDOS, delegate: self, increment: 1, totalSeconds: 5, repeats: false)
+        timerReparing = Timer(identifier: REPAIRING, delegate: self, increment: 1, totalSeconds: 10, repeats: false)
+        timerSonar = Timer(identifier: SONAR, delegate: self, increment: 1, totalSeconds: 1, repeats: true)
         
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         self.txtChatMsg.delegate = self;
@@ -92,7 +95,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
         if (gSettings.locationOverride)
         {
-            setOverriddenLocation(gSettings.getFakeLocation())
+            setLocation(gSettings.getFakeLocation())
         }
     }
     
@@ -112,13 +115,22 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         
         var location = locations[locations.endIndex - 1] as CLLocation
         if (!gSettings.locationOverride) {
-            setOverriddenLocation(location)
+            setLocation(location)
         }
     }
     
-    func setOverriddenLocation(location: CLLocation)
+    func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
+        let message = "Error while updating location: " + error.localizedDescription
+        txtLocation.text = message
+    }
+   
+    func setLocation(location: CLLocation)
     {
         self.game.playerLocationUpdate(network.peerID, location: location)
+        if (!timerSonar.isRunning())
+        {
+            timerSonar.start()
+        }
         
         var coordinate = location.coordinate
         var accuracy = location.horizontalAccuracy
@@ -135,20 +147,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
 
     }
     
-    func locationManager(manager: CLLocationManager!, didFailWithError error: NSError!) {
-        let message = "Error while updating location: " + error.localizedDescription
-        txtLocation.text = message
-    }
-    
     func textFieldShouldReturn(textField: UITextField!) -> Bool {   //delegate method
         network.sendToPeers(Game.Messages.MsgTypeChat,data: self.txtChatMsg.text)
         txtChatMsg.text = "";
         txtChatMsg.resignFirstResponder()
         return true;
     }
-    
-
-    
     
     /*
     * Logs a message in raw form to the output text view
@@ -197,53 +201,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
         return target;
     }
     
-    private func setPotentialTarget(target: MCPeerID!, distance:Double)
-    {
-        targetPeers[target] = PlayerRangeInfo(target: target, range: true, dist:distance)
-        if (getTarget() == nil && ableToFire)
-        {
-            //audioPing.play()
-            self.targetPeer = target
-            self.btnFire.enabled = true
-            self.btnFire.hidden = false
-        }
-
-        RegenerateTargetListForBinding()
-    }
- 
-    private func clearPotentialTarget(target: MCPeerID!, distance:Double)
-    {
-        targetPeers[target] = PlayerRangeInfo(target: target, range: false, dist: distance)
-        if (getTarget() == target)
-        {
-            self.targetPeer = nil
-            self.btnFire.hidden = true
-            for (id, playerRangeInfo) in targetPeers
-            {
-                if (playerRangeInfo.inRange)
-                {
-                    setPotentialTarget(id, distance: playerRangeInfo.distance)
-                    break
-                }
-            }
-        }
-        
-        findPotentialTarget()
-        RegenerateTargetListForBinding()
-    }
-    
-    func findPotentialTarget()
-    {
-        for (id, playerRangeInfo) in targetPeers
-        {
-            if (playerRangeInfo.inRange)
-            {
-                setPotentialTarget(id, distance: playerRangeInfo.distance)
-                break
-            }
-        }
-    }
- 
     func RegenerateTargetListForBinding()
     {
         targetsForDataBinding.removeAll(keepCapacity: true)
@@ -260,95 +217,97 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
     
     func inRange(playerID : MCPeerID!, distance:Double)
     {
-        setPotentialTarget(playerID, distance: distance)
+        targetPeers[playerID] = PlayerRangeInfo(target: playerID, range: true, dist: distance)
     }
     
     func outOfRange(playerID : MCPeerID!, distance:Double)
     {
-        clearPotentialTarget(playerID, distance: distance)
+        targetPeers[playerID] = PlayerRangeInfo(target: playerID, range: false, dist: distance)
     }
     
     func handlePlayerDisconnect(playerID: MCPeerID)
     {
         targetPeers.removeValueForKey(playerID)
-        // if the player disconnecting was my target, null it out
-        if (getTarget() == playerID)
-        {
-            self.targetPeer = nil
-            self.btnFire.hidden = true
-            // look to see if there is another candidate peer target
-            findPotentialTarget()
-        }
         RegenerateTargetListForBinding()
+    }
+    
+    func ableToFire() -> Bool
+    {
+        var x : Bool = timerLoadingTorpedos.isRunning()
+        var y : Bool = timerReparing.isRunning()
+        return !x && !y
     }
     
     func fire()
     {
-        if (ableToFire)
+        if (ableToFire())
         {
-            disableFireButton("Loading torpedos")
+            timerLoadingTorpedos.start()
+            audioFire.play()
             
             var target = getTarget()
             if (target != nil)
             {
-                ableToFire = false;
-                timerLoadingTorpedos = NSTimer.scheduledTimerWithTimeInterval(
-                    1.0, target: self, selector:"torpedosLoading", userInfo: nil, repeats: false)
-                
-                audioFire.play()
                 self.game.fire(target)
                 println("fired at \(target!.displayName)")
             }
         }
     }
     
-    func torpedosLoading()
-    {
-        self.secondsOfTorpedoLoading++;
-        self.btnFire.setTitle("Loading torpedos \(SECONDS_FOR_LOAD_TORPEDOS - secondsOfTorpedoLoading)", forState: UIControlState.Disabled)
-        if (secondsOfTorpedoLoading >= SECONDS_FOR_LOAD_TORPEDOS)
+    func timerIncrement(identifier: NSString!, elaspedSeconds : Double!, totalSeconds : Double!) {
+        
+        var remainingSeconds = Int(totalSeconds - elaspedSeconds)
+        if (identifier == LOADING_TORPEDOS)
         {
-            timerLoadingTorpedos?.invalidate()
-            torpedosLoaded()
+            disableFireButton("Loading Torpedos \(remainingSeconds)")
+        }
+        else if (identifier == REPAIRING)
+        {
+            disableFireButton("Repairing \(remainingSeconds)")
         }
     }
-    func torpedosLoaded()
-    {
-        self.secondsOfTorpedoLoading = 0;
-        ableToFire = true
-        enableFireButton()
-        println("torpedos loaded")
-        findPotentialTarget();
-    }
-
-    func reparing()
-    {
-        self.secondsOfRepairing++
-        self.btnFire.setTitle("Repairing \(SECONDS_FOR_REPAIR - secondsOfRepairing)", forState: UIControlState.Disabled)
-        if (secondsOfTorpedoLoading >= SECONDS_FOR_REPAIR)
+    
+    func timerFinished(identifier: NSString!)  {
+        if (identifier == LOADING_TORPEDOS)
         {
-            timerReparing?.invalidate()
-            repairsComplete()
+            if (ableToFire())
+            {
+                enableFireButton()
+            }
         }
-    }
-    func repairsComplete()
-    {
-        self.secondsOfRepairing = 0;
-        ableToFire = true
-        enableFireButton()
-        println("repairs complete")
+        else if (identifier == REPAIRING)
+        {
+            if (ableToFire())
+            {
+                enableFireButton()
+            }
+        }
+        else if (identifier == SONAR)
+        {
+            var playerInRangeID : MCPeerID? = nil
+            for (id, playerRangeInfo) in targetPeers
+            {
+                if (playerRangeInfo.inRange)
+                {
+                    playerInRangeID = id
+                    break
+                }
+            }
+            if (playerInRangeID == nil)
+            {
+                self.targetPeer = nil
+            }
+            else if (getTarget() == nil)
+            {
+                self.targetPeer = playerInRangeID
+            }
+        }
     }
     
     func hit(playerID: MCPeerID!)
     {
-        if (timerReparing != nil)
-        {
-            timerReparing!.invalidate()
-        }
-        ableToFire = false
-        disableFireButton("Repairing")
-        timerReparing = NSTimer.scheduledTimerWithTimeInterval(
-            1.0, target: self, selector:"repairing", userInfo: nil, repeats: false)
+        self.timerReparing.start()
+        self.timerLoadingTorpedos.stop()
         audioHit.play()
         AudioPlayer.vibrate()
     }

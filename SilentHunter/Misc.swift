@@ -53,3 +53,78 @@ extension String {
     }
 }
 
+@objc protocol TimerDelegate
+{
+    optional func timerIncrement(identifier: NSString!, elaspedSeconds : Double, totalSeconds : Double)
+    optional func timerFinished(identifier: NSString!)
+    optional func timerStopped(identifier: NSString!)
+    optional func timerStarted(identifier: NSString!)
+}
+class Timer : NSObject
+{
+    private var timer : NSTimer? = nil
+    private var delegate : TimerDelegate!
+    private var identifier : NSString!
+    private var increment : Double!
+    private var totalSeconds : Double!
+    private var repeats : Bool
+    private var currentSeconds : Double! = 0
+    
+    init(identifier : NSString!, delegate : TimerDelegate!, increment : Double!, totalSeconds : Double!, repeats : Bool)
+    {
+        self.identifier = identifier
+        self.delegate = delegate
+        self.increment = increment
+        self.totalSeconds = totalSeconds
+        self.repeats = repeats
+    }
+    
+    func isRunning() -> Bool
+    {
+        return timer != nil
+    }
+    
+    func start()
+    {
+        stopImpl(false)
+        currentSeconds = 0
+        timer = NSTimer.scheduledTimerWithTimeInterval(
+            increment, target: self, selector:"mySelector", userInfo: nil, repeats: true)
+        delegate.timerStarted?(identifier)
+        delegate.timerIncrement?(identifier, elaspedSeconds: 0, totalSeconds: totalSeconds)
+    }
+    
+    func stop()
+    {
+        stopImpl(true)
+    }
+    
+    private func stopImpl(alertDelegate : Bool)
+    {
+        if (timer != nil)
+        {
+            timer!.invalidate()
+            timer = nil
+            if (alertDelegate)
+            {
+                delegate.timerStopped?(identifier)
+            }
+        }
+    }
+    
+    func mySelector()
+    {
+        currentSeconds = currentSeconds + increment
+        delegate.timerIncrement?(identifier, elaspedSeconds: currentSeconds, totalSeconds: totalSeconds)
+        if (currentSeconds >= totalSeconds)
+        {
+            currentSeconds = 0
+            delegate.timerFinished?(identifier)
+            if (!self.repeats)
+            {
+                stopImpl(false)
+            }
+        }
+    }
+}
+    
