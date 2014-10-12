@@ -93,6 +93,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
             //if (lastLocation == nil || location != lastLocation)
             //{
                 var coordinate = location.coordinate
+                var accuracy = location.horizontalAccuracy
                 var lat = coordinate.latitude
                 var long = coordinate.longitude
                 var distanceInMeters = 0.0;
@@ -100,7 +101,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,UITextFieldDel
                 {
                     distanceInMeters = location.distanceFromLocation(lastLocation!)
                 }
-                var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)"
+                var message = "Latitude: \(lat)\nLongitude: \(long)\nDifference: \(distanceInMeters)\nAccuracy: \(accuracy)"
                 txtLocation.text = message
                 self.game.playerUpdate(network.peerID, location: location)
                 lastLocation = location
