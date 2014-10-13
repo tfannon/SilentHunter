@@ -15,7 +15,6 @@ enum SettingType {
     case Location
     case Session
     case LocationOffset
-    //mainViewController!.setLocation(gSettings.getFakeLocation())
 }
 
 protocol SettingsListener {
