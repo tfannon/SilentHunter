@@ -23,6 +23,7 @@ protocol MessageListener {
 class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate
 {
     var peerID : MCPeerID!
+    var deviceId : String!
     var session : MCSession!
     var serviceAdvertiser : MCNearbyServiceAdvertiser!
     var serviceBrowser : MCNearbyServiceBrowser!
@@ -34,6 +35,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     init(name : String) {
         super.init()
         peerID = MCPeerID(displayName: name)
+        deviceId = UIDevice.currentDevice().identifierForVendor.UUIDString
     }
     
     func startServices() {
@@ -56,9 +58,9 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     
     
     func setupSession() {
+        chat.logit("Device: \(deviceId)  PeerId:\(peerID.displayName)")
         var sessionName = gSettings.sessionOverride ? gSettings.sessionName : "SilentHunter"
-        var deviceId = UIDevice.currentDevice().identifierForVendor.UUIDString
-        chat.logit("Setting up session: \(sessionName) for \(deviceId)")
+        chat.logit("Setting up session: \(sessionName)")
         session = MCSession(peer: peerID)
         session.delegate = self
         serviceAdvertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType:sessionName)

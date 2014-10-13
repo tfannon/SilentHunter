@@ -98,8 +98,8 @@
 		657E69FC19EA1EFD00F4AC4D /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				65B16B1B19E97078008D728D /* ViewController.swift */,
 				65B16B1D19E97078008D728D /* Main.storyboard */,
+				65B16B1B19E97078008D728D /* ViewController.swift */,
 				5158EEF419EA0F7300B5FDC2 /* DebugViewController.swift */,
 				65B16B2219E97078008D728D /* LaunchScreen.xib */,
 			);

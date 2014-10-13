@@ -29,42 +29,28 @@ class Settings {
     //when some of these settings change, we need to notify anyone who cares
     //notify from here, NOT the individual view controllers
     var sessionOverride : Bool = false {
-        didSet {
-            for y in listeners {
-                y.settingDidChange(.Session)
-            }
-        }
+        didSet { fireSettingChanaged(.Session) }
     }
     
     var locationOffset : Double = 0.0 {
-        didSet {
-            for y in listeners {
-                y.settingDidChange(.LocationOffset)
-            }
-        }
+        didSet { fireSettingChanaged(.LocationOffset) }
     }
 
     var locationOverride : Bool = false {
-        didSet {
-            for y in listeners {
-                y.settingDidChange(.LocationOverride)
-            }
-        }
+        didSet { fireSettingChanaged(.LocationOverride) }
     }
 
     var longitude : Double = 0.0 {
-        didSet {
-            for y in listeners {
-                y.settingDidChange(.LocationOverride)
-            }
-        }
+        didSet { fireSettingChanaged(.Location) }
     }
 
     var latitude : Double = 0.0 {
-        didSet {
-            for y in listeners {
-                y.settingDidChange(.LocationOverride)
-            }
+        didSet { fireSettingChanaged(.Location) }
+    }
+    
+    private func fireSettingChanaged(type: SettingType) {
+        for y in listeners {
+            y.settingDidChange(type)
         }
     }
     
