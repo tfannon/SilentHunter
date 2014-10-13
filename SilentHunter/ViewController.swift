@@ -44,8 +44,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     var timerSonar : Timer!
     var numLogMsgs:Int = 0
     
-    var prefs = Dictionary<String, String>()
-    
+    var myLocation : CLLocation! = nil
     
     //MARK: Outlets
     @IBOutlet var btnFire: UIButton!
@@ -60,8 +59,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         
         timerLoadingTorpedos = Timer(identifier: LOADING_TORPEDOS, delegate: self, increment: 1, totalSeconds: 5, repeats: false)
         timerReparing = Timer(identifier: REPAIRING, delegate: self, increment: 1, totalSeconds: 10, repeats: false)
-        timerSonar = Timer(identifier: SONAR, delegate: self, increment: 1, totalSeconds: 1, repeats: true)
-        
+        timerSonar = Timer(identifier: SONAR, delegate: self, increment: 5, totalSeconds: 5, repeats: true)
+        timerSonar.start()
+
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         self.txtChatMsg.delegate = self;
         
@@ -93,6 +93,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         swipeUp.direction = .Up
         view.addGestureRecognizer(swipeUp)
         
+        self.btnFire.enabled = true
+        self.btnFire.backgroundColor = UIColor.redColor()
+        self.btnFire.hidden = false
+
         if (gSettings.locationOverride)
         {
             setLocation(gSettings.getFakeLocation())
@@ -126,11 +130,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
    
     func setLocation(location: CLLocation)
     {
-        self.game.playerLocationUpdate(network.peerID, location: location)
-        if (!timerSonar.isRunning())
-        {
-            timerSonar.start()
-        }
+        myLocation = location
         
         var coordinate = location.coordinate
         var accuracy = location.horizontalAccuracy
@@ -218,11 +218,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     func inRange(playerID : MCPeerID!, distance:Double)
     {
         targetPeers[playerID] = PlayerRangeInfo(target: playerID, range: true, dist: distance)
+        RegenerateTargetListForBinding()
+        println("inrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
     }
     
     func outOfRange(playerID : MCPeerID!, distance:Double)
     {
         targetPeers[playerID] = PlayerRangeInfo(target: playerID, range: false, dist: distance)
+        RegenerateTargetListForBinding()
+        println("outrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
     }
     
     func handlePlayerDisconnect(playerID: MCPeerID)
@@ -231,76 +235,65 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         RegenerateTargetListForBinding()
     }
     
-    func ableToFire() -> Bool
+    func shipOperationsInProgress() -> Bool
     {
-        var x : Bool = timerLoadingTorpedos.isRunning()
-        var y : Bool = timerReparing.isRunning()
-        return !x && !y
+        return timerReparing.isRunning() || timerLoadingTorpedos.isRunning()
     }
     
-    func fire()
+    func timerIncrement(identifier: NSString!, elaspedSeconds : Double, totalSeconds : Double)
     {
-        if (ableToFire())
-        {
-            timerLoadingTorpedos.start()
-            audioFire.play()
-            
-            var target = getTarget()
-            if (target != nil)
-            {
-                self.game.fire(target)
-                println("fired at \(target!.displayName)")
-            }
-        }
-    }
-    
-    func timerIncrement(identifier: NSString!, elaspedSeconds : Double!, totalSeconds : Double!) {
-        
         var remainingSeconds = Int(totalSeconds - elaspedSeconds)
         if (identifier == LOADING_TORPEDOS)
         {
-            disableFireButton("Loading Torpedos \(remainingSeconds)")
+            showShipOperationProgress("Loading Torpedos \(remainingSeconds)")
         }
         else if (identifier == REPAIRING)
         {
-            disableFireButton("Repairing \(remainingSeconds)")
+            showShipOperationProgress("Repairing \(remainingSeconds)")
         }
     }
     
     func timerFinished(identifier: NSString!)  {
-        if (identifier == LOADING_TORPEDOS)
+        if (identifier == SONAR)
         {
-            if (ableToFire())
+            println("SONAR [\(network.peerID.displayName)]: \(targetPeers.count)")
+            if (myLocation != nil)
             {
-                enableFireButton()
-            }
-        }
-        else if (identifier == REPAIRING)
-        {
-            if (ableToFire())
-            {
-                enableFireButton()
-            }
-        }
-        else if (identifier == SONAR)
-        {
-            var playerInRangeID : MCPeerID? = nil
-            for (id, playerRangeInfo) in targetPeers
-            {
-                if (playerRangeInfo.inRange)
+                self.game.playerLocationUpdate(network.peerID, location: myLocation)
+
+                var playerInRangeID : MCPeerID? = nil
+                println("targetPeers [\(network.peerID.displayName)]: \(targetPeers.count)")
+                for (id, playerRangeInfo) in targetPeers
                 {
-                    playerInRangeID = id
-                    break
+                    if (playerRangeInfo.inRange)
+                    {
+                        playerInRangeID = id
+                        break
+                    }
+                }
+                if (playerInRangeID == nil)
+                {
+                    self.targetPeer = nil
+                }
+                else if (getTarget() == nil)
+                {
+                    self.targetPeer = playerInRangeID
                 }
             }
-            if (playerInRangeID == nil)
-            {
-                self.targetPeer = nil
-            }
-            else if (getTarget() == nil)
-            {
-                self.targetPeer = playerInRangeID
-            }
+        }
+        handleFireButton()
+    }
+    
+    func fire()
+    {
+        timerLoadingTorpedos.start()
+        audioFire.play()
+        
+        var target = getTarget()
+        if (target != nil)
+        {
+            self.game.fire(target)
+            println("fired at \(target!.displayName)")
         }
     }
     
@@ -315,24 +308,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     func firedUpon(playerID: MCPeerID!) {
     }
     
-    func enableFireButton()
+    func handleFireButton()
     {
-        self.btnFire.enabled = true
-        self.btnFire.backgroundColor = UIColor.redColor()
+        if (!shipOperationsInProgress())
+        {
+            self.btnFire.enabled = true
+            self.btnFire.backgroundColor = UIColor.redColor()
+        }
+        self.btnFire.hidden =
+            getTarget() == nil && !shipOperationsInProgress()
     }
     
-    func disableFireButton(label : NSString!)
+    func showShipOperationProgress(label : NSString!)
     {
         self.btnFire.setTitle(label, forState: UIControlState.Disabled)
         self.btnFire.enabled = false
         self.btnFire.backgroundColor = UIColor.blackColor()
+        self.btnFire.hidden = false
     }
-    
-    func notify(message: NSString!) {
-        var alert = UIAlertController(title: "Alert", message: message, preferredStyle : UIAlertControllerStyle.Alert)
-        self.presentViewController(alert, animated: false, completion: nil)
-    }
-   
     
     @IBOutlet weak var tableView: UITableView!
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

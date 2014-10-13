@@ -81,9 +81,9 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         edgeSwipe.edges = UIRectEdge.Left
         self.view.addGestureRecognizer(edgeSwipe)
         
-        //var swipe = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
-        //swipe.direction = .Down
-        //view.addGestureRecognizer(swipe)
+        var swipe = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        swipe.direction = .Down
+        view.addGestureRecognizer(swipe)
         
         let center = NSNotificationCenter.defaultCenter()
         center.addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardDidShowNotification, object: nil)

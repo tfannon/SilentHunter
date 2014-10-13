@@ -22,7 +22,6 @@ protocol GameDelegate
     func logit(msg: String)
     func inRange(playerID : MCPeerID!, distance:Double)
     func outOfRange(playerID : MCPeerID!, distance:Double)
-    func notify(message : NSString!)
     func firedUpon(playerID : MCPeerID!)
     func hit(playerID: MCPeerID!)
     func handlePlayerDisconnect(playerID: MCPeerID)
@@ -170,19 +169,22 @@ class Game : NSObject, IProcessMessages {
         var info = PlayerInfo(playerID: playerID, location: location)
         players[playerID] = info
 
-        var meInfo = players[meId]
-       
-        var positionSame = false
-        if (prevPlayerInfo != nil)
+        var meMoved = false
+        if (self.meId == playerID && prevPlayerInfo != nil)
         {
             var prevLat = prevPlayerInfo!.location.coordinate.latitude
             var prevLng = prevPlayerInfo!.location.coordinate.longitude
             var currLat = location.coordinate.latitude
             var currLng = location.coordinate.longitude
-            positionSame = (prevLat == currLat && prevLng == currLng)
+            meMoved = !(prevLat == currLat && prevLng == currLng)
         }
-        if (self.meId == playerID && !positionSame) {
-            self.sendMyLocationMessage(meInfo!.location)
+        // send our position if a new player was detected (no prev info) or we moved
+        if (prevPlayerInfo == nil || meMoved || true) {
+            var meInfo = players[meId]
+            if (meInfo != nil)
+            {
+                self.sendMyLocationMessage(meInfo!.location)
+            }
         }
 
         checkForTargets()
