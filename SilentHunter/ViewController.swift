@@ -16,8 +16,7 @@ protocol IChat {
 }
 
 class ViewController: UIViewController, CLLocationManagerDelegate,
-    UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate, SettingsListener,
-    TimerDelegate
+    UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate, SettingsListener, TimerDelegate
 {
     
     //MARK: Variables
@@ -99,9 +98,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil);
-        let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as DebugViewController;
-        vc.mainViewController = self
+        let vc = self.storyboard!.instantiateViewControllerWithIdentifier("debugviewcontroller") as DebugViewController;
         self.presentViewController(vc, animated: true, completion: nil);
     }
     

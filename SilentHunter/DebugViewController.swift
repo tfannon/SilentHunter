@@ -11,8 +11,6 @@ import CoreLocation
 
 class DebugViewController: UIViewController, UITextFieldDelegate
 {
-    internal var mainViewController: ViewController?
-    
     @IBOutlet var txtSession: UITextField!
     @IBOutlet var sessionOverride: UISwitch!
     
@@ -31,12 +29,11 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         txtMoveLeftGPSAmount.text = NSString(format: "%.1f", moveLeftInMeters)
         gSettings.locationOffset = sender.value
         gSettings.persist()
-        mainViewController!.setLocation(gSettings.getFakeLocation())
     }
    
     @IBAction func stepLogMsgs(sender: UIStepper) {
-        gSettings.maxLogMsgs = Int(sender.value)
         lblMsgs.text = String(gSettings.maxLogMsgs)
+        gSettings.maxLogMsgs = Int(sender.value)
         gSettings.persist()
     }
     
@@ -52,8 +49,7 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     
     @IBAction func handleLocationOverride(sender: UISwitch) {
         gSettings.locationOverride = sender.on
-        if (sender.on)
-        {
+        if (sender.on) {
             moveStepperChanged(stpLocationOverride)
         }
         gSettings.persist()
