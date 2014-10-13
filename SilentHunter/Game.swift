@@ -42,8 +42,6 @@ class Game : NSObject, IProcessMessages {
     var delegate: GameDelegate!
     let MAX_DISTANCE = 10.0;
     var network: Networking?
-    var hackOtherPlayerCount : Int = 0
-    var hackOtherPlayerID : MCPeerID! = MCPeerID(displayName: "Breakthrough")
     var timeLastPlayerUpdateSent : NSDate?
     var checkingForTargets = false
     var timerCheckForTargets : NSTimer!

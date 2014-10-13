@@ -10,10 +10,6 @@ import Foundation
 import MultipeerConnectivity
 
 
-protocol SessionManagerDelegate {
-    func sessionDidChangeState()
-}
-
 
 class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate
 {
@@ -22,7 +18,7 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     var serviceAdvertiser : MCNearbyServiceAdvertiser!
     var serviceBrowser : MCNearbyServiceBrowser!
 
-    var delegate : SessionManagerDelegate?
+    
     var msgProcessor: IProcessMessages!
     var chat: IChat!
     
@@ -52,7 +48,8 @@ class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, 
     
     func setupSession() {
         var sessionName = gSettings.sessionOverride ? gSettings.sessionName : "SilentHunter"
-        chat.logit("Setting up session: \(sessionName)")
+        var deviceId = UIDevice.currentDevice().identifierForVendor.UUIDString
+        chat.logit("Setting up session: \(sessionName) for \(deviceId)")
         session = MCSession(peer: peerID)
         session.delegate = self
         serviceAdvertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType:sessionName)
