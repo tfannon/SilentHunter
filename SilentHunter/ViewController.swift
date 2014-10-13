@@ -212,14 +212,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     {
         targetPeers[playerID] = PlayerRangeInfo(target: playerID, range: true, dist: distance)
         RegenerateTargetListForBinding()
-        //println("inrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
+        println("inrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
     }
     
     func outOfRange(playerID : MCPeerID!, distance:Double)
     {
         targetPeers[playerID] = PlayerRangeInfo(target: playerID, range: false, dist: distance)
         RegenerateTargetListForBinding()
-        //println("outrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
+        println("outrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
     }
     
     func handlePlayerDisconnect(playerID: MCPeerID)
@@ -276,6 +276,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         }
         else if (getTarget() == nil)
         {
+            println ("target aquired")
             self.targetPeer = playerInRangeID
         }
         handleFireButton()

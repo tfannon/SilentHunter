@@ -168,6 +168,7 @@ class Game : NSObject, IProcessMessages {
 
         var prevPlayerInfo = players[playerID]
         var info = PlayerInfo(playerID: playerID, location: location)
+        var isMe = self.meId == playerID
         players[playerID] = info
 
         if (playerID != meId && prevPlayerInfo != nil)
@@ -177,7 +178,7 @@ class Game : NSObject, IProcessMessages {
             println("playerLocationUpdate - [\(self.meId.displayName)] - \(playerID.displayName) - \(location.coordinate.latitude), \(location.coordinate.longitude)")
         }
         var meMoved = false
-        if (self.meId == playerID && prevPlayerInfo != nil)
+        if (isMe && prevPlayerInfo != nil)
         {
             var prevLat = prevPlayerInfo!.location.coordinate.latitude
             var prevLng = prevPlayerInfo!.location.coordinate.longitude
@@ -186,15 +187,24 @@ class Game : NSObject, IProcessMessages {
             meMoved = !(prevLat == currLat && prevLng == currLng)
         }
         // send our position if a new player was detected (no prev info) or we moved
-        if (prevPlayerInfo == nil || meMoved || true) {
+        // (right now , we always send for me)
+        if (isMe) {
             var meInfo = players[meId]
             if (meInfo != nil)
             {
+                println("sendMyLocationMessage - [\(self.meId.displayName)] - \(location.coordinate.latitude), \(location.coordinate.longitude)")
                 self.sendMyLocationMessage(meInfo!.location)
             }
         }
 
-        checkForTargets()
+        if (!isMe)
+        {
+            checkForTargets()
+        }
+        else
+        {
+            checkForTargets()
+        }
     }
     
     
