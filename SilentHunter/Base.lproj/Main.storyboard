@@ -204,7 +204,7 @@
                                     <action selector="stepLogMsgs:" destination="NxI-Jf-QjG" eventType="valueChanged" id="a5s-OA-shG"/>
                                 </connections>
                             </stepper>
-                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumValue="-1000" maximumValue="1000" stepValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="sZM-NC-ehM">
+                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" minimumValue="-100" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="sZM-NC-ehM">
                                 <rect key="frame" x="197" y="427" width="94" height="29"/>
                                 <connections>
                                     <action selector="moveStepperChanged:" destination="NxI-Jf-QjG" eventType="valueChanged" id="8Pe-Df-rSU"/>
