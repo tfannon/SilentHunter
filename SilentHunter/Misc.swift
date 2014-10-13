@@ -86,6 +86,7 @@ class Timer : NSObject
     
     func start()
     {
+        var id = self.identifier
         stopImpl(false)
         currentSeconds = 0
         timer = NSTimer.scheduledTimerWithTimeInterval(
