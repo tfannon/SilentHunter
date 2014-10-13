@@ -60,7 +60,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         
         timerLoadingTorpedos = Timer(identifier: LOADING_TORPEDOS, delegate: self, increment: 1, totalSeconds: 5, repeats: false)
         timerReparing = Timer(identifier: REPAIRING, delegate: self, increment: 1, totalSeconds: 10, repeats: false)
-        timerSonar = Timer(identifier: SONAR, delegate: self, increment: 5, totalSeconds: 5, repeats: true)
+        timerSonar = Timer(identifier: SONAR, delegate: self, increment: 1, totalSeconds: 5, repeats: true)
         timerSonar.start()
 
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
@@ -249,30 +249,34 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     func timerFinished(identifier: NSString!)  {
         if (identifier == SONAR)
         {
-            //println("SONAR [\(network.peerID.displayName)]: \(targetPeers.count)")
             if (myLocation != nil)
             {
                 self.game.playerLocationUpdate(network.peerID, location: myLocation)
-
-                var playerInRangeID : MCPeerID? = nil
-                //println("targetPeers [\(network.peerID.displayName)]: \(targetPeers.count)")
-                for (id, playerRangeInfo) in targetPeers
-                {
-                    if (playerRangeInfo.inRange)
-                    {
-                        playerInRangeID = id
-                        break
-                    }
-                }
-                if (playerInRangeID == nil)
-                {
-                    self.targetPeer = nil
-                }
-                else if (getTarget() == nil)
-                {
-                    self.targetPeer = playerInRangeID
-                }
+                calculateTarget()
             }
+        }
+        handleFireButton()
+    }
+    
+    func calculateTarget()
+    {
+        var playerInRangeID : MCPeerID? = nil
+        //println("targetPeers [\(network.peerID.displayName)]: \(targetPeers.count)")
+        for (id, playerRangeInfo) in targetPeers
+        {
+            if (playerRangeInfo.inRange)
+            {
+                playerInRangeID = id
+                break
+            }
+        }
+        if (playerInRangeID == nil)
+        {
+            self.targetPeer = nil
+        }
+        else if (getTarget() == nil)
+        {
+            self.targetPeer = playerInRangeID
         }
         handleFireButton()
     }
