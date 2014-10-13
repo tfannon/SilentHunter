@@ -15,14 +15,15 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     
     @IBOutlet var lblSession: UITextField!
     @IBOutlet var serverOverride: UISwitch!
-    @IBOutlet weak var lblMsgs: UILabel!
     
-    @IBOutlet weak var txtMoveLeftGPSAmount: UITextField!
+    @IBOutlet var lblMsgs: UILabel!
+    @IBOutlet weak var stepLogMsgs: UIStepper!
     
     @IBOutlet var locationOverride: UISwitch!
     @IBOutlet var txtLatitude: UITextField!
     @IBOutlet var txtLongitude: UITextField!
     
+    @IBOutlet var txtMoveLeftGPSAmount: UITextField!
     @IBOutlet var stpLocationOverride: UIStepper!
     
     @IBAction func moveStepperChanged(sender: UIStepper) {
@@ -32,8 +33,7 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         gSettings.persist()
         mainViewController!.setLocation(gSettings.getFakeLocation())
     }
-    
-    @IBOutlet weak var stepLogMsgs: UIStepper!
+   
     @IBAction func stepLogMsgs(sender: UIStepper) {
         gSettings.maxLogMsgs = Int(sender.value)
         lblMsgs.text = String(gSettings.maxLogMsgs)
@@ -58,15 +58,6 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         }
         gSettings.persist()
     }
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        lblSession.resignFirstResponder()
-        return true
-    }
-    
-    @IBAction func handleLocationOverride(sender: UISwitch) {
-        gSettings.locationOverride = sender.on
-        gSettings.persist()
-    }
     
     @IBAction func handleLatitudeChange(sender: UITextField) {
         gSettings.latitude = txtLatitude.text.toDouble()!
@@ -77,6 +68,15 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         gSettings.longitude = txtLongitude.text.toDouble()!
         gSettings.persist()
     }
+
+
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        lblSession.resignFirstResponder()
+        txtLatitude.resignFirstResponder()
+        txtLongitude.resignFirstResponder()
+        return true
+    }
+
     
     //MARK:  controller
     override func viewDidLoad() {
@@ -86,9 +86,9 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         edgeSwipe.edges = UIRectEdge.Left
         self.view.addGestureRecognizer(edgeSwipe)
         
-        //var swipe = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
-        //swipe.direction = .Down
-        //view.addGestureRecognizer(swipe)
+        var swipe = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        swipe.direction = .Down
+        view.addGestureRecognizer(swipe)
         
         let center = NSNotificationCenter.defaultCenter()
         center.addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardDidShowNotification, object: nil)
