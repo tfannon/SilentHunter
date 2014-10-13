@@ -19,6 +19,7 @@ protocol MessageListener {
     func sendMessage(type: NetworkMessageType)
 }
 
+
 class Networking : NSObject, MCSessionDelegate, MCNearbyServiceBrowserDelegate, MCNearbyServiceAdvertiserDelegate
 {
     var peerID : MCPeerID!

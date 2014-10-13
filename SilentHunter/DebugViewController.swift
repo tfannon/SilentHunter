@@ -24,6 +24,8 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     @IBOutlet var txtMoveLeftGPSAmount: UITextField!
     @IBOutlet var stpLocationOverride: UIStepper!
     
+    @IBOutlet var txtStatus: UITextView!
+    
     @IBAction func moveStepperChanged(sender: UIStepper) {
         var moveLeftInMeters = sender.value;
         txtMoveLeftGPSAmount.text = NSString(format: "%.1f", moveLeftInMeters)

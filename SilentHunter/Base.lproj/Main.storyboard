@@ -60,12 +60,12 @@
                                     <outlet property="delegate" destination="vXZ-lx-hvc" id="54s-yy-7Ju"/>
                                 </connections>
                             </tableView>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bzo-8s-a4w">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bzo-8s-a4w" userLabel="Text - Chat">
                                 <rect key="frame" x="16" y="65" width="568" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-I7-vpp">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p2Y-I7-vpp" userLabel="Text - Game Messages">
                                 <rect key="frame" x="16" y="147" width="568" height="125"/>
                                 <color key="backgroundColor" red="0.0" green="0.59999999999999998" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
@@ -281,6 +281,7 @@
                         <outlet property="txtLongitude" destination="0rm-sv-wo7" id="JfN-f1-0gw"/>
                         <outlet property="txtMoveLeftGPSAmount" destination="JF6-Eo-eM8" id="Zcf-wK-CLz"/>
                         <outlet property="txtSession" destination="Sdg-19-1FM" id="9rW-EV-ncC"/>
+                        <outlet property="txtStatus" destination="izw-3g-PAy" id="mTM-yc-91V"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="V1b-WB-34B" userLabel="First Responder" sceneMemberID="firstResponder"/>
