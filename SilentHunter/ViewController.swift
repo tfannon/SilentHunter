@@ -16,10 +16,10 @@ protocol IChat {
 }
 
 class ViewController: UIViewController, CLLocationManagerDelegate,
-    UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate, SettingsListener,
-    TimerDelegate
+    UITextFieldDelegate, GameDelegate, UITableViewDelegate, UITableViewDataSource, IChat, UIGestureRecognizerDelegate, SettingsListener, TimerDelegate
 {
     
+    //MARK: Variables
     var game: Game! = nil
     var locationManager : CLLocationManager!
     var network : Networking!
@@ -48,12 +48,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     
     //MARK: Outlets
     @IBOutlet var btnFire: UIButton!
-    @IBOutlet weak var txtLocation: UILabel!
-    @IBOutlet weak var txtMessages: UITextView!
-    @IBOutlet weak var txtChatMsg: UITextField!
+    @IBOutlet var txtLocation: UILabel!
+    @IBOutlet var txtMessages: UITextView!
+    @IBOutlet var txtChatMsg: UITextField!
+    @IBOutlet var tableView: UITableView!
     
    
-    //MARK:  controller
+    //MARK: Controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -104,11 +105,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil);
-        let vc = storyboard.instantiateViewControllerWithIdentifier("debugviewcontroller") as DebugViewController;
-        vc.mainViewController = self
+        let vc = self.storyboard!.instantiateViewControllerWithIdentifier("debugviewcontroller") as DebugViewController;
         self.presentViewController(vc, animated: true, completion: nil);
     }
+    
     func respondToTap(gesture: UITapGestureRecognizer) {
         self.txtMessages.text = ""
     }
@@ -353,8 +353,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     
     //Mark: Settings Listener
     func settingDidChange(settingType: SettingType) {
-        if settingType == SettingType.Session {
-            network.restartServices()
+        switch settingType {
+            case .Session : network.restartServices()
+            case .Location, .LocationOffset :
+                self.setLocation(gSettings.getFakeLocation())
+        default:""
         }
     }
 }

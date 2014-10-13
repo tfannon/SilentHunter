@@ -11,36 +11,33 @@ import CoreLocation
 
 class DebugViewController: UIViewController, UITextFieldDelegate
 {
-    internal var mainViewController: ViewController?
+    @IBOutlet var txtSession: UITextField!
+    @IBOutlet var sessionOverride: UISwitch!
     
-    @IBOutlet var lblSession: UITextField!
-    @IBOutlet var serverOverride: UISwitch!
-    @IBOutlet weak var lblMsgs: UILabel!
-    
-    @IBOutlet weak var txtMoveLeftGPSAmount: UITextField!
+    @IBOutlet var lblMsgs: UILabel!
+    @IBOutlet weak var stepLogMsgs: UIStepper!
     
     @IBOutlet var locationOverride: UISwitch!
     @IBOutlet var txtLatitude: UITextField!
     @IBOutlet var txtLongitude: UITextField!
     
+    @IBOutlet var txtMoveLeftGPSAmount: UITextField!
     @IBOutlet var stpLocationOverride: UIStepper!
     
     @IBAction func moveStepperChanged(sender: UIStepper) {
         var moveLeftInMeters = sender.value;
         txtMoveLeftGPSAmount.text = NSString(format: "%.1f", moveLeftInMeters)
-        gSettings.fakeLocationOffset = sender.value
+        gSettings.locationOffset = sender.value
         gSettings.persist()
-        mainViewController!.setLocation(gSettings.getFakeLocation())
     }
-    
-    @IBOutlet weak var stepLogMsgs: UIStepper!
+   
     @IBAction func stepLogMsgs(sender: UIStepper) {
-        gSettings.maxLogMsgs = Int(sender.value)
         lblMsgs.text = String(gSettings.maxLogMsgs)
+        gSettings.maxLogMsgs = Int(sender.value)
         gSettings.persist()
     }
     
-    @IBAction func handleServerOverride(sender: UISwitch) {
+    @IBAction func handleSessionOverride(sender: UISwitch) {
         gSettings.sessionOverride = sender.on
         gSettings.persist()
     }
@@ -52,15 +49,10 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     
     @IBAction func handleLocationOverride(sender: UISwitch) {
         gSettings.locationOverride = sender.on
-        if (sender.on)
-        {
+        if (sender.on) {
             moveStepperChanged(stpLocationOverride)
         }
         gSettings.persist()
-    }
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        lblSession.resignFirstResponder()
-        return true
     }
     
     @IBAction func handleLatitudeChange(sender: UITextField) {
@@ -72,6 +64,16 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         gSettings.longitude = txtLongitude.text.toDouble()!
         gSettings.persist()
     }
+
+
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        txtSession.resignFirstResponder()
+        txtLatitude.resignFirstResponder()
+        txtLongitude.resignFirstResponder()
+        txtMoveLeftGPSAmount.resignFirstResponder()
+        return true
+    }
+
     
     //MARK:  controller
     override func viewDidLoad() {
@@ -89,20 +91,20 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         center.addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardDidShowNotification, object: nil)
         center.addObserver(self, selector: "keyboardWillHide:", name: UIKeyboardDidHideNotification, object: nil)
         
-        lblSession.delegate = self
+        txtSession.delegate = self
         txtLatitude.delegate = self
         txtLongitude.delegate = self
+        txtMoveLeftGPSAmount.delegate = self
 
-        serverOverride.on = gSettings.sessionOverride
-        lblSession.text = gSettings.sessionName
+        sessionOverride.on = gSettings.sessionOverride
+        txtSession.text = gSettings.sessionName
         locationOverride.on = gSettings.locationOverride
         txtLatitude.text = "\(gSettings.latitude)"
         txtLongitude.text = "\(gSettings.longitude)"
-        serverOverride.on = gSettings.sessionOverride
         lblMsgs.text = String(gSettings.maxLogMsgs)
         stepLogMsgs.value = Double(gSettings.maxLogMsgs)
-        stpLocationOverride.value = gSettings.fakeLocationOffset
-        txtMoveLeftGPSAmount.text = NSString(format: "%.1f", gSettings.fakeLocationOffset)
+        stpLocationOverride.value = gSettings.locationOffset
+        txtMoveLeftGPSAmount.text = NSString(format: "%.1f", gSettings.locationOffset)
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {

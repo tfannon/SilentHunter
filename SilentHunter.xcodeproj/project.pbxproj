@@ -138,9 +138,9 @@
 				65FCE3AF19E98DAC006D79B7 /* Networking.swift */,
 				708873E919E9D49000974A47 /* PlayerCell.swift */,
 				657E69FD19EA226200F4AC4D /* Settings.swift */,
+				657E69FC19EA1EFD00F4AC4D /* UI */,
 				657E69FB19EA1E7800F4AC4D /* Resources */,
 				65B16B1719E97078008D728D /* Supporting Files */,
-				657E69FC19EA1EFD00F4AC4D /* UI */,
 			);
 			path = SilentHunter;
 			sourceTree = "<group>";
@@ -218,7 +218,7 @@
 				TargetAttributes = {
 					65B16B1319E97078008D728D = {
 						CreatedOnToolsVersion = 6.0.1;
-						DevelopmentTeam = AU659F828V;
+						DevelopmentTeam = K9HP5J9XB3;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -227,6 +227,7 @@
 					};
 					65B16B2819E97078008D728D = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = K9HP5J9XB3;
 						TestTargetID = 65B16B1319E97078008D728D;
 					};
 				};
