@@ -327,7 +327,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         self.btnFire.hidden = false
     }
     
-    @IBOutlet weak var tableView: UITableView!
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var count = self.targetsForDataBinding.count
         return count
