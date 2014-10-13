@@ -15,6 +15,7 @@ enum SettingType {
     case Location
     case Session
     case LocationOffset
+    //mainViewController!.setLocation(gSettings.getFakeLocation())
 }
 
 protocol SettingsListener {
@@ -23,7 +24,10 @@ protocol SettingsListener {
 
 class Settings {
     private var userPrefs = Dictionary<String,String>()
+    private var listeners = [SettingsListener]()
 
+    //when some of these settings change, we need to notify anyone who cares
+    //notify from here, NOT the individual view controllers
     var sessionOverride : Bool = false {
         didSet {
             for y in listeners {
@@ -32,13 +36,21 @@ class Settings {
         }
     }
     
+    var locationOffset : Double = 0.0 {
+        didSet {
+            for y in listeners {
+                y.settingDidChange(.LocationOffset)
+            }
+        }
+    }
+
     var sessionName : String = ""
     var locationOverride: Bool = false
     var longitude : Double = 0.0
     var latitude : Double = 0.0
     var maxLogMsgs: Int = 100
-    var fakeLocationOffset : Double = 0.0
-    var listeners = [SettingsListener]()
+    
+    
     
     init() {
         let userDefaults = NSUserDefaults.standardUserDefaults();
@@ -52,7 +64,7 @@ class Settings {
                 if let tmp = result["longitude"] {
                     longitude = result["longitude"]!.toDouble()!
                     if let tmp = result["locationOffset"] {
-                        fakeLocationOffset = result["locationOffset"]!.toDouble()!
+                        locationOffset = result["locationOffset"]!.toDouble()!
                     }
                 }
             }
@@ -67,7 +79,7 @@ class Settings {
     func getFakeLocation () -> CLLocation
     {
         var loc = CLLocation(latitude: self.latitude, longitude: self.longitude)
-        var loc2 = Misc.offsetLocation(loc, offsetMeters: self.fakeLocationOffset, bearing: 270.0)
+        var loc2 = Misc.offsetLocation(loc, offsetMeters: self.locationOffset, bearing: 270.0)
         return loc2
     }
     
@@ -82,7 +94,7 @@ class Settings {
         userPrefs["locationOverride"] = locationOverride ? "true" : "false"
         userPrefs["latitude"] = "\(latitude)"
         userPrefs["longitude"] = "\(longitude)"
-        userPrefs["locationOffset"] = "\(fakeLocationOffset)"
+        userPrefs["locationOffset"] = "\(locationOffset)"
 
         var strMaxLogMsgs = String(maxLogMsgs)
         userPrefs["maxLogMsgs"] = strMaxLogMsgs

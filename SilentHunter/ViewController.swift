@@ -20,6 +20,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     TimerDelegate
 {
     
+    //MARK: Variables
     var game: Game! = nil
     var locationManager : CLLocationManager!
     var network : Networking!
@@ -44,17 +45,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     var timerSonar : Timer!
     var numLogMsgs:Int = 0
     
-    var prefs = Dictionary<String, String>()
-    
     
     //MARK: Outlets
     @IBOutlet var btnFire: UIButton!
-    @IBOutlet weak var txtLocation: UILabel!
-    @IBOutlet weak var txtMessages: UITextView!
-    @IBOutlet weak var txtChatMsg: UITextField!
+    @IBOutlet var txtLocation: UILabel!
+    @IBOutlet var txtMessages: UITextView!
+    @IBOutlet var txtChatMsg: UITextField!
+    @IBOutlet var tableView: UITableView!
     
    
-    //MARK:  controller
+    //MARK: Controller methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -93,8 +93,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         swipeUp.direction = .Up
         view.addGestureRecognizer(swipeUp)
         
-        if (gSettings.locationOverride)
-        {
+        if (gSettings.locationOverride) {
             setLocation(gSettings.getFakeLocation())
         }
     }
@@ -105,6 +104,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         vc.mainViewController = self
         self.presentViewController(vc, animated: true, completion: nil);
     }
+    
     func respondToTap(gesture: UITapGestureRecognizer) {
         self.txtMessages.text = ""
     }
@@ -334,7 +334,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     }
    
     
-    @IBOutlet weak var tableView: UITableView!
+  
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         var count = self.targetsForDataBinding.count
         return count
@@ -360,8 +360,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     
     //Mark: Settings Listener
     func settingDidChange(settingType: SettingType) {
-        if settingType == SettingType.Session {
-            network.restartServices()
+        switch settingType {
+            case .Session : network.restartServices()
+            case .Location, .LocationOffset :
+                self.setLocation(gSettings.getFakeLocation())
+        default:""
         }
     }
 }
