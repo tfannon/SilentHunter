@@ -100,7 +100,7 @@ class Settings {
     func getFakeLocation () -> CLLocation
     {
         var loc = CLLocation(latitude: self.latitude, longitude: self.longitude)
-        var loc2 = Misc.offsetLocation(loc, offsetMeters: self.locationOffset, bearing: 270.0)
+        var loc2 = Misc.offsetLocation(loc, offsetMeters: self.locationOffset)
         return loc2
     }
     

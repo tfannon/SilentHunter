@@ -27,6 +27,14 @@ class Misc
         }
     }
     
+    class func offsetLocation(startLocation:CLLocation, offsetMeters: Double) -> CLLocation
+    {
+        var movementLatitude = offsetMeters / 111111.0;
+        var loc = CLLocation(latitude: startLocation.coordinate.latitude + movementLatitude, longitude: startLocation.coordinate.longitude)
+        var delta = loc.distanceFromLocation(startLocation)
+        return loc
+    }
+/*
     class func offsetLocation(startLocation:CLLocation, offsetMeters: Double, bearing: Double) -> CLLocation
     {
         let EARTH_MEAN_RADIUS_METERS = 6372796.99;
@@ -36,6 +44,7 @@ class Misc
     
         return tempLocation;
     }
+*/
 }
 
 extension Array {
