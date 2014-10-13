@@ -143,17 +143,20 @@ class Game : NSObject, IProcessMessages {
         {
             checkingForTargets = true
             var meInfo = players[meId]
-            var displayName = meId.displayName
-            for (id, info) in players {
-                if (id != meId) {
-                    var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
-                    if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
-                    {
-                        delegate.inRange(id, distance: distanceInMeters)
-                    }
-                    else
-                    {
-                        delegate.outOfRange(id, distance: distanceInMeters)
+            if (meInfo != nil)
+            {
+                var displayName = meId.displayName
+                for (id, info) in players {
+                    if (id != meId) {
+                        var distanceInMeters = info.location.distanceFromLocation(meInfo!.location)
+                        if (distanceInMeters > 0 && distanceInMeters < MAX_DISTANCE)
+                        {
+                            delegate.inRange(id, distance: distanceInMeters)
+                        }
+                        else
+                        {
+                            delegate.outOfRange(id, distance: distanceInMeters)
+                        }
                     }
                 }
             }
@@ -167,6 +170,12 @@ class Game : NSObject, IProcessMessages {
         var info = PlayerInfo(playerID: playerID, location: location)
         players[playerID] = info
 
+        if (playerID != meId && prevPlayerInfo != nil)
+        {
+            var distanceInMeters = info.location.distanceFromLocation(prevPlayerInfo!.location)
+
+            println("playerLocationUpdate - [\(self.meId.displayName)] - \(playerID.displayName) - \(location.coordinate.latitude), \(location.coordinate.longitude)")
+        }
         var meMoved = false
         if (self.meId == playerID && prevPlayerInfo != nil)
         {

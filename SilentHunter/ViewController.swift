@@ -94,14 +94,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         swipeUp.direction = .Up
         view.addGestureRecognizer(swipeUp)
         
-        self.btnFire.enabled = true
-        self.btnFire.backgroundColor = UIColor.redColor()
-        self.btnFire.hidden = false
-
-        if (gSettings.locationOverride)
-        {
-            setLocation(gSettings.getFakeLocation())
-        }
+        handleFireButton()
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
@@ -219,14 +212,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     {
         targetPeers[playerID] = PlayerRangeInfo(target: playerID, range: true, dist: distance)
         RegenerateTargetListForBinding()
-        println("inrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
+        //println("inrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
     }
     
     func outOfRange(playerID : MCPeerID!, distance:Double)
     {
         targetPeers[playerID] = PlayerRangeInfo(target: playerID, range: false, dist: distance)
         RegenerateTargetListForBinding()
-        println("outrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
+        //println("outrange [\(network.peerID.displayName)] - [\(playerID.displayName)]")
     }
     
     func handlePlayerDisconnect(playerID: MCPeerID)
@@ -256,13 +249,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     func timerFinished(identifier: NSString!)  {
         if (identifier == SONAR)
         {
-            println("SONAR [\(network.peerID.displayName)]: \(targetPeers.count)")
+            //println("SONAR [\(network.peerID.displayName)]: \(targetPeers.count)")
             if (myLocation != nil)
             {
                 self.game.playerLocationUpdate(network.peerID, location: myLocation)
 
                 var playerInRangeID : MCPeerID? = nil
-                println("targetPeers [\(network.peerID.displayName)]: \(targetPeers.count)")
+                //println("targetPeers [\(network.peerID.displayName)]: \(targetPeers.count)")
                 for (id, playerRangeInfo) in targetPeers
                 {
                     if (playerRangeInfo.inRange)
@@ -354,8 +347,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     func settingDidChange(settingType: SettingType) {
         switch settingType {
             case .Session : network.restartServices()
-            case .Location, .LocationOffset :
-                self.setLocation(gSettings.getFakeLocation())
+            case .Location, .LocationOffset, .LocationOverride:
+                if (gSettings.locationOverride)
+                {
+                    self.setLocation(gSettings.getFakeLocation())
+                }
         default:""
         }
     }

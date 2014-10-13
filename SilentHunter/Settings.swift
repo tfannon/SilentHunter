@@ -15,6 +15,7 @@ enum SettingType {
     case Location
     case Session
     case LocationOffset
+    case LocationOverride
 }
 
 protocol SettingsListener {
@@ -43,10 +44,31 @@ class Settings {
         }
     }
 
+    var locationOverride : Bool = false {
+        didSet {
+            for y in listeners {
+                y.settingDidChange(.LocationOverride)
+            }
+        }
+    }
+
+    var longitude : Double = 0.0 {
+        didSet {
+            for y in listeners {
+                y.settingDidChange(.LocationOverride)
+            }
+        }
+    }
+
+    var latitude : Double = 0.0 {
+        didSet {
+            for y in listeners {
+                y.settingDidChange(.LocationOverride)
+            }
+        }
+    }
+    
     var sessionName : String = ""
-    var locationOverride: Bool = false
-    var longitude : Double = 0.0
-    var latitude : Double = 0.0
     var maxLogMsgs: Int = 100
     
     
@@ -84,6 +106,7 @@ class Settings {
     
     func registerListener(listener : SettingsListener) {
         listeners.append(listener)
+        listener.settingDidChange(.LocationOverride)
     }
     
     func persist() {

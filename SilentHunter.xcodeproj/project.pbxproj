@@ -218,7 +218,7 @@
 				TargetAttributes = {
 					65B16B1319E97078008D728D = {
 						CreatedOnToolsVersion = 6.0.1;
-						DevelopmentTeam = K9HP5J9XB3;
+						DevelopmentTeam = AU659F828V;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -227,7 +227,7 @@
 					};
 					65B16B2819E97078008D728D = {
 						CreatedOnToolsVersion = 6.0.1;
-						DevelopmentTeam = K9HP5J9XB3;
+						DevelopmentTeam = AU659F828V;
 						TestTargetID = 65B16B1319E97078008D728D;
 					};
 				};
