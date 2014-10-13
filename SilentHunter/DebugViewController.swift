@@ -14,15 +14,14 @@ class DebugViewController: UIViewController, UITextFieldDelegate
     @IBOutlet var txtSession: UITextField!
     @IBOutlet var sessionOverride: UISwitch!
     
-    @IBOutlet var lblMsgs: UILabel!
-    @IBOutlet weak var stepLogMsgs: UIStepper!
-    
     @IBOutlet var locationOverride: UISwitch!
     @IBOutlet var txtLatitude: UITextField!
     @IBOutlet var txtLongitude: UITextField!
     
     @IBOutlet var txtMoveLeftGPSAmount: UITextField!
     @IBOutlet var stpLocationOverride: UIStepper!
+    
+    @IBOutlet var txtStatus: UITextView!
     
     @IBAction func moveStepperChanged(sender: UIStepper) {
         var moveLeftInMeters = sender.value;
@@ -31,12 +30,6 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         gSettings.persist()
     }
    
-    @IBAction func stepLogMsgs(sender: UIStepper) {
-        lblMsgs.text = String(gSettings.maxLogMsgs)
-        gSettings.maxLogMsgs = Int(sender.value)
-        gSettings.persist()
-    }
-    
     @IBAction func handleSessionOverride(sender: UISwitch) {
         gSettings.sessionOverride = sender.on
         gSettings.persist()
@@ -101,8 +94,6 @@ class DebugViewController: UIViewController, UITextFieldDelegate
         locationOverride.on = gSettings.locationOverride
         txtLatitude.text = "\(gSettings.latitude)"
         txtLongitude.text = "\(gSettings.longitude)"
-        lblMsgs.text = String(gSettings.maxLogMsgs)
-        stepLogMsgs.value = Double(gSettings.maxLogMsgs)
         stpLocationOverride.value = gSettings.locationOffset
         txtMoveLeftGPSAmount.text = NSString(format: "%.1f", gSettings.locationOffset)
     }

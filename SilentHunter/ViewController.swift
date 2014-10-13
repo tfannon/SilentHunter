@@ -46,6 +46,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     
     var myLocation : CLLocation! = nil
     
+    var debugController : DebugViewController!
+    
     //MARK: Outlets
     @IBOutlet var btnFire: UIButton!
     @IBOutlet var txtLocation: UILabel!
@@ -65,6 +67,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
 
         self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
         self.txtChatMsg.delegate = self;
+        
+        //instantiate and hold onto our debug controller
+        self.debugController = self.storyboard!.instantiateViewControllerWithIdentifier("debugviewcontroller") as? DebugViewController;
+        debugController.viewDidLoad()
         
         let name = UIDevice.currentDevice().name
         //order is important here so dependencies are all hooked up
@@ -86,6 +92,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
         
         gSettings.registerListener(self)
         
+        
         var edgeSwipe = UIScreenEdgePanGestureRecognizer(target: self, action: "respondToSwipeGesture:")
         edgeSwipe.edges = UIRectEdge.Right;
         self.view.addGestureRecognizer(edgeSwipe)
@@ -98,8 +105,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     }
     
     func respondToSwipeGesture(gesture: UIScreenEdgePanGestureRecognizer) {
-        let vc = self.storyboard!.instantiateViewControllerWithIdentifier("debugviewcontroller") as DebugViewController;
-        self.presentViewController(vc, animated: true, completion: nil);
+        
+        self.presentViewController(debugController, animated: true, completion: nil);
     }
     
     func respondToTap(gesture: UITapGestureRecognizer) {
@@ -153,10 +160,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate,
     func logit(message: String) {
         println(message)
         if (++numLogMsgs > gSettings.maxLogMsgs) {
-            self.txtMessages.text = ""
+            //self.debugController.txtStatus.text = ""
             numLogMsgs = 0
         }
-        self.txtMessages.text = message + "\n" + self.txtMessages.text
+        self.debugController.txtStatus.text = message + "\n" + self.debugController.txtStatus.text
+        //self.txtMessages.text = message + "\n" + self.txtMessages.text
     }
     
     func updateChat(text : String, fromPeer peerID: MCPeerID) {

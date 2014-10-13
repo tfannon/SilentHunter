@@ -98,8 +98,8 @@
 		657E69FC19EA1EFD00F4AC4D /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				65B16B1B19E97078008D728D /* ViewController.swift */,
 				65B16B1D19E97078008D728D /* Main.storyboard */,
+				65B16B1B19E97078008D728D /* ViewController.swift */,
 				5158EEF419EA0F7300B5FDC2 /* DebugViewController.swift */,
 				65B16B2219E97078008D728D /* LaunchScreen.xib */,
 			);
@@ -218,7 +218,7 @@
 				TargetAttributes = {
 					65B16B1319E97078008D728D = {
 						CreatedOnToolsVersion = 6.0.1;
-						DevelopmentTeam = AU659F828V;
+						DevelopmentTeam = K9HP5J9XB3;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -227,7 +227,7 @@
 					};
 					65B16B2819E97078008D728D = {
 						CreatedOnToolsVersion = 6.0.1;
-						DevelopmentTeam = AU659F828V;
+						DevelopmentTeam = K9HP5J9XB3;
 						TestTargetID = 65B16B1319E97078008D728D;
 					};
 				};
